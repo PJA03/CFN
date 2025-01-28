@@ -18,19 +18,25 @@
 <body>
         <div class="card">
             <img src="../Resources/cfn_logo.png" class="logo" alt="Naturale">
-            <h1 class="display-1 text-center">Password Reset</h1>
-            <p class="lead">Please enter the email address associated with your account and click on the button below to receive a reset link. </p>
+            <h1 class="h1 text-center">Password Reset</h1>
+            <br>
+            <p class="lead" style="width: 65%";> Please enter the email address associated with your account and click on the button below to receive a reset link.</p>
+                <br>
             <form action="#" method="post">
                 <input type="text" name="email1" id="email1" class="form-control" placeholder="Email" required>
+                <br>
                 <div class="d-flex justify-content-center align-items-center">
-
-                    <button type="submit" class="reset">Reset Password</button>
-                </div>            
+                    <button type="submit" class="reset">Send Email</button>
+                </div>     
+                <br>       
             </form>
-            <div class="d-flex justify-content-center align-items-center">
+
+            <!-- <div class="d-flex justify-content-center align-items-center">
                 <p style="margin-top: 10px;">If you didn’t request this password reset, you can safely ignore it</p>
-            </div>
+            </div> -->
+
         </div>
-    
 </body>
 </html>
+
+<!-- 1/28/25: fixed spacings, added hover, removed last line (insert nalang yung message sa confirmation email)  -->

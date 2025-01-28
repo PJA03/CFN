@@ -7,7 +7,7 @@ use PHPMailer\PHPMailer\Exception;
 require '../phpmailer/vendor/autoload.php';
 require_once '../conn.php';
 
-function send_verification($username, $email, $token)
+function send_verification($email, $token)
 {
     $mail = new PHPMailer(true); // Passing true enables exceptions
     global $conn; // Ensure the $conn variable is accessible within the function
@@ -52,9 +52,24 @@ function send_verification($username, $email, $token)
             </div>";
 
         $mail->send();
-        echo "<script>alert('Email Successfully Sent!');</script>";
+        echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
+        echo "<script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Email Successfully Sent!',
+                    showConfirmButton: true
+                });
+              </script>";
     } catch (Exception $e) {
-        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
+        echo "<script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Message could not be sent.',
+                    text: 'Mailer Error: {$mail->ErrorInfo}',
+                    showConfirmButton: true
+                });
+              </script>";
     }
 }
 ?>

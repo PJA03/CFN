@@ -15,7 +15,7 @@ body {
     width: 100%;
     min-height: 100vh;
     background-color: #E8ECD7 !important;
-}
+}   
 
 
 
@@ -29,6 +29,7 @@ h1{
     font-size: 6rem;
     font-weight: 700;
     line-height: 5.2;
+    margin-left: 4%;    
 }
 
 .be-vietnam-pro-thin-italic {
@@ -49,7 +50,7 @@ p{
 
 
 .container {
-    width: 60%;
+    width: 80%;
     display: flex;
     height: 600px;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
@@ -120,17 +121,13 @@ p{
     transition: all 1.15s;
     z-index: 1;
     opacity: 0;
-    background-color: #fff;
+    background-color: #ffffff;
 }
 
 .container .box .form.log_in {
     opacity: 1;
     transition: all 1.15s;
     z-index: 5;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-
 }
 
 .container.active .box .form.log_in {
@@ -170,36 +167,43 @@ p{
 .container .overlay .page {
     height: 100%;
     min-width: 100%;
+    transition: all 0.5s;
+    opacity: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    text-align: center;
-    transition: all 0.5s;
-    opacity: 1;
 }
 
 .container.active .overlay .page.page_signIn {
     opacity: 0;
     margin-left: -100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 .container.active .overlay .page.page_signUp {
-    margin-left: 0%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+    text-align: left;
 }
 
 
 .btn { 
-    color: #EED3B1 !important;
+    color: #ffffff !important;
     background-color: #1F4529 !important; 
+    cursor: pointer;
 }
-
-
 
 .bkg {
     background-color: #1F4529;
-    color: #EED3B1;
-}
+    color: #ffffff;
+    cursor: pointer;
+    }
 
 .swipe {
    background-color: transparent;
@@ -214,7 +218,7 @@ p{
 }
 
 .card {
-     display: flex;
+    display: flex;
     transition: all 0.8s;
     transform: translateX(0);
     background-color: #1F4529 !important;
@@ -228,7 +232,7 @@ p{
     
 
     width: 43%;
-    height: 70%;
+    height: 80% !important;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
     border-radius: 50px;
     overflow: hidden;
@@ -251,6 +255,12 @@ p{
     font-size: 18px;
     width: 20%;
     margin-bottom: 20px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.reset:hover {
+    color: black; 
 }
 
 #email1{
@@ -266,3 +276,11 @@ p{
     margin-right: auto;
     margin-top: 8px;
 }
+
+.card .h1 {
+        font-size: 5rem;
+        font-weight: 500;
+        line-height: 1;
+    }
+
+    /* 1/28/25: updated */

@@ -18,17 +18,19 @@
 <body>
         <div class="card">
             <img src="../Resources/cfn_logo.png" class="logo" alt="Naturale">
-            <h1 class="display-1 text-center">Password Reset</h1>
+            <h1 class="h1 text-center">Password Reset</h1>
             <form action="#" method="post">
                 <input type="text" name="password1" id="password1" class="form-control" placeholder="Enter new password" required>
                 <input type="text" name="password1" id="password1" class="form-control" placeholder="Confirm new password" required>
-                <p style="width: 30%; text-align: left; font-size: 13px; margin-top: 8px;" class="be-vietnam-pro-thin-italic">Strong passwords should contain a mix of numbers, letters, and special characters.</p>
+                <br>
+                <p style="width: 60%; text-align:justify; line-height: 20px; font-size: 13px; margin-top: 8px;" class="be-vietnam-pro-thin-italic">Password must contain a mix of numbers, letters, and special characters.</p> 
                 <div class="d-flex justify-content-center align-items-center">
-
                     <button type="submit" class="reset" >Reset Password</button>
-                </div>            
+                </div>    
+                <br>        
             </form>
         </div>
-    
 </body>
 </html>
+
+<!-- 1/28/25: fixed spacings, added hover -->

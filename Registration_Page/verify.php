@@ -5,10 +5,6 @@ if (isset($_GET['email']) && isset($_GET['token'])) {
     $email = $_GET['email'];
     $token = $_GET['token'];
 
-    // Debugging: Print email and token
-    echo "Email: $email<br>";
-    echo "Token: $token<br>";
-
     // Check if the email and token exist in the database
     $check_sql = "SELECT * FROM tb_user WHERE email = '$email' AND token = '$token'";
     $check_result = $conn->query($check_sql);
@@ -57,7 +53,8 @@ $conn->close();
             showConfirmButton: true
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = 'http://localhost/CFN/Registration_Page/registration.php';
+                window.location.href = 'http://localhost/CFN/Registration_Page/registration.php'; // Redirect to login page or any other page
+            }
         });
     </script>
 </body>

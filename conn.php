@@ -20,7 +20,7 @@ $conn = new mysqli($servername, $username, $password, $name);
 // } else {
 //     echo "Database credentials are correct, and the connection is working!";
 // }
-// ?>
+?>
 
 
 </body>
