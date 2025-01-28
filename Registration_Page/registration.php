@@ -162,7 +162,7 @@
                             showConfirmButton: false,
                             timer: 1500
                         }).then(() => {
-                            window.location.href = 'dashboard.php'; // Redirect to the dashboard or any other page
+                            window.location.href = 'test.html'; // Redirect to the dashboard or any other page
                         });
                     </script>
                     <?php
