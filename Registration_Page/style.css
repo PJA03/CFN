@@ -214,7 +214,7 @@ p{
 }
 
 .card {
-    display: flex;
+     display: flex;
     transition: all 0.8s;
     transform: translateX(0);
     background-color: #1F4529 !important;

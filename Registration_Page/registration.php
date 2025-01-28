@@ -76,6 +76,8 @@
         </div>
     </div>
 
+  
+
 
 
 
@@ -88,6 +90,7 @@
 
     <?php
         require_once "../conn.php";
+        require_once "emailver.php";
         
         //account registration
         if (isset($_POST['signup'])) {
@@ -95,15 +98,17 @@
           $email = $_POST['regisemail'];
           //change hashing technique
           $password = md5($_POST['regispassword']);
-        //   $validated = false
+          $validated = false;
+          $token = rand(000000,999999);
+
 
           
-          $signup = "INSERT INTO tb_user(username, email, pass) values ('$username','$email','$password')";
-        //   $signup = "INSERT INTO tb_user(username, email, pass, validated) values ('$username','$email','$password', '$validated')";
-
+          $signup = "INSERT INTO tb_user(username, email, pass, validated, token) values ('$username','$email','$password', '$validated', '$token')";
           $result = $conn -> query($signup);
         
           if ($result == true) {
+            //call email verification function, 
+            send_verification($username, $email, $token); 
             ?>
             <script>
                 Swal.fire({
@@ -121,40 +126,68 @@
           }
         }
 
+
+
+
         //login account
         if (isset($_POST['login'])) {
             $email = $_POST['logemail'];
             //change hashing technique
             $password = md5($_POST['logpassword']);
-  
             
-            $loginsql = "SELECT * FROM tb_user WHERE email='".$email."' AND pass='".$password."'";
-            $result = $conn -> query($loginsql);
-          
-            if ($result == true) {
-              ?>
-              <script>
-                  Swal.fire({
-                  position: "center",    
-                  icon: "success",
-                  title: "Successfully added",
-                  showConfirmButton:false,
-                  timer: 1500  
-                  });
-              </script>
-          
-              <?php
-            } else {
-              echo $conn -> error;
+            // Query to check if the email and password match a record in the database
+            $loginsql = "SELECT * FROM tb_user WHERE email='$email' AND pass='$password'";
+            $result = $conn->query($loginsql);
+            
+            if ($result->num_rows > 0) {
+                $user = $result->fetch_assoc();
+                if ($user['validated'] == 1) {
+                    // Email is validated
+                    ?>
+                    <script>
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Login successful",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = 'dashboard.php'; // Redirect to the dashboard or any other page
+                        });
+                    </script>
+                    <?php
+                } else {
+               // Email is not validated
+                ?>
+                <script>
+                    Swal.fire({
+                        position: "center",
+                        icon: "error",
+                        title: "Email not validated",
+                        text: "Please verify your email before logging in.",
+                        showConfirmButton: true
+                    });
+                </script>
+                <?php
             }
-          }
-
+        } else {
+            // Email or password is incorrect
+            ?>
+            <script>
+                Swal.fire({
+                    position: "center",
+                    icon: "error",
+                    title: "Login failed",
+                    text: "Incorrect email or password.",
+                    showConfirmButton: true
+                });
+            </script>
+            <?php
+            }
+        }
     ?>
-
     <!-- link script -->
     <script src="main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
 </body>
 </html>
