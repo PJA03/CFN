@@ -76,52 +76,85 @@
         </div>
     </div>
 
-    <?php
-        require_once '../conn.php';
 
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $username = $_POST['username'];
-            $email = $_POST['regisemail'];
-            $password = $_POST['regispassword'];
+
+
+
+
+
+
+
+
+
+    <?php
+        require_once "../conn.php";
         
-            // Validate input
-            if (!empty($username) && !empty($email) && !empty($password)) {
-                // Hash the password
-                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        //account registration
+        if (isset($_POST['signup'])) {
+          $username = $_POST['username'];
+          $email = $_POST['regisemail'];
+          //change hashing technique
+          $password = md5($_POST['regispassword']);
+        //   $validated = false
+
+          
+          $signup = "INSERT INTO tb_user(username, email, pass) values ('$username','$email','$password')";
+        //   $signup = "INSERT INTO tb_user(username, email, pass, validated) values ('$username','$email','$password', '$validated')";
+
+          $result = $conn -> query($signup);
         
-                // Insert data into the database
-                $sql = "INSERT INTO tb_user (username, email, pass) VALUES ('$username', '$email', '$hashed_password')";
-                
-                if ($conn->query($sql) === TRUE) {
-                    echo "<script>
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: 'New record created successfully'
-                            });
-                          </script>";
-                } else {
-                    echo "<script>
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Error: " . $sql . "<br>" . $conn->error . "'
-                            });
-                          </script>";
-                }
-            } else {
-                echo "<script>
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'All fields are required.'
-                        });
-                      </script>";
-            }
+          if ($result == true) {
+            ?>
+            <script>
+                Swal.fire({
+                position: "center",    
+                icon: "success",
+                title: "Successfully added",
+                showConfirmButton:false,
+                timer: 1500  
+                });
+            </script>
+        
+            <?php
+          } else {
+            echo $conn -> error;
+          }
         }
+
+        //login account
+        if (isset($_POST['login'])) {
+            $email = $_POST['logemail'];
+            //change hashing technique
+            $password = md5($_POST['logpassword']);
+  
+            
+            $loginsql = "SELECT * FROM tb_user WHERE email='".$email."' AND pass='".$password."'";
+            $result = $conn -> query($loginsql);
+          
+            if ($result == true) {
+              ?>
+              <script>
+                  Swal.fire({
+                  position: "center",    
+                  icon: "success",
+                  title: "Successfully added",
+                  showConfirmButton:false,
+                  timer: 1500  
+                  });
+              </script>
+          
+              <?php
+            } else {
+              echo $conn -> error;
+            }
+          }
+
     ?>
+
     <!-- link script -->
     <script src="main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 </body>
 </html>
