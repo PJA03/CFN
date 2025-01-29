@@ -11,7 +11,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap');
     </style>
@@ -25,7 +26,7 @@
                 <br><br>
                     <h1>Login</h1>
                     <br><br>
-                    <form action="#" method="post">
+                    <form action="registration.php" method="post">
                         <div class="mb-3">
                             <input type="email" class="form-control" id="logemail" name="logemail" placeholder="Email" required>
                         </div>
@@ -58,8 +59,14 @@
                         </div>
                         <div class="mb-3">      
                             <input type="password" class="form-control" id="regispassword" name="regispassword" placeholder="Password" required>
+                           <!-- TODO: uncomment when done -->
+                            <!-- <input type="password" class="form-control" id="regispassword" name="regispassword" placeholder="Password"
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$" 
+                            title="Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character."
+                            required> -->
+                            <!-- <p class="passoword-hint text-muted">Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character.</p> -->
                         </div>
-                        <br>
+                    
                         <p class="text-center mt-3">By creating an account, you agree to our <span class="link-primary">Terms</span> and acknowledge our <span class="link-primary">Privacy Policy</span>.</p>
                         <br>
                         <div class="button d-flex justify-content-center align-items-center">
@@ -105,8 +112,9 @@
         if (isset($_POST['signup'])) {
           $username = $_POST['username'];
           $email = $_POST['regisemail'];
-          //change hashing technique
-          $password = md5($_POST['regispassword']);
+          //TODO:change hashing technique
+          //TODO: add password strong character validations
+          $password = $_POST['regispassword'];
           $validated = 0;
           $token = rand(000000,999999);
 
@@ -142,18 +150,20 @@
         //login account
         if (isset($_POST['login'])) {
             $email = $_POST['logemail'];
-            //change hashing technique
-            $password = md5($_POST['logpassword']);
+            //TODO:change hashing technique
+            $password =$_POST['logpassword'];
             
-            // Query to check if the email and password match a record in the database
+            //TODO:Add session start here
+            
             $loginsql = "SELECT * FROM tb_user WHERE email='$email' AND pass='$password'";
             $result = $conn->query($loginsql);
-            
+
             if ($result->num_rows > 0) {
                 $user = $result->fetch_assoc();
-                if ($user['validated'] == 1) {
-                    // Email is validated
+                if ($user['validated'] == 1) { //checks if account is validated
                     ?>
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
                     <script>
                         Swal.fire({
                             position: "center",
@@ -162,39 +172,39 @@
                             showConfirmButton: false,
                             timer: 1500
                         }).then(() => {
-                            window.location.href = 'test.html'; // Redirect to the dashboard or any other page
+                            window.location.href = 'test.html';
                         });
                     </script>
                     <?php
                 } else {
-               // Email is not validated
+                    // Email is not validated
+                    ?>
+                    <script>
+                        Swal.fire({
+                            position: "center",
+                            icon: "error",
+                            title: "Email not validated",
+                            showConfirmButton: true
+                        });
+                    </script>
+                    <?php
+                }
+            } else {
+                // Email or password is incorrect
                 ?>
                 <script>
                     Swal.fire({
                         position: "center",
                         icon: "error",
-                        title: "Email not validated",
+                        title: "Login failed",
+                        text: "Incorrect email or password.",
                         showConfirmButton: true
                     });
                 </script>
                 <?php
             }
-        } else {
-            // Email or password is incorrect
-            ?>
-            <script>
-                Swal.fire({
-                    position: "center",
-                    icon: "error",
-                    title: "Login failed",
-                    text: "Incorrect email or password.",
-                    showConfirmButton: true
-                });
-            </script>
-            <?php
-            }
         }
-    ?>
+        ?>
     <!-- link script -->
     <script src="main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

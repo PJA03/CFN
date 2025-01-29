@@ -9,3 +9,12 @@ btnSignIn.addEventListener('click', () => {
 btnSignUp.addEventListener('click', () => {
     container.classList.remove('active')
 })
+
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('signin')) {
+        console.log('signin parameter detected');
+
+        btnSignIn.click(); // Simulate a click on the sign-in button
+    }
+});

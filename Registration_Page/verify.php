@@ -63,7 +63,8 @@ $conn->close();
             showConfirmButton: true
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = 'http://localhost/CFN/Registration_Page/registration.php'; // Redirect to login page or any other page
+                header('Location: http://localhost/CFN/Registration_Page/registration.php?signin=true');
+                exit();         
             }
         });
     </script>
