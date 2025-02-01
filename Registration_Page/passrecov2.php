@@ -8,8 +8,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap');
@@ -20,12 +21,13 @@
             <img src="../Resources/cfn_logo.png" class="logo" alt="Naturale">
             <h1 class="h1 text-center">Password Reset</h1>
             <form action="#" method="post">
-                <input type="text" name="password1" id="password1" class="form-control" placeholder="Enter new password" required>
-                <input type="text" name="password1" id="password1" class="form-control" placeholder="Confirm new password" required>
+                <!-- //TODO: -->
+                <input type="password" name="password1" id="password1" class="form-control" placeholder="Enter new password" required>
+                <input type="password" name="password2" id="password1" class="form-control" placeholder="Confirm new password" required>
                 <br>
                 <p style="width: 60%; text-align:justify; line-height: 20px; font-size: 13px; margin-top: 8px;" class="be-vietnam-pro-thin-italic">Password must contain a mix of numbers, letters, and special characters.</p> 
                 <div class="d-flex justify-content-center align-items-center">
-                    <button type="submit" class="reset" >Reset Password</button>
+                    <button type="submit" class="reset" name="reset">Reset Password</button>
                 </div>    
                 <br>        
             </form>
@@ -34,3 +36,69 @@
 </html>
 
 <!-- 1/28/25: fixed spacings, added hover -->
+
+<?php
+    session_start();
+    require_once "../conn.php";
+    require_once "emailver.php";
+
+    $email = $_SESSION['email1'];
+
+    if (isset($_POST["reset"])) {
+        // TODO: add hashing to the password
+        $password1 = $_POST["password1"];
+        $password2 = $_POST["password2"];
+        
+        if ($password1 == $password2) {
+            $sql = "UPDATE tb_user SET pass = '$password1' WHERE email = '$email'";
+            $result = $conn->query($sql);
+            
+            if ($result === TRUE && $conn->affected_rows > 0) {
+            ?>
+                <script>
+                    Swal.fire({
+                        position: "center",    
+                        icon: "success",
+                        title: "Password Reset Successful. Continue to login account.",
+                        showConfirmButton: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = 'http://localhost/CFN/Registration_Page/test.html';
+                        
+                        }
+                    });
+                </script>
+                <?php
+
+            } else {
+                ?>
+                    <script>
+                        Swal.fire({
+                        position: "center",    
+                        icon: "error",
+                        title: "Password Reset Failed. Invalid Email",
+                        showConfirmButton:false,
+                        timer: 1500  
+                        });
+                    </script>
+                
+                    <?php
+            }
+        } else {
+            ?>
+                    <script>
+                        Swal.fire({
+                        position: "center",    
+                        icon: "error",
+                        title: "Password Reset Failed. Passwords do not match.",
+                        showConfirmButton:false,
+                        timer: 1500  
+                        });
+                    </script>
+                
+                    <?php
+        }
+    }
+
+
+?>

@@ -63,8 +63,7 @@ $conn->close();
             showConfirmButton: true
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = 'http://localhost/CFN/Registration_Page/registration.php';
-            
+                window.location.href = 'http://localhost/CFN/Registration_Page/passrecov2.php';     
             }
         });
     </script>

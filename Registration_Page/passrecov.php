@@ -26,16 +26,65 @@
                 <input type="text" name="email1" id="email1" class="form-control" placeholder="Email" required>
                 <br>
                 <div class="d-flex justify-content-center align-items-center">
-                    <button type="submit" class="reset">Send Email</button>
+                    <button type="submit" class="reset" name="verify">Send Email</button>
                 </div>     
                 <br>       
             </form>
-
-            <!-- <div class="d-flex justify-content-center align-items-center">
-                <p style="margin-top: 10px;">If you didn’t request this password reset, you can safely ignore it</p>
-            </div> -->
-
         </div>
+
+        <?php
+            session_start();
+            require_once "../conn.php";
+            require_once "emailver.php";
+             
+             //account registration
+            if (isset($_POST['verify'])) {
+                $email1 = $_POST['email1'];
+                $_SESSION['email1'] = $email1;
+                $token = rand(000000,999999);
+
+                $sql = "SELECT * FROM tb_user WHERE email = '$email1' AND validated=1";
+                $result = $conn->query($sql);
+
+                if ($result->num_rows > 0) {
+
+                    // Insert the token into the database
+                    $updateTokenSql = "UPDATE tb_user SET token = '$token' WHERE email = '$email1'";
+                    $conn->query($updateTokenSql);
+
+                    //call email verification function
+                    pass_recov( $email1, $token); 
+                    ?>
+                    <script>
+                        Swal.fire({
+                        position: "center",    
+                        icon: "success",
+                        title: "Check your email to validate",
+                        text: "Please verify your email before logging in.",
+                        showConfirmButton:false,
+                        timer: 1500  
+                        });
+                    </script>
+                
+                    <?php
+                } else {
+                    //email is not registered
+                    ?>
+                    <script>
+                        Swal.fire({
+                        position: "center",    
+                        icon: "error",
+                        title: "Email is not registered into any account",
+                        showConfirmButton:false,
+                        timer: 1500  
+                        });
+                    </script>
+                
+                    <?php
+                }    
+            }
+
+        ?>
 </body>
 </html>
 
