@@ -58,13 +58,11 @@
                             <input type="email" class="form-control" id="regisemail" name="regisemail" placeholder="Email" required>
                         </div>
                         <div class="mb-3">      
-                            <input type="password" class="form-control" id="regispassword" name="regispassword" placeholder="Password" required>
-                           <!-- TODO: uncomment when done -->
-                            <!-- <input type="password" class="form-control" id="regispassword" name="regispassword" placeholder="Password"
+                            <input type="password" class="form-control" id="regispassword" name="regispassword" placeholder="Password"
                             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$" 
                             title="Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character."
-                            required> -->
-                            <!-- <p class="passoword-hint text-muted">Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character.</p> -->
+                            required>
+                            <p class="passoword-hint text-muted">Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character.</p>
                         </div>
                     
                         <p class="text-center mt-3">By creating an account, you agree to our <span class="link-primary">Terms</span> and acknowledge our <span class="link-primary">Privacy Policy</span>.</p>
@@ -112,83 +110,116 @@
         if (isset($_POST['signup'])) {
           $username = $_POST['username'];
           $email = $_POST['regisemail'];
-          //TODO:change hashing technique
-          //TODO: add password strong character validations
-          $password = $_POST['regispassword'];
+          $password = password_hash($_POST['regispassword'], PASSWORD_BCRYPT);
+        //   $password = $_POST['regispassword'];
           $validated = 0;
           $token = rand(000000,999999);
+          $token_created_at = date("Y-m-d H:i:s");
 
 
-          
-          $signup = "INSERT INTO tb_user(username, email, pass, validated, token) values ('$username','$email','$password', '$validated', '$token')";
-          $result = $conn -> query($signup);
-        
-          if ($result == true) {
-            //call email verification function, 
-            send_verification( $email, $token); 
+        //select statement to check if email is already registered    
+          $check = "SELECT * FROM tb_user WHERE email = '$email'";
+          $result = $conn -> query($check);
+
+            if ($result->num_rows > 0) {
             ?>
             <script>
                 Swal.fire({
                 position: "center",    
-                icon: "success",
-                title: "Check your email to validate",
-                text: "Please verify your email before logging in.",
+                icon: "error",
+                title: "Email already registered",
+                text: "Please use a different email.",
                 showConfirmButton:false,
-                timer: 1500  
+                timer: 3000  
                 });
             </script>
-        
             <?php
-          } else {
-            echo $conn -> error;
-          }
+            } else {
+                    //insert statement to register account
+                $signup = "INSERT INTO tb_user(username, email, pass, validated, token) values ('$username','$email','$password', '$validated', '$token')";
+                $result = $conn -> query($signup);
+                
+                if ($result == true) {
+                    //call email verification function, 
+                    send_verification( $email, $token); 
+                    ?>
+                    <script>
+                        Swal.fire({
+                        position: "center",    
+                        icon: "success",
+                        title: "Check your email to validate",
+                        text: "Please verify your email to use your account. If you did not receive an email, please check your spam folder.",
+                        showConfirmButton:false,
+                        timer: 3000  
+                        });
+                    </script>
+                
+                    <?php
+                } else {
+                    echo $conn -> error;
+                }
+            }
         }
 
 
         //login account
         if (isset($_POST['login'])) {
             $email = $_POST['logemail'];
-            //TODO:change hashing technique
             $password =$_POST['logpassword'];
-            
-            //TODO:Add session start here
-            
-            $loginsql = "SELECT * FROM tb_user WHERE email='$email' AND pass='$password'";
-            $result = $conn->query($loginsql);
 
+            // Debugging: Display the unhashed password
+            // echo "Unhashed Password: " . $password . "<br>";
+            
+            $loginsql = "SELECT * FROM tb_user WHERE email='$email'";
+            $result = $conn->query($loginsql);
+        
+            if ($result === FALSE) {
+                die("Error in SELECT query: " . $conn->error);
+            }
+        
             if ($result->num_rows > 0) {
                 $user = $result->fetch_assoc();
-                if ($user['validated'] == 1) { //checks if account is validated
-                    ?>
-                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                // Debugging: Print fetched user data
+                // echo "User Data: " . print_r($user, true) . "<br>";
 
-                    <script>
-                        Swal.fire({
-                            position: "center",
-                            icon: "success",
-                            title: "Login successful",
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            window.location.href = 'test.html';
-                        });
-                    </script>
-                    <?php
+                
+                if (password_verify($password, $user['pass'])) {
+                    if ($user['validated'] == 1) { //checks if account is validated
+                        ?>
+                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                        <script>
+                                window.location.href = 'test.html';
+                        </script>
+                        <?php
+                    } else {
+                        // Email is not validated
+                        ?>
+                        <script>
+                            Swal.fire({
+                                position: "center",
+                                icon: "error",
+                                title: "Email not validated",
+                                showConfirmButton: true
+                            });
+                        </script>
+                        <?php
+                    }
                 } else {
-                    // Email is not validated
+                    // Password is incorrect
                     ?>
                     <script>
                         Swal.fire({
                             position: "center",
                             icon: "error",
-                            title: "Email not validated",
+                            title: "Login failed",
+                            text: "Incorrect email or password.",
                             showConfirmButton: true
                         });
                     </script>
                     <?php
                 }
             } else {
-                // Email or password is incorrect
+                // Email is incorrect
                 ?>
                 <script>
                     Swal.fire({
@@ -202,6 +233,7 @@
                 <?php
             }
         }
+
         ?>
     <!-- link script -->
     <script src="main.js"></script>
