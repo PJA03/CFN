@@ -22,8 +22,14 @@
             <h1 class="h1 text-center">Password Reset</h1>
             <form action="#" method="post">
                 <!-- //TODO: -->
-                <input type="password" name="password1" id="password1" class="form-control" placeholder="Enter new password" required>
-                <input type="password" name="password2" id="password1" class="form-control" placeholder="Confirm new password" required>
+                <input type="password" name="password1" id="password1" class="form-control" placeholder="Enter new password" 
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$" 
+                            title="Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character."
+                            required>
+                <input type="password" name="password2" id="password1" class="form-control" placeholder="Confirm new password" 
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$" 
+                            title="Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character."
+                            required>
                 <br>
                 <p style="width: 60%; text-align:justify; line-height: 20px; font-size: 13px; margin-top: 8px;" class="be-vietnam-pro-thin-italic">Password must contain a mix of numbers, letters, and special characters.</p> 
                 <div class="d-flex justify-content-center align-items-center">
@@ -50,7 +56,8 @@
         $password2 = $_POST["password2"];
         
         if ($password1 == $password2) {
-            $sql = "UPDATE tb_user SET pass = '$password1' WHERE email = '$email'";
+            $passwordHashed = password_hash($_POST['password1'], PASSWORD_BCRYPT);
+            $sql = "UPDATE tb_user SET pass = '$passwordHashed' WHERE email = '$email'";
             $result = $conn->query($sql);
             
             if ($result === TRUE && $conn->affected_rows > 0) {
@@ -63,7 +70,7 @@
                         showConfirmButton: true
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            window.location.href = 'http://localhost/CFN/Registration_Page/test.html';
+                            window.location.href = 'http://localhost/CFN/Registration_Page/registration.php?signin=true';
                         
                         }
                     });

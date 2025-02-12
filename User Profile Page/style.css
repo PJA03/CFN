@@ -1,0 +1,166 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Be Vietnam Pro", serif !important;
+    font-weight: 400;
+    font-style: normal;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #E8ECD7 !important;
+    line-height: 1.6;
+}
+
+/* Headings styling */
+h1 {
+    font-family: "Bebas Neue", serif !important;
+    font-size: 100px !important;  /* Ensure font size applies */
+    /* color: #FF8666 !important;    Use !important for overriding */
+    font-style: normal;
+}
+
+h2 {
+    font-family: "Bebas Neue", serif !important;
+    font-size: 50px !important;  /* Apply font size */
+    font-style: normal;
+    /* color: #FF8666 !important;    Override any conflicts */
+}
+
+h3 {
+    font-family: "Bebas Neue", serif !important;
+    font-size: 30px !important;  /* Apply font size */
+    font-style: normal;
+    /* color: #FF8666 !important;    Override any conflicts */
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjust spacing between the image and text */
+}
+
+.logo-image {
+    height: 40px; /* Adjust size as needed */
+    width: auto; /* Keep aspect ratio */
+}
+
+/* Header Styling */
+header {
+    background-color: #1F4529;
+    color: #EED3B1;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Ensure the header uses the full width */
+    box-sizing: border-box; /* Prevent layout shift */
+    position: relative;
+}
+
+/* Logo Styling */
+.logo img {
+    height: 40px; /* Adjust logo size */
+}
+
+/* Navigation Bar Styling */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    flex-grow: 1; /* Allow navbar to use available space */
+    margin-left: 1015px; /* Add space between the logo and navbar */
+}
+
+/* Search Bar Styling */
+.search-bar {
+    padding: 8px 12px;
+    border-radius: 25px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    width: 300px; /* Adjust width as needed */
+    background-color: #FFFFFF;
+    color: #1F4529;
+}
+
+/* Icons in Navigation */
+.icons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Font Awesome Icon Styles */
+.icon-profile {
+    font-size: 1.5rem;
+    color: #EED3B1;
+    cursor: pointer;
+}
+
+.burger-menu {
+    font-size: 1.8rem;
+    color: #EED3B1;
+    cursor: pointer;
+}
+
+/* Ensure the body doesn't have padding that messes with the layout */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.active{
+    text-decoration: underline;
+    color: black;
+    margin: 8px
+}
+
+.transparent-button{
+    background-color: transparent;
+    border: none;
+        margin: 8px
+}
+
+.main{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 50px;
+    width: 80vw;
+    margin: auto;
+    margin-top: 50px;
+    /* background-color: #FF8666; */
+
+}
+
+/* .left-panel{
+} */
+
+.right-panel{
+    background: #1F4529;
+    border-radius: 20px;
+    color: #FFFFFF;
+}
+
+.profile-details {
+    display: flex;
+    align-items: center;
+}
+.profile-details h2 {
+    margin-right: 10px;
+}
+.profile-details button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+.profile-details button i {
+    color: white; /* Change this to the desired color */
+}

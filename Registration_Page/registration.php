@@ -188,7 +188,7 @@
                         ?>
                         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                         <script>
-                                window.location.href = 'test.html';
+                                window.location.href = '../Home_Page/home.html';
                         </script>
                         <?php
                     } else {
