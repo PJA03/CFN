@@ -74,7 +74,7 @@ header {
     justify-content: flex-start;
     gap: 20px;
     flex-grow: 1; /* Allow navbar to use available space */
-    margin-left: 1015px; /* Add space between the logo and navbar */
+    margin-left: 1050; /* Add space between the logo and navbar */
 }
 
 /* Search Bar Styling */
@@ -108,6 +108,7 @@ header {
     color: #EED3B1;
     cursor: pointer;
 }
+
 
 /* Ensure the body doesn't have padding that messes with the layout */
 body {
@@ -163,4 +164,21 @@ body {
 }
 .profile-details button i {
     color: white; /* Change this to the desired color */
+}
+
+.save-button {
+    background-color: #C0D171 !important; 
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin: 20px;
+    cursor: pointer;
+}
+
+.right-panel .form-control {
+    width: 50%; /* Adjust the width as needed */
+}
+
+.row{
+    margin: 5px;
 }

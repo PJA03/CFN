@@ -1,3 +1,6 @@
+<?php
+    session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -127,7 +130,7 @@
                 Swal.fire({
                 position: "center",    
                 icon: "error",
-                title: "Email already registered",
+                title: "Email is already registered",
                 text: "Please use a different email.",
                 showConfirmButton:false,
                 timer: 3000  
@@ -163,9 +166,12 @@
 
 
         //login account
+        
+
         if (isset($_POST['login'])) {
             $email = $_POST['logemail'];
             $password =$_POST['logpassword'];
+            $_SESSION['email'] = $email;
 
             // Debugging: Display the unhashed password
             // echo "Unhashed Password: " . $password . "<br>";
@@ -188,7 +194,8 @@
                         ?>
                         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                         <script>
-                                window.location.href = '../Home_Page/home.html';
+                                // window.location.href = '../Home_Page/home.html';
+                                window.location.href = '../User_Profile_Page/UserProfile.php';
                         </script>
                         <?php
                     } else {
