@@ -56,6 +56,9 @@
                     <form action="registration.php" method="post">
                         <div class="mb-3">
                             <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                            <div id="usernameFeedback" class="invalid-feedback d-none">
+                                
+                            </div>
                         </div>
                         <div class="mb-3">
                             <input type="email" class="form-control" id="regisemail" name="regisemail" placeholder="Email" required>
@@ -65,7 +68,6 @@
                             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$" 
                             title="Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character."
                             required>
-                            <p class="passoword-hint text-muted">Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character.</p>
                         </div>
                     
                         <p class="text-center mt-3">By creating an account, you agree to our <span class="link-primary">Terms</span> and acknowledge our <span class="link-primary">Privacy Policy</span>.</p>
@@ -92,59 +94,84 @@
         </div>
     </div>
 
-
-  
-
-
-
-
-
-
-
-
-
-
-
     <?php
         require_once "../conn.php";
         require_once "emailver.php";
         
         //account registration
+        $registrationFailed = false;
         if (isset($_POST['signup'])) {
-          $username = $_POST['username'];
-          $email = $_POST['regisemail'];
-          $password = password_hash($_POST['regispassword'], PASSWORD_BCRYPT);
-        //   $password = $_POST['regispassword'];
-          $validated = 0;
-          $token = rand(000000,999999);
-          $token_created_at = date("Y-m-d H:i:s");
+            $username = $_POST['username'];
+            $email = $_POST['regisemail'];
+            $password = password_hash($_POST['regispassword'], PASSWORD_BCRYPT);
+            $validated = 0;
+            $token = rand(000000,999999);
+            $token_created_at = date("Y-m-d H:i:s");
+
+            // Check if email is already registered
+            $check_email = "SELECT * FROM tb_user WHERE email = '$email'";
+            $result_email = $conn->query($check_email);
+
+            // Check if username is already taken
+            $check_username = "SELECT * FROM tb_user WHERE username = ?";
+            $stmt = $conn->prepare($check_username);
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $result_username = $stmt->get_result();
+
+            if ($result_username->num_rows > 0) {
+                $registrationFailed = true;
+                ?>
+                <script>
+                    Swal.fire({
+                        position: "center",    
+                        icon: "error",
+                        title: "Username is already taken",
+                        text: "Please choose a different username.",
+                        showConfirmButton: false,
+                        timer: 3000  
+                    });
+                </script>
+                <?php
+            } 
 
 
-        //select statement to check if email is already registered    
-          $check = "SELECT * FROM tb_user WHERE email = '$email'";
-          $result = $conn -> query($check);
-
-            if ($result->num_rows > 0) {
-            ?>
-            <script>
-                Swal.fire({
-                position: "center",    
-                icon: "error",
-                title: "Email is already registered",
-                text: "Please use a different email.",
-                showConfirmButton:false,
-                timer: 3000  
-                });
-            </script>
-            <?php
+            if ($result_email->num_rows > 0) {
+                $registrationFailed = true;
+                ?>
+                <script>
+                    Swal.fire({
+                    position: "center",    
+                    icon: "error",
+                    title: "Email is already registered",
+                    text: "Please use a different email.",
+                    showConfirmButton:false,
+                    timer: 3000  
+                    });
+                </script>
+                <?php
+            } elseif ($result_username->num_rows > 0) {
+                $registrationFailed = true;
+                ?>
+                <script>
+                    Swal.fire({
+                    position: "center",    
+                    icon: "error",
+                    title: "Username is already taken",
+                    text: "Please choose a different username.",
+                    showConfirmButton:false,
+                    timer: 3000  
+                    });
+                </script>
+                <?php
             } else {
-                    //insert statement to register account
-                $signup = "INSERT INTO tb_user(username, email, pass, validated, token) values ('$username','$email','$password', '$validated', '$token')";
-                $result = $conn -> query($signup);
+                // Insert statement to register account
+                $signup = "INSERT INTO tb_user(username, email, pass, validated, token, token_created_at) values ('$username','$email','$password', '$validated', '$token', '$token_created_at')";
+                $result = $conn->query($signup);
                 
                 if ($result == true) {
-                    //call email verification function, 
-                    send_verification( $email, $token); 
+                    // Call email verification function
+                    send_verification($email, $token); 
                     ?>
                     <script>
                         Swal.fire({
@@ -156,26 +183,20 @@
                         timer: 3000  
                         });
                     </script>
-                
                     <?php
                 } else {
-                    echo $conn -> error;
+                    $registrationFailed = true;
+                    echo $conn->error;
                 }
             }
         }
 
-
-        //login account
-        
-
+        // Login account
         if (isset($_POST['login'])) {
             $email = $_POST['logemail'];
-            $password =$_POST['logpassword'];
+            $password = $_POST['logpassword'];
             $_SESSION['email'] = $email;
 
-            // Debugging: Display the unhashed password
-            // echo "Unhashed Password: " . $password . "<br>";
-            
             $loginsql = "SELECT * FROM tb_user WHERE email='$email'";
             $result = $conn->query($loginsql);
         
@@ -185,17 +206,13 @@
         
             if ($result->num_rows > 0) {
                 $user = $result->fetch_assoc();
-                // Debugging: Print fetched user data
-                // echo "User Data: " . print_r($user, true) . "<br>";
-
                 
                 if (password_verify($password, $user['pass'])) {
-                    if ($user['validated'] == 1) { //checks if account is validated
+                    if ($user['validated'] == 1) { // Checks if account is validated
                         ?>
                         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                         <script>
-                                // window.location.href = '../Home_Page/home.html';
-                                window.location.href = '../User_Profile_Page/UserProfile.php';
+                            window.location.href = '../User_Profile_Page/UserProfile.php';
                         </script>
                         <?php
                     } else {
@@ -240,10 +257,50 @@
                 <?php
             }
         }
-
-        ?>
+    ?>
     <!-- link script -->
     <script src="main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+       document.addEventListener("DOMContentLoaded", function () {
+    var usernameInput = document.getElementById('username');
+    var feedback = document.getElementById('usernameFeedback');
+    var form = document.querySelector("form[action='registration.php']");
+
+    usernameInput.addEventListener('input', function () {
+        var username = this.value;
+        if (username.length > 0) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'check_username.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    if (xhr.responseText == 'taken') {
+                        feedback.textContent = 'Username is already taken';
+                        feedback.classList.add('d-block');
+                        feedback.classList.remove('d-none');
+                        usernameInput.classList.add('is-invalid');
+                        form.querySelector("[name='signup']").disabled = true;
+                    } else {
+                        feedback.textContent = '';
+                        feedback.classList.add('d-none');
+                        feedback.classList.remove('d-block');
+                        usernameInput.classList.remove('is-invalid');
+                        form.querySelector("[name='signup']").disabled = false;
+                    }
+                }
+            };
+            xhr.send('username=' + encodeURIComponent(username));
+        } else {
+            feedback.textContent = '';
+            feedback.classList.add('d-none');
+            feedback.classList.remove('d-block');
+            usernameInput.classList.remove('is-invalid');
+            form.querySelector("[name='signup']").disabled = false;
+        }
+    });
+});
+
+    </script>
 </body>
 </html>

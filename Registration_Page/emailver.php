@@ -7,6 +7,11 @@ use PHPMailer\PHPMailer\Exception;
 require '../phpmailer/vendor/autoload.php';
 require_once '../conn.php';
 
+// Check if a session is already started before calling session_start()
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 function send_verification($email, $token)
 {
     $mail = new PHPMailer(true); // Passing true enables exceptions
@@ -26,6 +31,10 @@ function send_verification($email, $token)
         $mail->setFrom('pjarahgalias27@gmail.com', 'Cosmeticas Fraiche Naturale');
         $mail->addAddress($email); // Add a recipient
 
+        // Store email and token in session
+        $_SESSION['email'] = $email;
+        $_SESSION['token'] = $token;
+
         // Content
         $mail->isHTML(true);  // Set email format to HTML
         $mail->Subject = "Email Verification";
@@ -36,7 +45,7 @@ function send_verification($email, $token)
                         <h1 style='color: #ffffff;'>Verify your email</h1> 
                         <p style='color: #ffffff;'>Please Click on the button below to verify your account</p>
                         <p style='color: #ffffff;'>By clicking on the button below, you will verify $email</p>
-                        <a href='http://localhost/CFN/Registration_Page/verify.php?email=$email&token=$token' 
+                        <a href='http://localhost/CFN/Registration_Page/verify.php' 
                             style='
                             display: inline-block;
                             padding: 10px 20px;
@@ -73,7 +82,6 @@ function send_verification($email, $token)
     }
 }
 
-
 function pass_recov($email, $token)
 {
     $mail = new PHPMailer(true); // Passing true enables exceptions
@@ -93,17 +101,21 @@ function pass_recov($email, $token)
         $mail->setFrom('pjarahgalias27@gmail.com', 'Cosmeticas Fraiche Naturale');
         $mail->addAddress($email); // Add a recipient
 
+        // Store email and token in session
+        $_SESSION['email'] = $email;
+        $_SESSION['token'] = $token;
+
         // Content
         $mail->isHTML(true);  // Set email format to HTML
-        $mail->Subject = "Email Verification";
+        $mail->Subject = "Password Recovery";
         $mail->Body = "
             <div class='container' style='color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh;'>
                 <div class='row'>
                     <div class='col' style='background-color: #1F4529; padding: 20px; border-radius: 10px; text-align: center;'>
-                        <h1 style='color: #ffffff;'>Verify your email</h1> 
-                        <p style='color: #ffffff;'>Please Click on the button below to verify your account</p>
-                        <p style='color: #ffffff;'>By clicking on the button below, you will verify $email</p>
-                        <a href='http://localhost/CFN/Registration_Page/verify_pass_recov.php?email=$email&token=$token' 
+                        <h1 style='color: #ffffff;'>Password Recovery</h1> 
+                        <p style='color: #ffffff;'>Please Click on the button below to reset your password</p>
+                        <p style='color: #ffffff;'>By clicking on the button below, you will reset the password for $email</p>
+                        <a href='http://localhost/CFN/Registration_Page/verify_pass_recov.php' 
                             style='
                             display: inline-block;
                             padding: 10px 20px;
@@ -112,8 +124,8 @@ function pass_recov($email, $token)
                             background-color: #C0D171;
                             text-decoration: none;
                             border-radius: 5px;
-                        '>Verify Email</a>
-                        <p style='color: #ffffff;'>If you didn’t request this email verification, you can safely ignore it.</p>
+                        '>Reset Password</a>
+                        <p style='color: #ffffff;'>If you didn’t request this password reset, you can safely ignore it.</p>
                     </div>
                 </div>
             </div>";

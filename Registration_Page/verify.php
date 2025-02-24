@@ -1,9 +1,14 @@
 <?php
 require_once "../conn.php";
 
-if (isset($_GET['email']) && isset($_GET['token'])) {
-    $email = $_GET['email'];
-    $token = $_GET['token'];
+// Check if a session is already started before calling session_start()
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (isset($_SESSION['email']) && isset($_SESSION['token'])) {
+    $email = $_SESSION['email'];
+    $token = $_SESSION['token'];
 
     $check_sql = "SELECT * FROM tb_user WHERE email = '$email' AND token = '$token'";
     $check_result = $conn->query($check_sql);
@@ -39,6 +44,10 @@ if (isset($_GET['email']) && isset($_GET['token'])) {
         $message = "Verification Failed. Invalid verification link or token.";
         $alertType = "error";
     }
+
+    // Clear session variables after verification
+    unset($_SESSION['email']);
+    unset($_SESSION['token']);
 } else {
     $message = "Verification Failed. Invalid verification link.";
     $alertType = "error";
