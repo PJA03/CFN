@@ -147,6 +147,7 @@ body {
     background: #1F4529;
     border-radius: 20px;
     color: #FFFFFF;
+    padding: 10px !important
 }
 
 .profile-details {
@@ -161,24 +162,43 @@ body {
     border: none;
     padding: 0;
     cursor: pointer;
+
 }
 .profile-details button i {
     color: white; /* Change this to the desired color */
 }
 
-.save-button {
+.save-button, .image{
     background-color: #C0D171 !important; 
     color: white;
     padding: 10px 20px;
     border-radius: 10px;
     margin: 20px;
     cursor: pointer;
+    border: none;
+    width: auto;
+    text-align: right;
+    
 }
 
+.save-button:hover, .image:hover{
+    background-color: #a5b461 !important; 
+}
+
+
+
 .right-panel .form-control {
-    width: 50%; /* Adjust the width as needed */
+    width: 80%; /* Adjust the width as needed */
+  ;
 }
 
 .row{
     margin: 5px;
 }
+
+
+.right-align{
+    display: block;
+    align-items:end;
+}
+
