@@ -74,7 +74,7 @@ header {
     justify-content: flex-start;
     gap: 20px;
     flex-grow: 1; /* Allow navbar to use available space */
-    margin-left: 1050; /* Add space between the logo and navbar */
+    margin-left: 1050px; /* Add space between the logo and navbar */
 }
 
 /* Search Bar Styling */

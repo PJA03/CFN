@@ -52,10 +52,10 @@ if (isset($_POST['save'])) {
             if (move_uploaded_file($fileTmpPath, $dest_path)) {
                 $profile_image = $dest_path;
             } else {
-                $user['error'] = 'There was an error moving the uploaded file.';
+                $user = ['error' => 'There was an error moving the uploaded file.'];
             }
         } else {
-            $user['error'] = 'Upload failed. Allowed file types: ' . implode(',', $allowedfileExtensions);
+            $user = ['error' => 'Upload failed. Allowed file types: ' . implode(',', $allowedfileExtensions)];
         }
     }
 
@@ -66,7 +66,7 @@ if (isset($_POST['save'])) {
         $user = ['username' => $username, 'email' => $email, 'first_name' => $first_name, 'last_name' => $last_name, 'contact_no' => $contact_no, 'address' => $address, 'profile_image' => $profile_image];
         $updateSuccess = true;
     } else {
-        $user['error'] = 'Failed to update user';
+        $user = ['error' => 'Failed to update user'];
     }
 }
 ?>
@@ -170,16 +170,19 @@ if (isset($_POST['save'])) {
                                     <input type="text" name="address" class="editable form-control profile-input" value="<?php echo isset($user['address']) ? $user['address'] : ''; ?>" required>
                                 </div>
                             </div>
-
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <p>Profile Image: </p>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="file" id="profile_image" name="profile_image" style="margin: 8px;">
+                                </div>
+                            </div>
                             <button type="submit" name="save" class="button save-button">Save changes</button>
                         </form>
                     </div>
                     <div class="col-md-5 text-center">
                         <img src="<?php echo isset($user['profile_image']) ? $user['profile_image'] : '../Resources/profile.png'; ?>" alt="Profile Icon" name="icon" id="icon" class="profile-icon" width="100" style="margin: 10px;"/>
-                        <br>
-                        <input type="file" id="profile_image" name="profile_image" style="margin: 8px;">
-                        <p>File size: Maximum 1MB</p>
-                        <p>File extension: .JPEG, .PNG</p>
                     </div>
                 </div>    
             </div>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 08, 2025 at 11:07 AM
+-- Generation Time: Feb 24, 2025 at 01:20 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,8 +34,10 @@ CREATE TABLE `tb_user` (
   `pass` varchar(255) NOT NULL,
   `first_name` varchar(30) DEFAULT NULL,
   `last_name` varchar(30) DEFAULT NULL,
-  `contact_no` int(11) DEFAULT NULL,
+  `contact_no` varchar(11) DEFAULT NULL,
   `address` varchar(50) DEFAULT NULL,
+  `role` varchar(30) DEFAULT NULL,
+  `profile_image` varchar(255) DEFAULT NULL,
   `validated` tinyint(1) DEFAULT NULL,
   `token` varchar(32) DEFAULT NULL,
   `token_created_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -45,9 +47,9 @@ CREATE TABLE `tb_user` (
 -- Dumping data for table `tb_user`
 --
 
-INSERT INTO `tb_user` (`user_id`, `username`, `email`, `pass`, `first_name`, `last_name`, `contact_no`, `address`, `validated`, `token`, `token_created_at`) VALUES
-(59, 'pja', 'princessjamie.galias.cics@ust.edu.ph', '$2y$10$CN5FyX5JZyXPtiKJ/Lit9eZgsCFsRwfTdzn8mAySGE44fT.6t9DQy', NULL, NULL, NULL, NULL, 1, '', '2025-02-08 09:34:04'),
-(62, 'pja', 'pjarahgalias27@gmail.com', '$2y$10$iVLvUura2qC.aDTFrs971.HdRHbRQpWz4qatld69facLwtNsBF2Ri', NULL, NULL, NULL, NULL, 1, '', '2025-02-08 09:41:34');
+INSERT INTO `tb_user` (`user_id`, `username`, `email`, `pass`, `first_name`, `last_name`, `contact_no`, `address`, `role`, `profile_image`, `validated`, `token`, `token_created_at`) VALUES
+(68, 'pja', 'pjarahgalias27@gmail.com', '$2y$10$Tcux0yAx2.MUSk4T0iYKJu5BxKcTVmzetXlL28OA/NBqxt2ZQeEhe', 'Arah', 'Galias', '09669463472', '839 Tolentino Street, Sampaloc, Manila ', NULL, '../uploads/Beige Minimalist Bridal Shower Bingo Card.png', 1, '', '2025-02-15 09:32:46'),
+(69, 'ironman', 'princessjamie.galias.cics@ust.edu.ph', '$2y$10$v3UZxJJSrDUip7tu3c.9OOEgz12qoua.wy/tLYXgAUKsRDBWUwhjq', 'US-Letter', 'x 11', '09669463472', 'Blk 1 Lot 1 Ibañez St', NULL, '', 1, '', '2025-02-17 13:18:09');
 
 --
 -- Indexes for dumped tables
@@ -67,7 +69,7 @@ ALTER TABLE `tb_user`
 -- AUTO_INCREMENT for table `tb_user`
 --
 ALTER TABLE `tb_user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
