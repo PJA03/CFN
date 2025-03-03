@@ -25,6 +25,7 @@ if (isset($_POST['logout'])) {
 }
 
 $updateSuccess = false;
+$noChanges = false;
 
 if (isset($_POST['save'])) {
     $username = $_POST['username'];
@@ -33,40 +34,46 @@ if (isset($_POST['save'])) {
     $last_name = $_POST['last_name'];
     $contact_no = $_POST['contact_no'];
     $address = $_POST['address'];
-
-    // Handle file upload
     $profile_image = $user['profile_image'];
-    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == UPLOAD_ERR_OK) {
-        $fileTmpPath = $_FILES['profile_image']['tmp_name'];
-        $fileName = $_FILES['profile_image']['name'];
-        $fileSize = $_FILES['profile_image']['size'];
-        $fileType = $_FILES['profile_image']['type'];
-        $fileNameCmps = explode(".", $fileName);
-        $fileExtension = strtolower(end($fileNameCmps));
 
-        $allowedfileExtensions = array('jpg', 'jpeg', 'png');
-        if (in_array($fileExtension, $allowedfileExtensions)) {
-            $uploadFileDir = '../uploads/';
-            $dest_path = $uploadFileDir . $fileName;
-
-            if (move_uploaded_file($fileTmpPath, $dest_path)) {
-                $profile_image = $dest_path;
-            } else {
-                $user = ['error' => 'There was an error moving the uploaded file.'];
-            }
-        } else {
-            $user = ['error' => 'Upload failed. Allowed file types: ' . implode(',', $allowedfileExtensions)];
-        }
-    }
-
-    $sql = "UPDATE tb_user SET username = '$username', email = '$email', first_name = '$first_name', last_name = '$last_name', contact_no = '$contact_no', address = '$address', profile_image = '$profile_image' WHERE email = '$email'";
-    $result = $conn->query($sql);
-
-    if ($result) {
-        $user = ['username' => $username, 'email' => $email, 'first_name' => $first_name, 'last_name' => $last_name, 'contact_no' => $contact_no, 'address' => $address, 'profile_image' => $profile_image];
-        $updateSuccess = true;
+    // Check if any changes were made
+    if ($username == $user['username'] && $email == $user['email'] && $first_name == $user['first_name'] && $last_name == $user['last_name'] && $contact_no == $user['contact_no'] && $address == $user['address'] && !isset($_FILES['profile_image'])) {
+        $noChanges = true;
     } else {
-        $user = ['error' => 'Failed to update user'];
+        
+        // Handle file upload
+        if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == UPLOAD_ERR_OK) {
+            $fileTmpPath = $_FILES['profile_image']['tmp_name'];
+            $fileName = $_FILES['profile_image']['name'];
+            $fileSize = $_FILES['profile_image']['size'];
+            $fileType = $_FILES['profile_image']['type'];
+            $fileNameCmps = explode(".", $fileName);
+            $fileExtension = strtolower(end($fileNameCmps));
+
+            $allowedfileExtensions = array('jpg', 'jpeg', 'png');
+            if (in_array($fileExtension, $allowedfileExtensions)) {
+                $uploadFileDir = '../uploads/';
+                $dest_path = $uploadFileDir . $fileName;
+
+                if (move_uploaded_file($fileTmpPath, $dest_path)) {
+                    $profile_image = $dest_path;
+                } else {
+                    $user = ['error' => 'There was an error moving the uploaded file.'];
+                }
+            } else {
+                $user = ['error' => 'Upload failed. Allowed file types: ' . implode(',', $allowedfileExtensions)];
+            }
+        }
+
+        $sql = "UPDATE tb_user SET username = '$username', email = '$email', first_name = '$first_name', last_name = '$last_name', contact_no = '$contact_no', address = '$address', profile_image = '$profile_image' WHERE email = '$email'";
+        $result = $conn->query($sql);
+
+        if ($result) {
+            $user = ['username' => $username, 'email' => $email, 'first_name' => $first_name, 'last_name' => $last_name, 'contact_no' => $contact_no, 'address' => $address, 'profile_image' => $profile_image];
+            $updateSuccess = true;
+        } else {
+            $user = ['error' => 'Failed to update user'];
+        }
     }
 }
 ?>
@@ -110,15 +117,16 @@ if (isset($_POST['save'])) {
                 <h3>My Account</h3>
                 <a href="UserProfile.html" class="active">Profile</a>
                 <br>
-                <form method="post" action="">
+                <form method="post" action="editUserProfile.php">
                     <button class="transparent-button" name="logout">Logout</button>
                 </form>
             </div>
             <div class="col-md-10 right-panel container">
                 <div class="row">
                     <div class="col-md-7">
-                        <button class="transparent-button" style="color: white;" id="edit-button">
-                            <h2>Profile Details<p class="lead"><i class="bi bi-pen"></i></p></h2>
+                        <h2 class="lead">Profile Details</h2>
+                        <button class="transparent-button" style="color: black;" id="edit-button">
+                            <i class="bi bi-pen"></i>
                         </button>
                         <br> 
                         <form method="post" action="" id="profileForm" enctype="multipart/form-data">
@@ -179,6 +187,7 @@ if (isset($_POST['save'])) {
                                 </div>
                             </div>
                             <button type="submit" name="save" class="button save-button">Save changes</button>
+                            <button type="button" name="cancel" id="cancel" class="button cancel-button">Cancel</button>
                         </form>
                     </div>
                     <div class="col-md-5 text-center">
@@ -191,14 +200,38 @@ if (isset($_POST['save'])) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
-        document.getElementById('profile_image').addEventListener('change', function(event) {
-            var reader = new FileReader();
-            reader.onload = function() {
-                var output = document.getElementById('icon');
-                output.src = reader.result;
-            };
-            reader.readAsDataURL(event.target.files[0]);
+    document.addEventListener('DOMContentLoaded', function() {
+        // Store original values
+        const originalValues = {
+            username: document.querySelector('input[name="username"]').value,
+            email: document.querySelector('input[name="email"]').value,
+            first_name: document.querySelector('input[name="first_name"]').value,
+            last_name: document.querySelector('input[name="last_name"]').value,
+            contact_no: document.querySelector('input[name="contact_no"]').value,
+            address: document.querySelector('input[name="address"]').value
+        };
+
+        let changesMade = false;
+
+        // Function to check for changes
+        function checkForChanges() {
+            changesMade = (
+                document.querySelector('input[name="username"]').value !== originalValues.username ||
+                document.querySelector('input[name="email"]').value !== originalValues.email ||
+                document.querySelector('input[name="first_name"]').value !== originalValues.first_name ||
+                document.querySelector('input[name="last_name"]').value !== originalValues.last_name ||
+                document.querySelector('input[name="contact_no"]').value !== originalValues.contact_no ||
+                document.querySelector('input[name="address"]').value !== originalValues.address ||
+                document.querySelector('input[name="profile_image"]').files.length > 0
+            );
+        }
+
+        // Add event listeners to input fields
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', checkForChanges);
         });
+
+        document.getElementById('profile_image').addEventListener('change', checkForChanges);
 
         document.getElementById('profileForm').addEventListener('submit', function(event) {
             var email = document.querySelector('input[name="email"]').value;
@@ -225,6 +258,33 @@ if (isset($_POST['save'])) {
                 });
                 return;
             }
+
+            if (!changesMade) {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'info',
+                    title: 'No Changes',
+                    text: 'No changes were made to your profile.'
+                }).then(() => {
+                window.location.href = 'UserProfile.php';
+            });
+            }
+        });
+
+        document.getElementById('cancel').addEventListener('click', function() {
+            Swal.fire({
+                title: 'Discard Changes?',
+                text: "You will lose any unsaved changes",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#1F4529',
+                cancelButtonColor: '#D34646',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'UserProfile.php';
+                }
+            });
         });
 
         // Show success alert if update was successful
@@ -237,7 +297,58 @@ if (isset($_POST['save'])) {
                 window.location.href = 'UserProfile.php';
             });
         <?php endif; ?>
-    </script>
+    });
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var usernameInput = document.getElementById('username');
+    var feedback = document.getElementById('usernameFeedback');
+    var form = document.querySelector("form[action='editUserProfile.php']");
+
+    usernameInput.addEventListener('input', function () {
+        var username = this.value;
+        if (username.length > 0) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'check_username.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    if (xhr.responseText == 'taken') {
+                        feedback.textContent = 'Username is already taken';
+                        feedback.classList.add('d-block');
+                        feedback.classList.remove('d-none');
+                        usernameInput.classList.add('is-invalid');
+                        form.querySelector("[name='signup']").disabled = true;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Username is already taken',
+                            text: 'Please choose a different username.',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#1F4529'
+                        });
+                    } else {
+                        feedback.textContent = '';
+                        feedback.classList.add('d-none');
+                        feedback.classList.remove('d-block');
+                        usernameInput.classList.remove('is-invalid');
+                        form.querySelector("[name='signup']").disabled = false;
+                    }
+                }
+            };
+            xhr.send('username=' + encodeURIComponent(username));
+        } else {
+            feedback.textContent = '';
+            feedback.classList.add('d-none');
+            feedback.classList.remove('d-block');
+            usernameInput.classList.remove('is-invalid');
+            form.querySelector("[name='signup']").disabled = false;
+        }
+    });
+});
+</script>
+
+
 </body>
 
 </html>

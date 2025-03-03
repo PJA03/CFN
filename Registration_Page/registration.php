@@ -10,10 +10,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CFN - Registration Form</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -33,8 +33,9 @@
                         <div class="mb-3">
                             <input type="email" class="form-control" id="logemail" name="logemail" placeholder="Email" required>
                         </div>
-                        <div class="mb-3">      
+                        <div class="mb-3 password-section">      
                             <input type="password" class="form-control" id="logpassword" name="logpassword" placeholder="Password" required>
+                            <span class="fa fa-eye " id="togglePassword"  ></span>
                         </div>
                         <p><a href="passrecov.php">Forgot password?</a></p>
                         <br><br>
@@ -262,7 +263,7 @@
     <script src="main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-       document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
     var usernameInput = document.getElementById('username');
     var feedback = document.getElementById('usernameFeedback');
     var form = document.querySelector("form[action='registration.php']");
@@ -302,5 +303,27 @@
 });
 
     </script>
+    <script>
+  $(document).ready(function () {
+  
+     //  Toggle  Password Start
+     $("#togglePassword").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
+     $("#togglePassword").click(function() {
+        const passwordInput = $("#logpassword");
+        const type = passwordInput.attr("type");
+
+        if (type === "password") {
+            passwordInput.attr("type", "text");
+            $("#togglePassword").removeClass("fa fa-eye-slash").addClass("fa fa-eye");
+        } else {
+            passwordInput.attr("type", "password");
+            $("#togglePassword").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
+        }
+    });
+    //  Toggle  Password End
+    
+  });
+
+</script>
 </body>
 </html>

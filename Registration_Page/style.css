@@ -285,4 +285,22 @@ p{
 
     /* 1/28/25: updated */
 
-    
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}
+
+.password-section .fa-eye {
+    position: absolute;
+    top: 76%;
+    right: 22px; /* Adjust this value to control the icon's position */
+    transform: translateY(-50%);
+    cursor: pointer;
+ }
+ .password-section .fa-eye-slash {
+    position: absolute;
+    top: 50%;
+    right: 15px; /* Adjust this value to control the icon's position */
+    transform: translateY(-50%);
+    cursor: pointer;
+ }

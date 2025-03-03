@@ -70,10 +70,10 @@ if (isset($_POST['logout'])) {
             <div class="col-md-10 right-panel container">
                 <div class="row">
                     <div class="col-md-7">
+                        <h2 class="lead">Profile Details</h2>
                         <form action="editUserProfile.php">
-                            <button class="transparent-button" style="color: white;" id="edit-button" href="editUserProfile.php">
-                                <h2>Profile Details<p class="lead">
-                                <i class="bi bi-pen"></i></p></h2>
+                            <button class="transparent-button" style="color: black;" id="edit-button" href="editUserProfile.php">
+                                <i class="bi bi-pen"></i>
                             </button>
                         </form>
                         <div class="row">
