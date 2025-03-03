@@ -3,27 +3,26 @@ require_once "../conn.php";
 session_start();
 
 if (isset($_SESSION['email'])) {
-    $email = $_SESSION['email'];
-
-    $sql = "SELECT username, email, first_name, last_name, contact_no, address, profile_image FROM tb_user WHERE email = '$email'";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-    } else {
-        $user = ['error' => 'User not found'];
-    }
+    $user = [
+        'email' => $_SESSION['email'],
+        'first_name' => $_SESSION['first_name'],
+        'last_name' => $_SESSION['last_name'],
+        'contact_no' => $_SESSION['contact_no'],
+        'address' => $_SESSION['address'],
+    ];
 } else {
     header('Location: ../Registration_Page/registration.php');
     exit();
 }
 
+// Logout
 if (isset($_POST['logout'])) {
     session_destroy();
     header('Location: ../Home_Page/Home.html');
     exit();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
