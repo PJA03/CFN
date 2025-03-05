@@ -197,71 +197,80 @@
         }
 
         // Login account
-        if (isset($_POST['login'])) {
-            $email = $_POST['logemail'];
-            $password = $_POST['logpassword'];
-            $_SESSION['email'] = $email;
+if (isset($_POST['login'])) {
+    $email = $_POST['logemail'];
+    $password = $_POST['logpassword'];
+    $_SESSION['email'] = $email;
 
-            $loginsql = "SELECT * FROM tb_user WHERE email='$email'";
-            $result = $conn->query($loginsql);
-        
-            if ($result === FALSE) {
-                die("Error in SELECT query: " . $conn->error);
-            }
-        
-            if ($result->num_rows > 0) {
-                $user = $result->fetch_assoc();
-                
-                if (password_verify($password, $user['pass'])) {
-                    if ($user['validated'] == 1) { // Checks if account is validated
-                        ?>
-                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                        <script>
-                            window.location.href = '../User_Profile_Page/UserProfile.php';
-                        </script>
-                        <?php
-                    } else {
-                        // Email is not validated
-                        ?>
-                        <script>
-                            Swal.fire({
-                                position: "center",
-                                icon: "error",
-                                title: "Email not validated",
-                                showConfirmButton: true
-                            });
-                        </script>
-                        <?php
-                    }
-                } else {
-                    // Password is incorrect
-                    ?>
-                    <script>
-                        Swal.fire({
-                            position: "center",
-                            icon: "error",
-                            title: "Login failed",
-                            text: "Incorrect email or password.",
-                            showConfirmButton: true
-                        });
-                    </script>
-                    <?php
-                }
+    // Query to fetch user data
+    $loginsql = "SELECT * FROM tb_user WHERE email='$email'";
+    $result = $conn->query($loginsql);
+
+    if ($result === FALSE) {
+        die("Error in SELECT query: " . $conn->error);
+    }
+
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+
+        // Verify password
+        if (password_verify($password, $user['pass'])) {
+            if ($user['validated'] == 1) { // Check if account is validated
+                // Store user data in session
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['first_name'] = $user['first_name'];
+                $_SESSION['last_name'] = $user['last_name'];
+                $_SESSION['contact_no'] = $user['contact_no'];
+                $_SESSION['address'] = $user['address'];
+                $_SESSION['profile_image'] = $user['profile_image'];
+                ?>
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <script>
+                    window.location.href = '../Home_Page/home.php'; // Redirect to home page
+                </script>
+                <?php
             } else {
-                // Email is incorrect
+                // Email not validated
                 ?>
                 <script>
                     Swal.fire({
                         position: "center",
                         icon: "error",
-                        title: "Login failed",
-                        text: "Incorrect email or password.",
+                        title: "Email not validated",
                         showConfirmButton: true
                     });
                 </script>
                 <?php
             }
+        } else {
+            // Incorrect password
+            ?>
+            <script>
+                Swal.fire({
+                    position: "center",
+                    icon: "error",
+                    title: "Login failed",
+                    text: "Incorrect email or password.",
+                    showConfirmButton: true
+                });
+            </script>
+            <?php
         }
+    } else {
+        // Incorrect email
+        ?>
+        <script>
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Login failed",
+                text: "Incorrect email or password.",
+                showConfirmButton: true
+            });
+        </script>
+        <?php
+    }
+}
     ?>
     <!-- link script -->
     <script src="main.js"></script>
