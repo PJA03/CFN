@@ -4,12 +4,18 @@ require_once "../conn.php";
 if (isset($_POST['username'])) {
     $username = $_POST['username'];
 
-    $query = "SELECT * FROM tb_user WHERE username = ?";
-    $stmt = $conn->prepare($query);
+    $checkUsername = "SELECT * FROM tb_user WHERE username = ?";
+    $stmt = $conn->prepare($checkUsername);
     $stmt->bind_param("s", $username);
     $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt->get_result();
 
-    echo ($result->num_rows > 0) ? 'taken' : 'available';
+    if ($stmt->num_rows > 0) {
+        echo 'taken';
+    } else {
+        echo 'available';
+    }
+    $stmt -> close();
 }
+
 ?>

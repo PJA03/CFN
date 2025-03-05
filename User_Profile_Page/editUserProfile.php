@@ -40,30 +40,54 @@ if (isset($_POST['save'])) {
     if ($username == $user['username'] && $email == $user['email'] && $first_name == $user['first_name'] && $last_name == $user['last_name'] && $contact_no == $user['contact_no'] && $address == $user['address'] && !isset($_FILES['profile_image'])) {
         $noChanges = true;
     } else {
+         // Check for duplicate username
+         $checkUsername = "SELECT * FROM tb_user WHERE username = ?";
+         $stmt = $conn->prepare($checkUsername);
+         $stmt->bind_param("s", $username);
+         $stmt->execute();
+         $result = $stmt->get_result();
+ 
+        if ($result->num_rows > 0) {
+                $registrationFailed = true;
+                ?>
+                <script>
+                    Swal.fire({
+                        position: "center",    
+                        icon: "error",
+                        title: "Username is already taken",
+                        text: "Please choose a different username.",
+                        showConfirmButton: false,
+                        timer: 3000  
+                    });
+                </script>
+                <?php
+            
+        } else {
         
-        // Handle file upload
-        if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == UPLOAD_ERR_OK) {
-            $fileTmpPath = $_FILES['profile_image']['tmp_name'];
-            $fileName = $_FILES['profile_image']['name'];
-            $fileSize = $_FILES['profile_image']['size'];
-            $fileType = $_FILES['profile_image']['type'];
-            $fileNameCmps = explode(".", $fileName);
-            $fileExtension = strtolower(end($fileNameCmps));
+            // Handle file upload
+            if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == UPLOAD_ERR_OK) {
+                $fileTmpPath = $_FILES['profile_image']['tmp_name'];
+                $fileName = $_FILES['profile_image']['name'];
+                $fileSize = $_FILES['profile_image']['size'];
+                $fileType = $_FILES['profile_image']['type'];
+                $fileNameCmps = explode(".", $fileName);
+                $fileExtension = strtolower(end($fileNameCmps));
 
-            $allowedfileExtensions = array('jpg', 'jpeg', 'png');
-            if (in_array($fileExtension, $allowedfileExtensions)) {
-                $uploadFileDir = '../uploads/';
-                $dest_path = $uploadFileDir . $fileName;
+                $allowedfileExtensions = array('jpg', 'jpeg', 'png');
+                if (in_array($fileExtension, $allowedfileExtensions)) {
+                    $uploadFileDir = '../uploads/';
+                    $dest_path = $uploadFileDir . $fileName;
 
-                if (move_uploaded_file($fileTmpPath, $dest_path)) {
-                    $profile_image = $dest_path;
+                    if (move_uploaded_file($fileTmpPath, $dest_path)) {
+                        $profile_image = $dest_path;
+                    } else {
+                        $user = ['error' => 'There was an error moving the uploaded file.'];
+                    }
                 } else {
-                    $user = ['error' => 'There was an error moving the uploaded file.'];
-                }
-            } else {
-                $user = ['error' => 'Upload failed. Allowed file types: ' . implode(',', $allowedfileExtensions)];
+                    $user = ['error' => 'Upload failed. Allowed file types: ' . implode(',', $allowedfileExtensions)];
             }
         }
+    }
 
         $sql = "UPDATE tb_user SET username = '$username', email = '$email', first_name = '$first_name', last_name = '$last_name', contact_no = '$contact_no', address = '$address', profile_image = '$profile_image' WHERE email = '$email'";
         $result = $conn->query($sql);
@@ -117,7 +141,7 @@ if (isset($_POST['save'])) {
                 <h3>My Account</h3>
                 <a href="UserProfile.html" class="active">Profile</a>
                 <br>
-                <form method="post" action="editUserProfile.php">
+                <form method="post">
                     <button class="transparent-button" name="logout">Logout</button>
                 </form>
             </div>
@@ -129,13 +153,16 @@ if (isset($_POST['save'])) {
                             <i class="bi bi-pen"></i>
                         </button>
                         <br> 
-                        <form method="post" action="" id="profileForm" enctype="multipart/form-data">
+                        <form method="post" action="editUserProfile.php" id="profileForm" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-md-3">
                                     <p>Username: </p>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" name="username" class="editable form-control profile-input" value="<?php echo isset($user['username']) ? $user['username'] : ''; ?>" required>
+                                    <input type="text" name="username" id="username" class="editable form-control profile-input" value="<?php echo isset($user['username']) ? $user['username'] : ''; ?>" required>
+                                    <div id="usernameFeedback" class="invalid-feedback d-none">
+                                        
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -196,8 +223,10 @@ if (isset($_POST['save'])) {
                 </div>    
             </div>
         </div>
-    </div>
+    </div>    
 
+    <script src="main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -299,56 +328,5 @@ if (isset($_POST['save'])) {
         <?php endif; ?>
     });
 </script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    var usernameInput = document.getElementById('username');
-    var feedback = document.getElementById('usernameFeedback');
-    var form = document.querySelector("form[action='editUserProfile.php']");
-
-    usernameInput.addEventListener('input', function () {
-        var username = this.value;
-        if (username.length > 0) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'check_username.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    if (xhr.responseText == 'taken') {
-                        feedback.textContent = 'Username is already taken';
-                        feedback.classList.add('d-block');
-                        feedback.classList.remove('d-none');
-                        usernameInput.classList.add('is-invalid');
-                        form.querySelector("[name='signup']").disabled = true;
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Username is already taken',
-                            text: 'Please choose a different username.',
-                            confirmButtonText: 'OK',
-                            confirmButtonColor: '#1F4529'
-                        });
-                    } else {
-                        feedback.textContent = '';
-                        feedback.classList.add('d-none');
-                        feedback.classList.remove('d-block');
-                        usernameInput.classList.remove('is-invalid');
-                        form.querySelector("[name='signup']").disabled = false;
-                    }
-                }
-            };
-            xhr.send('username=' + encodeURIComponent(username));
-        } else {
-            feedback.textContent = '';
-            feedback.classList.add('d-none');
-            feedback.classList.remove('d-block');
-            usernameInput.classList.remove('is-invalid');
-            form.querySelector("[name='signup']").disabled = false;
-        }
-    });
-});
-</script>
-
-
 </body>
-
 </html>

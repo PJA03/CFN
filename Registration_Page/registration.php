@@ -33,9 +33,13 @@
                         <div class="mb-3">
                             <input type="email" class="form-control" id="logemail" name="logemail" placeholder="Email" required>
                         </div>
-                        <div class="mb-3 password-section">      
-                            <input type="password" class="form-control" id="logpassword" name="logpassword" placeholder="Password" required>
-                            <span class="fa fa-eye " id="togglePassword"  ></span>
+                        <div class="mb-3 password-section">
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="logpassword" name="logpassword" placeholder="Password" required>
+                                <span class="input-group-text" id="eyeicon">
+                                    <i class="fa fa-eye"></i>
+                                </span>
+                            </div>
                         </div>
                         <p><a href="passrecov.php">Forgot password?</a></p>
                         <br><br>
@@ -324,6 +328,22 @@
     
   });
 
+</script>
+<script>
+          document.addEventListener("DOMContentLoaded", function () {
+    var eyeicon = document.getElementById("eyeicon");
+    var passwordInput = document.getElementById("logpassword");
+
+    eyeicon.addEventListener('click', function () {
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            eyeicon.innerHTML = '<i class="fa fa-eye-slash"></i>';
+        } else {
+            passwordInput.type = "password";
+            eyeicon.innerHTML = '<i class="fa fa-eye"></i>';
+        }
+    });
+});
 </script>
 </body>
 </html>
