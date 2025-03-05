@@ -41,27 +41,14 @@ if (isset($_POST['save'])) {
         $noChanges = true;
     } else {
          // Check for duplicate username
-         $checkUsername = "SELECT * FROM tb_user WHERE username = ?";
+         $checkUsername = "SELECT * FROM tb_user WHERE username = ? AND email != ?";
          $stmt = $conn->prepare($checkUsername);
-         $stmt->bind_param("s", $username);
+         $stmt->bind_param("ss", $username, $email);
          $stmt->execute();
          $result = $stmt->get_result();
  
         if ($result->num_rows > 0) {
-                $registrationFailed = true;
-                ?>
-                <script>
-                    Swal.fire({
-                        position: "center",    
-                        icon: "error",
-                        title: "Username is already taken",
-                        text: "Please choose a different username.",
-                        showConfirmButton: false,
-                        timer: 3000  
-                    });
-                </script>
-                <?php
-            
+            $user = ['error' => 'Username is already taken'];
         } else {
         
             // Handle file upload
@@ -223,110 +210,162 @@ if (isset($_POST['save'])) {
                 </div>    
             </div>
         </div>
-    </div>    
+    </div>
+
+
+    <?php
+        require_once "../conn.php";
+
+        if (isset($_POST['save'])) {
+            $username = $_POST['username'];
+           
+            // Check if username is already taken
+            $check_username = "SELECT * FROM tb_user WHERE username = ?";
+            $stmt = $conn->prepare($check_username);
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $result_username = $stmt->get_result();
+
+            if ($result_username->num_rows > 0) {
+                ?>
+                <script>
+                    Swal.fire({
+                        position: "center",    
+                        icon: "error",
+                        title: "Username is already taken",
+                        text: "Please choose a different username.",
+                        showConfirmButton: false,
+                        timer: 3000  
+                    });
+                </script>
+                <?php
+            } else {
+                ?>
+                <script>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: '<?php echo $success; ?>',
+                        confirmButtonColor: '#28a745'
+                    }).then(() => {
+                        window.location.href = 'UserProfile.php';                    });
+                </script>
+                <?php
+            }
+        }    
+    ?>        
 
     <script src="main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Store original values
-        const originalValues = {
-            username: document.querySelector('input[name="username"]').value,
-            email: document.querySelector('input[name="email"]').value,
-            first_name: document.querySelector('input[name="first_name"]').value,
-            last_name: document.querySelector('input[name="last_name"]').value,
-            contact_no: document.querySelector('input[name="contact_no"]').value,
-            address: document.querySelector('input[name="address"]').value
-        };
-
-        let changesMade = false;
-
-        // Function to check for changes
-        function checkForChanges() {
-            changesMade = (
-                document.querySelector('input[name="username"]').value !== originalValues.username ||
-                document.querySelector('input[name="email"]').value !== originalValues.email ||
-                document.querySelector('input[name="first_name"]').value !== originalValues.first_name ||
-                document.querySelector('input[name="last_name"]').value !== originalValues.last_name ||
-                document.querySelector('input[name="contact_no"]').value !== originalValues.contact_no ||
-                document.querySelector('input[name="address"]').value !== originalValues.address ||
-                document.querySelector('input[name="profile_image"]').files.length > 0
-            );
-        }
-
-        // Add event listeners to input fields
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', checkForChanges);
-        });
-
-        document.getElementById('profile_image').addEventListener('change', checkForChanges);
-
-        document.getElementById('profileForm').addEventListener('submit', function(event) {
-            var email = document.querySelector('input[name="email"]').value;
-            var contact_no = document.querySelector('input[name="contact_no"]').value;
-            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            var phonePattern = /^\d{11}$/;
-
-            if (!emailPattern.test(email)) {
-                event.preventDefault();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Email',
-                    text: 'Please enter a valid email address.'
+        document.getElementById('profile_image').addEventListener('change', function(event) {
+                    var reader = new FileReader();
+                    reader.onload = function() {
+                        var output = document.getElementById('icon');
+                        output.src = reader.result;
+                    };
+                    reader.readAsDataURL(event.target.files[0]);
                 });
-                return;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Store original values
+            const originalValues = {
+                username: document.querySelector('input[name="username"]').value,
+                email: document.querySelector('input[name="email"]').value,
+                first_name: document.querySelector('input[name="first_name"]').value,
+                last_name: document.querySelector('input[name="last_name"]').value,
+                contact_no: document.querySelector('input[name="contact_no"]').value,
+                address: document.querySelector('input[name="address"]').value
+            };
+
+            let changesMade = false;
+
+            // Function to check for changes
+            function checkForChanges() {
+                changesMade = (
+                    document.querySelector('input[name="username"]').value !== originalValues.username ||
+                    document.querySelector('input[name="email"]').value !== originalValues.email ||
+                    document.querySelector('input[name="first_name"]').value !== originalValues.first_name ||
+                    document.querySelector('input[name="last_name"]').value !== originalValues.last_name ||
+                    document.querySelector('input[name="contact_no"]').value !== originalValues.contact_no ||
+                    document.querySelector('input[name="address"]').value !== originalValues.address ||
+                    document.querySelector('input[name="profile_image"]').files.length > 0
+                );
             }
 
-            if (!phonePattern.test(contact_no)) {
-                event.preventDefault();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Phone Number',
-                    text: 'Please enter a valid 11-digit phone number.'
-                });
-                return;
-            }
-
-            if (!changesMade) {
-                event.preventDefault();
-                Swal.fire({
-                    icon: 'info',
-                    title: 'No Changes',
-                    text: 'No changes were made to your profile.'
-                }).then(() => {
-                window.location.href = 'UserProfile.php';
+            // Add event listeners to input fields
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', checkForChanges);
             });
-            }
-        });
 
-        document.getElementById('cancel').addEventListener('click', function() {
-            Swal.fire({
-                title: 'Discard Changes?',
-                text: "You will lose any unsaved changes",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#1F4529',
-                cancelButtonColor: '#D34646',
-                confirmButtonText: 'Yes'
-            }).then((result) => {
-                if (result.isConfirmed) {
+            document.getElementById('profile_image').addEventListener('change', checkForChanges);
+
+            document.getElementById('profileForm').addEventListener('submit', function(event) {
+                var email = document.querySelector('input[name="email"]').value;
+                var contact_no = document.querySelector('input[name="contact_no"]').value;
+                var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                var phonePattern = /^\d{11}$/;
+
+                if (!emailPattern.test(email)) {
+                    event.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Email',
+                        text: 'Please enter a valid email address.'
+                    });
+                    return;
+                }
+
+                if (!phonePattern.test(contact_no)) {
+                    event.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Phone Number',
+                        text: 'Please enter a valid 11-digit phone number.'
+                    });
+                    return;
+                }
+
+                if (!changesMade) {
+                    event.preventDefault();
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'No Changes',
+                        text: 'No changes were made to your profile.'
+                    }).then(() => {
                     window.location.href = 'UserProfile.php';
+                });
                 }
             });
-        });
 
-        // Show success alert if update was successful
-        <?php if ($updateSuccess): ?>
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: 'Your profile has been updated successfully.'
-            }).then(() => {
-                window.location.href = 'UserProfile.php';
+            document.getElementById('cancel').addEventListener('click', function() {
+                Swal.fire({
+                    title: 'Discard Changes?',
+                    text: "You will lose any unsaved changes",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#1F4529',
+                    cancelButtonColor: '#D34646',
+                    confirmButtonText: 'Yes'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'UserProfile.php';
+                    }
+                });
             });
-        <?php endif; ?>
-    });
+
+            // Show success alert if update was successful
+            <?php if ($updateSuccess): ?>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Your profile has been updated successfully.'
+                }).then(() => {
+                    window.location.href = 'UserProfile.php';
+                });
+            <?php endif; ?>
+        });
 </script>
 </body>
 </html>

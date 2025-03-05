@@ -4,6 +4,7 @@ session_start();
 
 if (isset($_SESSION['email'])) {
     $user = [
+        'username' => $_SESSION['username'],
         'email' => $_SESSION['email'],
         'first_name' => $_SESSION['first_name'],
         'last_name' => $_SESSION['last_name'],
