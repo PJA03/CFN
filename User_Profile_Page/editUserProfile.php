@@ -40,15 +40,27 @@ if (isset($_POST['save'])) {
     if ($username == $user['username'] && $email == $user['email'] && $first_name == $user['first_name'] && $last_name == $user['last_name'] && $contact_no == $user['contact_no'] && $address == $user['address'] && !isset($_FILES['profile_image'])) {
         $noChanges = true;
     } else {
-         // Check for duplicate username
-         $checkUsername = "SELECT * FROM tb_user WHERE username = ? AND email != ?";
-         $stmt = $conn->prepare($checkUsername);
-         $stmt->bind_param("ss", $username, $email);
+         // Check if username is already taken
+         $check_username = "SELECT * FROM tb_user WHERE username = ?";
+         $stmt = $conn->prepare($check_username);
+         $stmt->bind_param("s", $username);
          $stmt->execute();
-         $result = $stmt->get_result();
+         $result_username = $stmt->get_result();
  
         if ($result->num_rows > 0) {
             $user = ['error' => 'Username is already taken'];
+            ?>
+                <script>
+                    Swal.fire({
+                        position: "center",    
+                        icon: "error",
+                        title: "Username is already taken",
+                        text: "Please choose a different username.",
+                        showConfirmButton: false,
+                        timer: 3000  
+                    });
+                </script>
+                <?php
         } else {
         
             // Handle file upload
@@ -213,46 +225,7 @@ if (isset($_POST['save'])) {
     </div>
 
 
-    <?php
-        require_once "../conn.php";
-
-        if (isset($_POST['save'])) {
-            $username = $_POST['username'];
-           
-            // Check if username is already taken
-            $check_username = "SELECT * FROM tb_user WHERE username = ?";
-            $stmt = $conn->prepare($check_username);
-            $stmt->bind_param("s", $username);
-            $stmt->execute();
-            $result_username = $stmt->get_result();
-
-            if ($result_username->num_rows > 0) {
-                ?>
-                <script>
-                    Swal.fire({
-                        position: "center",    
-                        icon: "error",
-                        title: "Username is already taken",
-                        text: "Please choose a different username.",
-                        showConfirmButton: false,
-                        timer: 3000  
-                    });
-                </script>
-                <?php
-            } else {
-                ?>
-                <script>
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: '<?php echo $success; ?>',
-                        confirmButtonColor: '#28a745'
-                    }).then(() => {
-                        window.location.href = 'UserProfile.php';                    });
-                </script>
-                <?php
-            }
-        }    
+    
     ?>        
 
     <script src="main.js"></script>
