@@ -36,31 +36,25 @@ if (isset($_POST['save'])) {
     $address = $_POST['address'];
     $profile_image = $user['profile_image'];
 
-    // Check if any changes were made
     if ($username == $user['username'] && $email == $user['email'] && $first_name == $user['first_name'] && $last_name == $user['last_name'] && $contact_no == $user['contact_no'] && $address == $user['address'] && !isset($_FILES['profile_image'])) {
         $noChanges = true;
     } else {
-         // Check for duplicate username
-         $checkUsername = "SELECT * FROM tb_user WHERE username = ? AND email != ?";
-         $stmt = $conn->prepare($checkUsername);
-         $stmt->bind_param("ss", $username, $email);
-         $stmt->execute();
-         $result = $stmt->get_result();
- 
+        $checkUsername = "SELECT * FROM tb_user WHERE username = ? AND email != ?";
+        $stmt = $conn->prepare($checkUsername);
+        $stmt->bind_param("ss", $username, $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
         if ($result->num_rows > 0) {
             $user = ['error' => 'Username is already taken'];
         } else {
-        
-            // Handle file upload
             if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == UPLOAD_ERR_OK) {
                 $fileTmpPath = $_FILES['profile_image']['tmp_name'];
                 $fileName = $_FILES['profile_image']['name'];
-                $fileSize = $_FILES['profile_image']['size'];
-                $fileType = $_FILES['profile_image']['type'];
                 $fileNameCmps = explode(".", $fileName);
                 $fileExtension = strtolower(end($fileNameCmps));
-
                 $allowedfileExtensions = array('jpg', 'jpeg', 'png');
+
                 if (in_array($fileExtension, $allowedfileExtensions)) {
                     $uploadFileDir = '../uploads/';
                     $dest_path = $uploadFileDir . $fileName;
@@ -72,16 +66,27 @@ if (isset($_POST['save'])) {
                     }
                 } else {
                     $user = ['error' => 'Upload failed. Allowed file types: ' . implode(',', $allowedfileExtensions)];
+                }
             }
         }
-    }
 
-        $sql = "UPDATE tb_user SET username = '$username', email = '$email', first_name = '$first_name', last_name = '$last_name', contact_no = '$contact_no', address = '$address', profile_image = '$profile_image' WHERE email = '$email'";
-        $result = $conn->query($sql);
+        $sql = "UPDATE tb_user SET username = ?, email = ?, first_name = ?, last_name = ?, contact_no = ?, address = ?, profile_image = ? WHERE email = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssssss", $username, $email, $first_name, $last_name, $contact_no, $address, $profile_image, $email);
+        $updateSuccess = $stmt->execute();
 
-        if ($result) {
+        if ($updateSuccess) {
+            session_destroy();
+            session_start();
+            $_SESSION['email'] = $email;
+            $_SESSION['username'] = $username;
+            $_SESSION['first_name'] = $first_name;
+            $_SESSION['last_name'] = $last_name;
+            $_SESSION['contact_no'] = $contact_no;
+            $_SESSION['address'] = $address;
+            $_SESSION['profile_image'] = $profile_image;
+
             $user = ['username' => $username, 'email' => $email, 'first_name' => $first_name, 'last_name' => $last_name, 'contact_no' => $contact_no, 'address' => $address, 'profile_image' => $profile_image];
-            $updateSuccess = true;
         } else {
             $user = ['error' => 'Failed to update user'];
         }
