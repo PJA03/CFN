@@ -107,7 +107,7 @@ $conn->close();
             
             <!-- Product Image -->
             <div class="image-container text-center mb-3">
-              <img id="productImage" src="<?= !empty($product['product_image']) ? $product['product_image'] : 'images/image.png'; ?>" alt="Product Image" class="product-preview" style="max-width:300px;">
+              <img id="productImage" src="<?= !empty($product['product_image']) ? $product['product_image'] : 'images/cfn_logo.png'; ?>" alt="Product Image" class="product-preview" style="max-width:300px;">
               <div class="d-flex justify-content-end mt-2">
                 <input type="file" id="imageUpload" name="productImage" accept="image/*" class="d-none">
                 <button type="button" class="btn btn-danger edit-image-btn" onclick="document.getElementById('imageUpload').click();">Edit Image</button>
