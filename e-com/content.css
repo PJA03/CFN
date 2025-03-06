@@ -99,12 +99,12 @@ body {
 .stat-title {
     font-size: 1rem;
     margin-bottom: 0.5rem;
+    
     color: #000000;
 }
 
 .stat-card .value {
     font-size: 1.4rem;
-    font-weight: bold;
     color: #000000;
 }
 
@@ -164,7 +164,7 @@ body {
 /* Best Sellers Section */
 .best-sellers-title {
     font-size: 1.8rem;
-    font-weight: bold;
+
     color: #D4802D; /* Orange title */
     text-transform: uppercase;
     text-align: center;

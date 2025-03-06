@@ -8,12 +8,12 @@ body {
 
 /* Sidebar Styling */
 .sidebar {
-    height: 100vh; /* Full viewport height */
-    position: sticky; /* Fixed position during scroll */
-    top: 0; /* Start from the top */
+    height: 100vh;
+    position: sticky;
+    top: 0;
     display: flex;
-    flex-direction: column; /* Aligns items vertically */
-    background-color: #1F4529; /* Green background */
+    flex-direction: column;
+    background-color: #1F4529;
     color: white;
     font-size: 1rem;
 }
@@ -28,22 +28,21 @@ body {
     font-family: "Bebas Neue", serif;
     font-weight: 400;
     font-size: 2rem;
-    font-style: normal;
-    text-decoration: none; /* Removes underline */
-    color: #EED3B1; /* Default yellow (cream) */
-    display: block; /* Ensures vertical layout for flex-column */
-    transition: all 0.3s ease-in-out; /* Smooth transition for hover/click */
+    text-decoration: none;
+    color: #EED3B1;
+    display: block;
+    transition: all 0.3s ease-in-out;
 }
 
 .sidebar nav .nav-link:hover {
-    color: #b4d644; /* Green on hover */
+    color: #b4d644;
     text-decoration: underline;
 }
 
 .nav-link:visited {
     font-family: "Be Vietnam Pro", serif;
-    font-size: 1.1rem; /* Slightly larger */
-    color: #1F4529; /* Green */
+    font-size: 1.1rem;
+    color: #1F4529;
     font-weight: bold;
 }
 
@@ -58,20 +57,19 @@ body {
 
 /* Main Content Styling */
 .main-content h1 {
-    font-size: 1.5rem; /* Large size for the main header */
-    font-family: "Bebas Neue", serif; /* Headers font */
-    color: #1F4529; /* Green */
-    margin-bottom: 1rem; /* Added spacing for structure */
-    text-align: left; /* Left alignment for the welcome message */
+    font-size: 1.5rem;
+    font-family: "Bebas Neue", serif;
+    color: #1F4529;
+    margin-bottom: 1rem;
+    text-align: left;
 }
 
-/* Main Content Styling for h3 */
 .main-content h3 {
-    font-size: 2.5rem; /* Slightly smaller size for subheadings */
-    font-family: "Bebas Neue", serif; /* Headers font */
-    color: #1F4529; /* Green */
-    margin-bottom: 1rem; /* Added spacing for structure */
-    text-align: center; /* Center alignment for Products Table */
+    font-size: 2.5rem;
+    font-family: "Bebas Neue", serif;
+    color: #1F4529;
+    margin-bottom: 1rem;
+    text-align: center;
 }
 
 .table img {
@@ -93,18 +91,21 @@ body {
 .bg-white {
     background-color: #fff;
 }
+
 .product-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 20px;
     padding: 10px;
 }
+
 .product-card {
-    background-color: #f0f0f0; /* Light gray background */
+    background-color: #f0f0f0;
     border-radius: 10px;
     text-align: center;
     padding: 10px;
 }
+
 .product-card img {
     width: 100%;
     height: 120px;
@@ -112,24 +113,144 @@ body {
     margin-bottom: 10px;
     border-radius: 5px;
 }
+
 .product-card h5 {
     margin: 5px 0;
     font-size: 14px;
 }
+
 .product-card p {
     font-size: 12px;
     color: #777;
 }
+
 .product-card .actions {
     margin-top: 10px;
 }
+
 .product-card .actions i {
     margin: 0 5px;
     font-size: 14px;
     color: #555;
 }
+
 .btn-green {
-    background-color: #1F4529;;
+    background-color: #1F4529;
     color: white;
 }
 
+/* Popup Styling */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Make modal content wider so columns have more room */
+.popup-content {
+    max-width: 95% !important; /* Increase to nearly full viewport width */
+  }
+  
+  /* Let the table layout expand naturally, 
+     and allow horizontal scroll if it exceeds modal width */
+  .table-container {
+    overflow-x: auto !important;
+  }
+  
+  /* Remove forced centering, allow text to wrap */
+  .table th,
+  .table td {
+    text-align: left !important;         /* Switch from center to left */
+    white-space: normal !important;      /* Allow multi-line wrapping */
+    word-wrap: break-word !important;    /* Break long words onto new line */
+    overflow-wrap: break-word !important;
+  }
+  
+  /* If you want to remove or adjust the forced width on the first column */
+  .table td:first-child,
+  .table th:first-child {
+    width: auto !important;  /* Instead of 150px */
+    min-width: 100px;        /* Or set a min-width if you prefer */
+  }
+  
+
+.table th {
+    font-weight: bold;
+}
+
+.table td select, .table td input[type="text"] {
+    width: 100%;
+    padding: 5px;
+}
+
+.table td ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.table td ul li {
+    margin-bottom: 5px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.btn-save, .btn-discard {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+}
+
+.btn-save {
+    background-color: #1F4529;
+    color: white;
+}
+
+.btn-discard {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Zoomed Image Popup */
+.zoom-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.zoom-popup img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+}
+
+.zoom-popup .close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 30px;
+    color: white;
+    cursor: pointer;
+}

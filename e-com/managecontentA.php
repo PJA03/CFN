@@ -102,7 +102,7 @@
     }
     .product-name {
       font-size: 1.1rem;
-      font-weight: 600;
+      font-weight: 100;
       color: #343a40;
     }
     .product-category {
@@ -151,7 +151,7 @@
       <div class="bg-white p-4 shadow-sm rounded stat-container">
         <div class="row mb-4 justify-content-center">
           <div class="col-md-2 stat-card">
-            <div class="stat-title">Pending Orders</div>
+          <div class="stat-title">Pending Orders</div>
             <div class="value">35</div>
           </div>
           <div class="col-md-2 stat-card">
@@ -290,135 +290,168 @@
       </div>
 
       <!-- Best Sellers Section -->
-      <div class="bg-white p-4 shadow-sm rounded stat-container">
-        <h2 class="text-center">Best Sellers</h2>
-        <div class="product-slider">
-          <!-- Container for best seller cards -->
-          <div id="bestSellersContainer" class="d-flex gap-3">
-            <!-- Existing best seller card (example) -->
-            <div class="product-card">
-              <div class="product-image">
-                <img src="images/image.png" alt="Clarifying Shampoo Bar" class="img-fluid" />
-              </div>
-              <div class="product-info">
-                <h5 class="product-name">Clarifying Shampoo Bar</h5>
-                <p class="product-category">Skincare</p>
-                <div class="product-icons">
-                  <i class="bi bi-trash delete-icon" onclick="this.closest('.product-card').remove()"></i>
+<div class="bg-white p-4 shadow-sm rounded stat-container">
+  <h2 class="text-center">Best Sellers</h2>
+  <div class="product-slider">
+    <!-- Container for best seller cards -->
+    <div id="bestSellersContainer" class="d-flex gap-3">
+      <?php
+      // Connect to the database and fetch best seller products
+      $conn = new mysqli("localhost", "root", "", "db_cfn");
+      if ($conn->connect_error) {
+          die("Connection failed: " . $conn->connect_error);
+      }
+
+      // Query best sellers by joining best_sellers table with tb_products
+      $sql = "SELECT bs.bestseller_id, p.productID, p.product_name, p.brand, p.category, p.product_image 
+              FROM tb_bestsellers bs
+              JOIN tb_products p ON bs.productID = p.productID
+              ORDER BY bs.display_order ASC";
+      $result = $conn->query($sql);
+      if ($result->num_rows > 0) {
+          while ($row = $result->fetch_assoc()) {
+              $imgSrc = !empty($row['product_image']) ? $row['product_image'] : "images/image.png";
+              ?>
+              <div class="product-card" data-product-id="<?= $row['productID']; ?>">
+                <div class="product-image">
+                  <img src="<?= $imgSrc; ?>" alt="<?= htmlspecialchars($row['product_name']); ?>" class="img-fluid" />
+                </div>
+                <div class="product-info">
+                  <h5 class="product-name"><?= htmlspecialchars($row['product_name']); ?></h5>
+                  <p class="product-category"><?= htmlspecialchars($row['category']); ?></p>
+                  <div class="product-icons">
+                    <i class="bi bi-trash delete-icon" onclick="deleteBestSeller(this)"></i>
+                  </div>
                 </div>
               </div>
+              <?php
+          }
+      } else {
+          echo "<p class='text-center'>No best sellers found.</p>";
+      }
+      $conn->close();
+      ?>
+    </div>
+  </div>
+  <div class="promo-btn-container mt-3 text-center">
+    <button class="btn btn-success promo-btn" onclick="openModal()">Add Best Seller</button>
+  </div>
+</div>
+
+<!-- Add Best Seller Modal -->
+<div id="addBestSellerModal" class="modal-overlay" style="display:none;">
+  <div class="modal-content">
+    <h3 class="text-center">Select a Product to Add as Best Seller</h3>
+    <select id="productDropdown" class="form-select">
+      <option value="" disabled selected>Select a product</option>
+      <?php
+      // Dynamically load product options from tb_products
+      $conn = new mysqli("localhost", "root", "", "db_cfn");
+      if ($conn->connect_error) {
+          die("Connection failed: " . $conn->connect_error);
+      }
+      $sql = "SELECT productID, product_name FROM tb_products";
+      $result = $conn->query($sql);
+      if ($result->num_rows > 0) {
+          while ($row = $result->fetch_assoc()) {
+              echo '<option value="' . $row['productID'] . '">' . htmlspecialchars($row['product_name']) . '</option>';
+          }
+      }
+      $conn->close();
+      ?>
+    </select>
+    <div class="modal-buttons mt-3">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-success" onclick="confirmBestSeller()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript for Best Seller Functionality -->
+<script>
+  // Open the Best Seller Modal
+  function openModal() {
+    document.getElementById("addBestSellerModal").style.display = "flex";
+  }
+  // Close the Best Seller Modal
+  function closeModal() {
+    document.getElementById("addBestSellerModal").style.display = "none";
+  }
+  // Confirm Best Seller: Send a POST request to add the best seller and update the DOM
+  function confirmBestSeller() {
+    let productDropdown = document.getElementById("productDropdown");
+    let selectedValue = productDropdown.value;
+    if (!selectedValue) {
+      alert("Please select a product.");
+      return;
+    }
+    let selectedText = productDropdown.options[productDropdown.selectedIndex].text;
+    
+    // Send AJAX request to add the best seller (endpoint: add_bestseller.php)
+    fetch("addbestseller.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ productID: selectedValue })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Create a new best seller card dynamically
+        let card = document.createElement("div");
+        card.className = "product-card";
+        card.setAttribute("data-product-id", selectedValue);
+        card.innerHTML = `
+          <div class="product-image">
+            <img src="images/image.png" alt="${selectedText}" class="img-fluid" />
+          </div>
+          <div class="product-info">
+            <h5 class="product-name">${selectedText}</h5>
+            <p class="product-category">Default Category</p>
+            <div class="product-icons">
+              <i class="bi bi-trash delete-icon" onclick="deleteBestSeller(this)"></i>
             </div>
           </div>
-        </div>
-        <div class="promo-btn-container mt-3 text-center">
-          <button class="btn btn-success promo-btn" onclick="openModal()">Add Best Seller</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Add Best Seller Modal -->
-  <div id="addBestSellerModal" class="modal-overlay">
-    <div class="modal-content">
-      <h3 class="text-center">Select a Product to Add as Best Seller</h3>
-      <select id="productDropdown" class="form-select">
-        <option value="" disabled selected>Select a product</option>
-        <option value="product1">Clarifying Shampoo Bar</option>
-        <option value="product2">Moisturizing Lotion</option>
-        <option value="product3">Essential Oil Set</option>
-        <option value="product4">Facial Cleanser</option>
-      </select>
-      <div class="modal-buttons mt-3">
-        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-success" onclick="confirmBestSeller()">Confirm</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bootstrap JS Bundle (includes Popper) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Intercept promo code form submission (existing functionality)
-    document.getElementById("promoForm").addEventListener("submit", function (event) {
-      event.preventDefault();
-      
-      // Gather promo code data from the form
-      const promo1 = {
-        discount: document.getElementById("promo1Discount").value,
-        details: document.getElementById("promo1Details").value,
-        valid: document.getElementById("promo1Valid").value,
-        code: document.getElementById("promo1Code").value
-      };
-      const promo2 = {
-        discount: document.getElementById("promo2Discount").value,
-        details: document.getElementById("promo2Details").value,
-        valid: document.getElementById("promo2Valid").value,
-        code: document.getElementById("promo2Code").value
-      };
-      const promo3 = {
-        discount: document.getElementById("promo3Discount").value,
-        details: document.getElementById("promo3Details").value,
-        valid: document.getElementById("promo3Valid").value,
-        code: document.getElementById("promo3Code").value
-      };
-
-      const promoCodes = { promo1, promo2, promo3 };
-      
-      // Log the promo code data to the console (replace with your AJAX call if needed)
-      console.log("Saving promo codes:", promoCodes);
-      
-      // Hide the modal using Bootstrap's modal API
-      const editModalEl = document.getElementById("editPromoModal");
-      const modalInstance = bootstrap.Modal.getInstance(editModalEl);
-      if (modalInstance) {
-        modalInstance.hide();
+        `;
+        document.getElementById("bestSellersContainer").appendChild(card);
+        productDropdown.selectedIndex = 0;
+        closeModal();
+      } else {
+        alert("Error adding best seller: " + (data.error || "Unknown error"));
       }
+    })
+    .catch(error => {
+      console.error("Error adding best seller:", error);
+      alert("Error adding best seller.");
     });
+  }
 
-    // Open Modal function for Best Seller (using custom modal)
-    function openModal() {
-      document.getElementById("addBestSellerModal").style.display = "flex";
+  // Delete Best Seller via AJAX when the trash icon is clicked
+  function deleteBestSeller(element) {
+    if (confirm("Are you sure you want to delete this best seller?")) {
+      let card = element.closest('.product-card');
+      let productId = card.getAttribute("data-product-id");
+      fetch("delete_bestseller.php?id=" + productId, {
+        method: "DELETE"
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("Best seller deleted successfully.");
+          card.remove();
+        } else {
+          alert("Error deleting best seller: " + (data.error || "Unknown error"));
+        }
+      })
+      .catch(error => {
+        console.error("Error deleting best seller:", error);
+        alert("Error deleting best seller.");
+      });
     }
-    // Close Modal function for Best Seller
-    function closeModal() {
-      document.getElementById("addBestSellerModal").style.display = "none";
-    }
-    // Confirm Best Seller function: dynamically add a new product card
-    function confirmBestSeller() {
-      let productDropdown = document.getElementById("productDropdown");
-      let selectedValue = productDropdown.value;
-      if (!selectedValue) {
-        alert("Please select a product.");
-        return;
-      }
-      // Get the selected product name (option text)
-      let selectedText = productDropdown.options[productDropdown.selectedIndex].text;
-      
-      // Create a new product card element
-      let card = document.createElement("div");
-      card.className = "product-card";
-      card.innerHTML = `
-        <div class="product-image">
-          <img src="images/image.png" alt="${selectedText}" class="img-fluid" />
-        </div>
-        <div class="product-info">
-          <h5 class="product-name">${selectedText}</h5>
-          <p class="product-category">Default Category</p>
-          <div class="product-icons">
-            <i class="bi bi-pencil-square edit-icon"></i>
-            <i class="bi bi-trash delete-icon" onclick="this.closest('.product-card').remove()"></i>
-          </div>
-        </div>
-      `;
-      
-      // Append the new card to the best sellers container
-      document.getElementById("bestSellersContainer").appendChild(card);
-      
-      // Reset the dropdown selection
-      productDropdown.selectedIndex = 0;
-      // Close the modal
-      closeModal();
-    }
-  </script>
+  }
+</script>
+
+
 </body>
 </html>
