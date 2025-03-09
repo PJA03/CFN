@@ -133,7 +133,6 @@
             $sql = "SELECT 
                         p.productID, 
                         p.product_name, 
-                        p.brand, 
                         p.category, 
                         p.product_image, 
                         v.price, 
@@ -154,7 +153,6 @@
                      data-product-id="<?= $product['productID']; ?>"
                      data-price="<?= $product['price']; ?>"
                      data-stock="<?= $stockLevel; ?>"
-                     data-brand="<?= strtolower($product['brand']); ?>"
                      data-category="<?= strtolower($product['category']); ?>">
                   <img src="<?= $imgSrc; ?>" alt="Product Image">
                   <h5><?= $product['product_name']; ?></h5>

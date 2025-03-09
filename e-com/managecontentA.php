@@ -303,7 +303,7 @@
       }
 
       // Query best sellers by joining best_sellers table with tb_products
-      $sql = "SELECT bs.bestseller_id, p.productID, p.product_name, p.brand, p.category, p.product_image 
+      $sql = "SELECT bs.bestseller_id, p.productID, p.product_name, p.category, p.product_image 
               FROM tb_bestsellers bs
               JOIN tb_products p ON bs.productID = p.productID
               ORDER BY bs.display_order ASC";
