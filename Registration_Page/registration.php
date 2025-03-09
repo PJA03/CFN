@@ -36,8 +36,8 @@
                         <div class="mb-3 password-section">
                             <div class="input-group">
                                 <input type="password" class="form-control" id="logpassword" name="logpassword" placeholder="Password" required>
-                                <span class="input-group-text" id="eyeicon">
-                                    <i class="fa fa-eye"></i>
+                                <span class="input-group-text">
+                                    <img src="eye-close.jpg" id="eyeicon-login" class="eyeicon">
                                 </span>
                             </div>
                         </div>
@@ -68,13 +68,18 @@
                         <div class="mb-3">
                             <input type="email" class="form-control" id="regisemail" name="regisemail" placeholder="Email" required>
                         </div>
-                        <div class="mb-3">      
+                        <div class="mb-3 password-section">
+                        <div class="input-group">   
                             <input type="password" class="form-control" id="regispassword" name="regispassword" placeholder="Password"
                             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$" 
                             title="Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character."
                             required>
+                            <span class="input-group-text">
+                                <img src="eye-close.jpg" id="eyeicon-regis" class="eyeicon">
+                            </span>
                         </div>
-                    
+                        </div>
+
                         <p class="text-center mt-3">By creating an account, you agree to our <span class="link-primary">Terms</span> and acknowledge our <span class="link-primary">Privacy Policy</span>.</p>
                         <br>
                         <div class="button d-flex justify-content-center align-items-center">
@@ -338,20 +343,44 @@ if (isset($_POST['login'])) {
   });
 
 </script>
-<script>
-          document.addEventListener("DOMContentLoaded", function () {
-    var eyeicon = document.getElementById("eyeicon");
-    var passwordInput = document.getElementById("logpassword");
 
-    eyeicon.addEventListener('click', function () {
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            eyeicon.innerHTML = '<i class="fa fa-eye-slash"></i>';
-        } else {
-            passwordInput.type = "password";
-            eyeicon.innerHTML = '<i class="fa fa-eye"></i>';
-        }
-    });
+<style>
+    #eyeicon {
+        width: 20px; 
+        height: 20px; 
+        cursor: pointer;
+    }
+
+    .form-control {
+    width: 100%; /* Ensures uniform width */
+    height: 40px; /* Adjust height to match other inputs */
+    }
+
+    .input-group-text img {
+    width: 18px; 
+    height: 18px;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    function togglePassword(eyeIconId, passwordInputId) {
+        var eyeicon = document.getElementById(eyeIconId);
+        var passwordInput = document.getElementById(passwordInputId);
+
+        eyeicon.addEventListener("click", function () {
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                eyeicon.src = "eye-open.jpg";
+            } else {
+                passwordInput.type = "password";
+                eyeicon.src = "eye-close.jpg";
+            }
+        });
+    }
+
+    togglePassword("eyeicon-login", "logpassword");
+    togglePassword("eyeicon-regis", "regispassword");
 });
 </script>
 </body>

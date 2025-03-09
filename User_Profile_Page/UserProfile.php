@@ -10,6 +10,7 @@ if (isset($_SESSION['email'])) {
         'last_name' => $_SESSION['last_name'],
         'contact_no' => $_SESSION['contact_no'],
         'address' => $_SESSION['address'],
+        'profile' => $_SESSION['profile_image'],
     ];
 } else {
     header('Location: ../Registration_Page/registration.php');
