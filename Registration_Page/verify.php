@@ -1,10 +1,10 @@
 <?php
 require_once "../conn.php";
 
-// // Check if a session is already started before calling session_start()
-// if (session_status() == PHP_SESSION_NONE) {
-//     session_start();
-// }
+// Check if a session is already started before calling session_start()
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (isset($_SESSION['email']) && isset($_SESSION['token'])) {
     $email = $_SESSION['email'];

@@ -1,21 +1,18 @@
 <?php
 require_once "../conn.php";
 
-if (isset($_POST['username'])) {
+if(isset($_POST['username']) && isset($_POST['current_email'])){
     $username = $_POST['username'];
+    $currentEmail = $_POST['current_email'];
 
-    $checkUsername = "SELECT * FROM tb_user WHERE username = ?";
-    $stmt = $conn->prepare($checkUsername);
-    $stmt->bind_param("s", $username);
+    $stmt = $conn->prepare("SELECT * FROM tb_user WHERE username = ? AND email != ?");
+    $stmt->bind_param("ss", $username, $currentEmail);
     $stmt->execute();
-    $stmt->get_result();
+    $result = $stmt->get_result();
 
-    if ($stmt->num_rows > 0) {
-        echo 'taken';
-    } else {
-        echo 'available';
-    }
-    $stmt -> close();
+    header("Content-Type: text/plain");
+    echo ($result->num_rows > 0) ? 'taken' : 'available';
+    exit();
 }
 
 ?>
