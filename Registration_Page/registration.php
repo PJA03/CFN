@@ -115,6 +115,9 @@
             $email = $_POST['regisemail'];
             $password = password_hash($_POST['regispassword'], PASSWORD_BCRYPT);
             $validated = 0;
+            
+            //TODO: change back to user role when done testing
+            $role = "admin";
             $token = rand(000000,999999);
             $token_created_at = date("Y-m-d H:i:s");
 
@@ -176,7 +179,7 @@
                 <?php
             } else {
                 // Insert statement to register account
-                $signup = "INSERT INTO tb_user(username, email, pass, validated, token, token_created_at) values ('$username','$email','$password', '$validated', '$token', '$token_created_at')";
+                $signup = "INSERT INTO tb_user(username, email, pass, validated, role, token, token_created_at) values ('$username','$email','$password', '$validated', '$role', '$token', '$token_created_at')";
                 $result = $conn->query($signup);
                 
                 if ($result == true) {
@@ -228,12 +231,24 @@ if (isset($_POST['login'])) {
                 $_SESSION['contact_no'] = $user['contact_no'];
                 $_SESSION['address'] = $user['address'];
                 $_SESSION['profile_image'] = $user['profile_image'];
-                ?>
-                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                <script>
-                    window.location.href = '../Home_Page/home.php'; // Redirect to home page
-                </script>
-                <?php
+                $_SESSION['role'] = $user['role'];
+                
+                // Redirect based on role
+                if ($user['role'] == 'admin') {
+                    ?>
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                    <script>
+                        window.location.href = '../e-com/manageproductsA.php'; // Redirect to admin page
+                    </script>
+                    <?php
+                } else {
+                    ?>
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                    <script>
+                        window.location.href = '../Home_Page/home.php'; // Redirect to home page
+                    </script>
+                    <?php
+                }
             } else {
                 // Email not validated
                 ?>

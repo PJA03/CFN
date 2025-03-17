@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 03, 2025 at 07:39 AM
+-- Generation Time: Mar 17, 2025 at 01:32 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -263,8 +263,10 @@ CREATE TABLE `tb_user` (
   `pass` varchar(255) NOT NULL,
   `first_name` varchar(30) DEFAULT NULL,
   `last_name` varchar(30) DEFAULT NULL,
-  `contact_no` int(11) DEFAULT NULL,
+  `contact_no` varchar(11) DEFAULT NULL,
   `address` varchar(50) DEFAULT NULL,
+  `role` varchar(30) DEFAULT NULL,
+  `profile_image` varchar(255) DEFAULT NULL,
   `validated` tinyint(1) DEFAULT NULL,
   `token` varchar(32) DEFAULT NULL,
   `token_created_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -274,33 +276,14 @@ CREATE TABLE `tb_user` (
 -- Dumping data for table `tb_user`
 --
 
-INSERT INTO `tb_user` (`user_id`, `username`, `email`, `pass`, `first_name`, `last_name`, `contact_no`, `address`, `validated`, `token`, `token_created_at`) VALUES
-(59, 'pja', 'princessjamie.galias.cics@ust.edu.ph', '$2y$10$CN5FyX5JZyXPtiKJ/Lit9eZgsCFsRwfTdzn8mAySGE44fT.6t9DQy', NULL, NULL, NULL, NULL, 1, '', '2025-02-08 09:34:04'),
-(62, 'pja', 'pjarahgalias27@gmail.com', '$2y$10$iVLvUura2qC.aDTFrs971.HdRHbRQpWz4qatld69facLwtNsBF2Ri', NULL, NULL, NULL, NULL, 1, '', '2025-02-08 09:41:34');
+INSERT INTO `tb_user` (`user_id`, `username`, `email`, `pass`, `first_name`, `last_name`, `contact_no`, `address`, `role`, `profile_image`, `validated`, `token`, `token_created_at`) VALUES
+(69, 'ironm111', 'princessjamie.galias.cics@ust.edu.ph', '$2y$10$v3UZxJJSrDUip7tu3c.9OOEgz12qoua.wy/tLYXgAUKsRDBWUwhjq', 'US-Letter', 'x 11', '09669463472', 'Blk 1 Lot 1 Ibañez St', NULL, NULL, 1, '', '2025-02-17 13:18:09'),
+(72, 'ironman123', 'pjarahgalias27@gmail.com', '$2y$10$ADKB6wCkyA4XlCiZaAGrn.lxH/Hp3ndcNjU8olRh6aQTC0024ymHK', 'Arah', 'Galias', '09669463472', 'Blk 1 Lot 1 Ibañez St', NULL, '../uploads/ey.png', 1, '', '2025-03-05 13:10:47'),
+(79, 'Admin', 'galias.pja@gmail.com', '$2y$10$xZh8zzSPbdyxUa7cng7aDu7LsPboC1x29eitjMxjd/gTU0GP3bcL.', NULL, NULL, NULL, NULL, 'admin', NULL, 1, '', '2025-03-10 19:50:28');
 
 --
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `tb_bestsellers`
---
-ALTER TABLE `tb_bestsellers`
-  ADD PRIMARY KEY (`bestseller_id`),
-  ADD KEY `productID` (`productID`);
-
---
--- Indexes for table `tb_products`
---
-ALTER TABLE `tb_products`
-  ADD PRIMARY KEY (`productID`);
-
---
--- Indexes for table `tb_productvariants`
---
-ALTER TABLE `tb_productvariants`
-  ADD PRIMARY KEY (`variant_id`),
-  ADD KEY `productID` (`productID`);
 
 --
 -- Indexes for table `tb_user`
@@ -313,44 +296,10 @@ ALTER TABLE `tb_user`
 --
 
 --
--- AUTO_INCREMENT for table `tb_bestsellers`
---
-ALTER TABLE `tb_bestsellers`
-  MODIFY `bestseller_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `tb_products`
---
-ALTER TABLE `tb_products`
-  MODIFY `productID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
-
---
--- AUTO_INCREMENT for table `tb_productvariants`
---
-ALTER TABLE `tb_productvariants`
-  MODIFY `variant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
-
---
 -- AUTO_INCREMENT for table `tb_user`
 --
 ALTER TABLE `tb_user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `tb_bestsellers`
---
-ALTER TABLE `tb_bestsellers`
-  ADD CONSTRAINT `tb_bestsellers_ibfk_1` FOREIGN KEY (`productID`) REFERENCES `tb_products` (`productID`) ON DELETE CASCADE;
-
---
--- Constraints for table `tb_productvariants`
---
-ALTER TABLE `tb_productvariants`
-  ADD CONSTRAINT `tb_productvariants_ibfk_1` FOREIGN KEY (`productID`) REFERENCES `tb_products` (`productID`) ON DELETE CASCADE;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

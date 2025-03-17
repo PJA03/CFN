@@ -3,30 +3,122 @@ require_once "../conn.php";
 session_start();
 
 if (isset($_SESSION['email'])) {
-    $email = $_SESSION['email'];
+    // // Debugging: Print session variables
+    // echo "<pre>";
+    // print_r($_SESSION);
+    // echo "</pre>";
 
-    $sql = "SELECT username, email, first_name, last_name, contact_no, address, profile_image FROM tb_user WHERE email = '$email'";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-    } else {
-        $user = ['error' => 'User not found'];
-    }
+    $user = [
+        'username' => $_SESSION['username'] ?? '',
+        'email' => $_SESSION['email'] ?? '',
+        'first_name' => $_SESSION['first_name'] ?? '',
+        'last_name' => $_SESSION['last_name'] ?? '',
+        'contact_no' => $_SESSION['contact_no'] ?? '',
+        'address' => $_SESSION['address'] ?? '',
+        'profile_image' => $_SESSION['profile_image'] ?? '',
+    ];
 } else {
     header('Location: ../Registration_Page/registration.php');
     exit();
 }
 
+// Logout
 if (isset($_POST['logout'])) {
     session_destroy();
     header('Location: ../Home_Page/Home.php');
     exit();
 }
 
+$updateSuccess = false;
+$noChanges = false;
 
+if (isset($_POST['save'])) {
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $contact_no = $_POST['contact_no'];
+    $address = $_POST['address'];
+    $profile_image = $user['profile_image'];
 
+    if ($username == $user['username'] && $email == $user['email'] && $first_name == $user['first_name'] && $last_name == $user['last_name'] && $contact_no == $user['contact_no'] && $address == $user['address'] && !isset($_FILES['profile_image'])) {
+        $noChanges = true;
+    } else {
+         // Check if username is already taken
+         $check_username = "SELECT * FROM tb_user WHERE username = ?";
+         $stmt = $conn->prepare($check_username);
+         $stmt->bind_param("s", $username);
+         $stmt->execute();
+         $result_username = $stmt->get_result();
+ 
+        if ($result_username->num_rows > 0) {
+            $user = ['error' => 'Username is already taken'];
+            ?>
+                <script>
+                    Swal.fire({
+                        position: "center",    
+                        icon: "error",
+                        title: "Username is already taken",
+                        text: "Please choose a different username.",
+                        showConfirmButton: false,
+                        timer: 3000  
+                    });
+                </script>
+                <?php
+        } else {
+            if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == UPLOAD_ERR_OK) {
+                $fileTmpPath = $_FILES['profile_image']['tmp_name'];
+                $fileName = $_FILES['profile_image']['name'];
+                $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                $allowedfileExtensions = ['jpg', 'jpeg', 'png'];
+            
+                if (in_array($fileExtension, $allowedfileExtensions)) {
+                    $uploadFileDir = '../uploads/';
+                    $newFileName = uniqid() . "_" . $fileName;  // Generate a unique filename
+                    $dest_path = $uploadFileDir . $newFileName;
+            
+                    if (move_uploaded_file($fileTmpPath, $dest_path)) {
+                        $profile_image = $newFileName; // Save only the filename, not the full path
+                    } else {
+                        $profile_image = $user['profile_image']; // Keep old image if move fails
+                    }
+                } else {
+                    $profile_image = $user['profile_image']; // Keep old image if wrong file type
+                }
+            } else {
+                $profile_image = $user['profile_image']; // Keep old image if no new file is uploaded
+            }
+            
 
+ 
+         
+                    
+        }
+
+        $sql = "UPDATE tb_user SET username = ?, email = ?, first_name = ?, last_name = ?, contact_no = ?, address = ?, profile_image = ? WHERE email = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssssss", $username, $email, $first_name, $last_name, $contact_no, $address, $profile_image, $_SESSION['email']); // Use session email to match user
+        $updateSuccess = $stmt->execute();
+        
+
+        if ($updateSuccess) {
+            session_destroy();
+            session_start();
+            $_SESSION['email'] = $email;
+            $_SESSION['username'] = $username;
+            $_SESSION['first_name'] = $first_name;
+            $_SESSION['last_name'] = $last_name;
+            $_SESSION['contact_no'] = $contact_no;
+            $_SESSION['address'] = $address;
+            $_SESSION['profile_image'] = $profile_image;
+
+            $user = ['username' => $username, 'email' => $email, 'first_name' => $first_name, 'last_name' => $last_name, 'contact_no' => $contact_no, 'address' => $address, 'profile_image' => $profile_image];
+        } else {
+            $user = ['error' => 'Failed to update user'];
+        }
+    }
+
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,9 +127,9 @@ if (isset($_POST['logout'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="main.js">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Account Profile</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,24 +160,28 @@ if (isset($_POST['logout'])) {
                 <h3>My Account</h3>
                 <a href="UserProfile.html" class="active">Profile</a>
                 <br>
-                <form method="post" action="">
+                <form method="post">
                     <button class="transparent-button" name="logout">Logout</button>
                 </form>
             </div>
             <div class="col-md-10 right-panel container">
                 <div class="row">
                     <div class="col-md-7">
-                        <button class="transparent-button" style="color: white;" id="edit-button">
-                            <h2>Profile Details<p class="lead"><i class="bi bi-pen"></i></p></h2>
+                        <h2 class="lead">Profile Details</h2>
+                        <button class="transparent-button" style="color: black;" id="edit-button">
+                            <i class="bi bi-pen"></i>
                         </button>
                         <br> 
-                        <form method="post" action="" id="profileForm" enctype="multipart/form-data">
+                        <form method="post" action="editUserProfile.php" id="profileForm" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-md-3">
                                     <p>Username: </p>
                                 </div>
                                 <div class="col-md-9">
                                     <input type="text" name="username" id="username" class="editable form-control profile-input" value="<?php echo isset($user['username']) ? $user['username'] : ''; ?>" required>
+                                    <div id="usernameFeedback" class="invalid-feedback d-none">
+                                        
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -136,184 +232,34 @@ if (isset($_POST['logout'])) {
                                     <input type="file" id="profile_image" name="profile_image" style="margin: 8px;">
                                 </div>
                             </div>
-                            <button type="submit" name="save" id="save" class="button save-button">Save changes</button>
+                            <button type="submit" name="save" class="button save-button">Save changes</button>
                             <button type="button" name="cancel" id="cancel" class="button cancel-button">Cancel</button>
-
                         </form>
                     </div>
                     <div class="col-md-5 text-center">
-                        <img src="<?php echo isset($user['profile_image']) ? $user['profile_image'] : '../Resources/profile.png'; ?>" alt="Profile Icon" name="icon" id="icon" class="profile-icon" width="100" style="margin: 10px;"/>
+                    <img src="<?php echo isset($user['profile_image']) && !empty($user['profile_image']) ? $user['profile_image'] : '../Resources/profile.png'; ?>" alt="Profile Icon" name="icon" id="icon" class="profile-icon" width="100" style="margin: 10px;"/>
                     </div>
                 </div>    
             </div>
         </div>
     </div>
 
-    <?php
-        $updateSuccess = false;
-        $noChanges = false;        
 
-        if (isset($_POST['save'])) {
-            $username = $_POST['username'];
-            $email = $_POST['email'];
-            $first_name = $_POST['first_name'];
-            $last_name = $_POST['last_name'];
-            $contact_no = $_POST['contact_no'];
-            $address = $_POST['address'];
-            $profile_image = $user['profile_image'];
-        
-             // Check if username exists and is not the current user's
-             $checkUsername = $conn->prepare("SELECT * FROM tb_user WHERE username = ? AND email != ?");
-             $checkUsername->bind_param("ss", $username, $_SESSION['email']);
-             $checkUsername->execute();
-             $result = $checkUsername->get_result();
-        
-             if ($result->num_rows > 0) {
-                // Username is taken, show an error and prevent saving
-                echo "<script>
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Username Taken',
-                        text: 'Please choose a different username.'
-                    });
-                </script>";
-                exit();
-            }
-        
-         
-            
-        
-            if ($username == $user['username'] && $email == $user['email'] && $first_name == $user['first_name'] && $last_name == $user['last_name'] && $contact_no == $user['contact_no'] && $address == $user['address'] && !isset($_FILES['profile_image'])) {
-                $noChanges = true;
-            } else {
-                if ($result->num_rows > 0) {
-                    echo "<script>
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Username Taken',
-                            text: 'Please choose a different username.'
-                        });
-                    </script>";
-               } else {
-                   
-               }
-        
-                
-        
-            }    
-            $sql = "UPDATE tb_user SET username = ?, email = ?, first_name = ?, last_name = ?, contact_no = ?, address = ?, profile_image = ? WHERE email = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssssssss", $username, $email, $first_name, $last_name, $contact_no, $address, $profile_image, $_SESSION['email']); // Use session email to match user
-            $updateSuccess = $stmt->execute();
-        
-            if ($updateSuccess) {
-                // session_destroy();
-                // session_start();
-                // session_regenerate_id(true);
-                $_SESSION['email'] = $email;
-                $_SESSION['username'] = $username;
-                $_SESSION['first_name'] = $first_name;
-                $_SESSION['last_name'] = $last_name;
-                $_SESSION['contact_no'] = $contact_no;
-                $_SESSION['address'] = $address;
-                $_SESSION['profile_image'] = $profile_image;
-            
-                echo "<script>
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Profile Updated',
-                        text: 'Your profile has been updated successfully.'
-                    }).then(() => {
-                        window.location.href = 'UserProfile.php';
-                    });
-                </script>";
-            }
-        }
-    ?>
+    
+    ?>        
 
-
+    <script src="main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
-document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("username").addEventListener("input", function() {
-        let username = this.value.trim();
-
-        if (username !== "") {
-            fetch("check_username.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: "username=" + encodeURIComponent(username)
-            })
-            .then(response => response.text())
-            .then(data => {
-                if (data === "taken") {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Username Taken",
-                        text: "Please choose a different username."
-                    });
-                }
-            })
-            .catch(error => console.error("Error:", error));
-        }
-    });
-});
-</script>
-
-   <script>
-    
-    //username duplicates check
-    document.addEventListener("DOMContentLoaded", function () {
-    const usernameInput = document.getElementById("username");
-    const saveButton = document.getElementById("save");
-
-    usernameInput.addEventListener("input", function () {
-        const username = this.value.trim();
-
-        if (username !== "") {
-            fetch("check_username.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: "username=" + encodeURIComponent(username)
-            })
-                .then(response => response.text())
-                .then(data => {
-                    if (data === "taken") {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Username Taken",
-                            text: "Please choose a different username."
-                        });
-                        saveButton.disabled = true; // Disable the save button
-                    } else {
-                        saveButton.disabled = false; // Enable the save button
-                    }
-                })
-                .catch(error => console.error("Error:", error));
-        } else {
-            saveButton.disabled = false; // Enable the save button if the input is empty
-        }
-    });
-});
-
-
-
-
-
-        // image preview
         document.getElementById('profile_image').addEventListener('change', function(event) {
-            var reader = new FileReader();
-            reader.onload = function() {
-                var output = document.getElementById('icon');
-                output.src = reader.result;
-            };
-            reader.readAsDataURL(event.target.files[0]);
-        });
+                    var reader = new FileReader();
+                    reader.onload = function() {
+                        var output = document.getElementById('icon');
+                        output.src = reader.result;
+                    };
+                    reader.readAsDataURL(event.target.files[0]);
+                });
 
         document.addEventListener('DOMContentLoaded', function() {
             // Store original values
@@ -340,7 +286,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     document.querySelector('input[name="profile_image"]').files.length > 0
                 );
             }
-        
+
             // Add event listeners to input fields
             document.querySelectorAll('input').forEach(input => {
                 input.addEventListener('input', checkForChanges);
@@ -413,8 +359,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             <?php endif; ?>
         });
-
 </script>
 </body>
-
 </html>
