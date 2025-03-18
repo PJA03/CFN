@@ -1,27 +1,27 @@
 <?php
-header("Content-Type: application/json");
+header('Content-Type: application/json');
 
-include 'conn.php';
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "db_cfn";
 
-if (isset($_GET['orderID'])) {
-    $orderID = $_GET['orderID'];
-    $sql = "SELECT * FROM tb_orders WHERE orderID = ?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt === false) {
-        echo json_encode(["error" => "Prepare failed: " . $conn->error]);
-        exit;
-    }
-    $stmt->bind_param("i", $orderID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $order = $result->fetch_assoc();
-    
-    if ($order) {
-        echo json_encode($order);
-    } else {
-        echo json_encode(["error" => "Order not found"]);
-    }
-} else {
-    echo json_encode(["error" => "No orderID specified"]);
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    echo json_encode(['error' => 'Connection failed']);
+    exit();
 }
+
+$orderID = isset($_GET['orderID']) ? intval($_GET['orderID']) : 0;
+$sql = "SELECT * FROM tb_orders WHERE orderID = $orderID";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    echo json_encode($row);
+} else {
+    echo json_encode(['error' => 'Order not found']);
+}
+
+$conn->close();
 ?>
