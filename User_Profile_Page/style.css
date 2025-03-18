@@ -39,20 +39,27 @@ h3 {
     /* color: #FF8666 !important;    Override any conflicts */
 }
 
-.col-md-5, .col-md-7{
+.col-md-5, .col-md-7 {
     line-height: 2;
     text-wrap: wrap;
     white-space: normal;
     word-wrap: break-word;
 }
 
+.col-md-4 {
+    line-height: 2;
+    align-items: center;
+}
+
 .usernamedisplay{
     display: flex;
     justify-content: center;
+    text-align: center;
     color: #EED3B1;  
-    padding-top:15px;
     font-size: 20px;
     font-style: italic;
+    flex-wrap: wrap;
+    padding-top: 15px;
 }
 
 /* Logo */
@@ -72,14 +79,12 @@ h3 {
 header {
     background-color: #1F4529;
     color: #EED3B1;
-    padding: 20px;
+    padding: 20px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%; /* Ensure the header uses the full width */
-    box-sizing: border-box; /* Prevent layout shift */
-    position: relative;
-    height: auto;
+    flex-wrap: wrap;
 }
 
 /* Logo Styling */
@@ -93,20 +98,6 @@ header {
     align-items: center;
     justify-content: flex-start;
     gap: 20px;
-    flex-grow: 1; /* Allow navbar to use available space */
-    margin-left: 70vw; /* Add space between the logo and navbar */
-}
-
-/* Search Bar Styling */
-.search-bar {
-    padding: 8px 12px;
-    border-radius: 25px;
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    width: 300px; /* Adjust width as needed */
-    background-color: #FFFFFF;
-    color: #1F4529;
 }
 
 /* Icons in Navigation */
@@ -115,7 +106,9 @@ header {
     align-items: center;
     justify-items: center;
     gap: 15px;
-    margin-left: 3vh;
+    transition: transform 0.3s ease, color 0.3s ease;
+    margin-left: 50px;
+    margin-right: 40px;
 }
 
 /* Font Awesome Icon Styles */
@@ -123,9 +116,13 @@ header {
     font-size: 1.6rem;
     color: #EED3B1;
     cursor: pointer;
-
+    margin-left: 10px;
 }
 
+.icon-profile:hover, .home:hover, .cart:hover {
+    transform: scale(1.1);
+    color: whitesmoke;
+}
 
 /* Ensure the body doesn't have padding that messes with the layout */
 body {
@@ -133,66 +130,60 @@ body {
     padding: 0;
 }
 
-
 .active{
     text-decoration: underline;
     color: white;
-    
+    display: flex;
+    align-items: center;
 }
 
 .transparent-button{
     display: flex;
+    align-items: center;
     background-color: transparent;
     border: none;
     margin-left: 10px;
     color: white;
 }
 
-.main{
+.main {
     display: flex;
     justify-content: center;
-    flex-direction: column;
-    margin-top: 50px;
-    width: 50vw;
+    flex-direction: row;
+    width: 100%;
     margin: auto;
     margin-top: 50px;
-    /* background-color: #FF8666; */
-    height: 60vh;
-    /* background: whitesmoke; */
-   
-
+    min-height: 60vh;
+    flex-wrap: nowrap;
+    align-items: stretch;
 }
 
-.left-panel{
+.left-panel {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     background: #1F4529;
     color: white;
-    /* border-radius: 20px; */
     padding-top: 50px;
-    height: 60vh;
+    min-height: 60vh;
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
     overflow: auto;
-    
-
+    flex-shrink: 0;
+    max-width: 60vw;
 }
-
-.right-panel{
+    
+.right-panel {
     display: flex;
     align-items: center;
     background: whitesmoke;
-    /* padding-top: 30px; */
-    /* padding: 10px; */
-    height: 60vh;
-    /* border-radius: 20px; */
+    min-height: 60vh;
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
     overflow: auto;
-
-
+    flex-shrink: 0;
+    max-width: 60vw;
 }
 
 .profile-details {
@@ -207,9 +198,7 @@ body {
     border: none;
     padding: 0;
     cursor: pointer;
-
 }
-
 
 .save-button, .image{
     background-color: #C0D171 !important; 
@@ -221,8 +210,6 @@ body {
     border: none;
     width: 150px;
     text-align: center;
-
-    
 }
 
 .save-button:hover, .image:hover{
@@ -240,15 +227,11 @@ body {
     border: none;
     width: 150px;
     text-align: center;
-    
 }
 
 .cancel-button:hover{
     background-color: #A9A9A9 !important; 
 }
-
-
-
 
 .right-panel .form-control {
     width: 80%; /* Adjust the width as needed */
@@ -258,7 +241,6 @@ body {
 .row{
     margin: 5px;
 }
-
 
 .right-align{
     display: block;
@@ -286,28 +268,32 @@ body {
 footer {
     background-color: #1F4529;
     color: white;
-    padding: 20px 50px;
+    padding: 40px 40px;
     display: flex;
     flex-direction: column; /* Stack footer elements vertically */
+    align-items: center;
     width: 100%;
 }
 
 .footer-container {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
     max-width: 1200px;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 .footer-left {
     display: flex;
+    flex-direction: column;
     align-items: center;
+    gap: 20px;
 }
 
 .footer-logo {
-    height: 200px; /* Adjust according to your logo size */
-    margin-left: 100px;
+    height: 150px; /* Adjust according to your logo size */
 }
 
 .footer-logo img {
@@ -319,7 +305,7 @@ footer {
 .footer-right {
     display: flex;
     flex-direction: column;
-    text-align: right;
+    text-align: left;
 }
 
 .footer-nav {
@@ -331,17 +317,20 @@ footer {
 .footer-nav li {
     font-family: "Bebas Neue", serif !important;
     font-size: 20px;
+    margin-bottom: 8px;
 }
 
 .footer-nav a {
     color: white;
     text-decoration: none;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .social-icons {
+    display: flex;
     flex-direction: column; /* Keeps the SOCIALS text on top and icons underneath */
     align-items: flex-start; /* Aligns items to the left */
-    margin-bottom: 100px;
+    gap: 10px;
 }
 
 .social-icons a {
@@ -350,13 +339,19 @@ footer {
     text-decoration: none;
     gap: 10px;
     margin-left: 4px;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icons a:hover, .footer-nav a:hover {
+    transform: scale(1.1);
+    color: #EED3B1;
 }
 
 .social-icons p {
     color: white;
     font-size: 20px;
     font-family: "Bebas Neue", serif !important;
-    margin-bottom:0px; /* Space between SOCIALS text and icons */
+    margin-bottom: 0px; /* Space between SOCIALS text and icons */
     margin-top: 0;  /* Optional, removes unnecessary margin */
 }
 
@@ -364,7 +359,7 @@ footer {
     text-align: center;
     width: 100%;
     font-size: 14px;
-    margin-top: 10px;  /* Space between content and copyright */
+    opacity: 0.8;
 }
 
 /* Custom Scrollbar */
@@ -386,4 +381,45 @@ footer {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #1F4529; /* Darker green when hovered */
+}
+
+.modal-body {
+    text-align: justify;
+    align-items: center;
+    border-radius: 30px;
+}
+
+.modal-header {
+    color:  whitesmoke;
+}
+
+.modal-dialog {
+     max-width: 40%; /* Adjust as needed */
+}
+
+.modal-content {
+    max-height: 50vh; /* Adjust height */
+    overflow-y: auto; /* Enables scrolling if content is too long */
+}
+
+.btn-close {
+    transition: background-color 0.3s ease;
+    opacity: 1;
+    cursor: pointer;
+}
+
+.btn-close:hover {
+    background-color:#C0D171
+}
+
+.btn { 
+    color: #ffffff !important;
+    background-color: #1F4529 !important; 
+    cursor: pointer;
+    opacity: 1;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color:#C0D171
 }
