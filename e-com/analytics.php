@@ -6,16 +6,16 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="style1.css"> <!-- Custom styles -->
-    <!-- Chart.js CDN -->
+    <link rel="stylesheet" href="style1.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Admin Analytics</title>
     <style>
         .chart-container {
             max-width: 800px;
             margin: 20px auto;
+            display: none; /* Initially hidden */
         }
-        /* Loading Spinner */
         .loading-spinner {
             display: inline-block;
             width: 1.5rem;
@@ -29,6 +29,22 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        .stat-card {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            margin: 0.5rem;
+        }
+        .stat-title {
+            font-size: 1rem;
+            color: #666;
+        }
+        .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1F4529;
+        }
     </style>
 </head>
 <body>
@@ -40,7 +56,7 @@
                 <a class="nav-link" href="manageproductsA.php">Products</a>
                 <a class="nav-link" href="managecontentA.php">Content</a>
                 <a class="nav-link" href="manageordersA.php">Orders</a>
-                <a class="nav-link" href="analytics.php">Analytics</a>
+                <a class="nav-link active" href="analytics.php">Analytics</a>
             </nav>
             <div class="date-picker mt-4">
                 <label for="start">Start Date:</label>
@@ -64,31 +80,23 @@
             <h3 class="mt-4 text-center">Analytics/Report</h3>
             <div class="bg-white p-4 shadow-sm rounded">
                 <div class="row mb-4 justify-content-center">
-                    <div class="col-md-2 stat-card">
+                    <div class="col-md-3 stat-card">
                         <div class="stat-title">Total Sales</div>
-                        <div class="value">₱12,000.00</div>
+                        <div class="value" id="totalSales">₱0.00</div>
                     </div>
-                    <div class="col-md-2 stat-card">
-                        <div class="stat-title">Cart Abandonment</div>
-                        <div class="value">37%</div>
-                    </div>
-                    <div class="col-md-2 stat-card">
+                    <div class="col-md-3 stat-card">
                         <div class="stat-title">No. of New Users</div>
-                        <div class="value">74</div>
+                        <div class="value" id="newUsers">0</div>
                     </div>
-                    <div class="col-md-2 stat-card">
+                    <div class="col-md-3 stat-card">
                         <div class="stat-title">Repeat Purchase %</div>
-                        <div class="value">15%</div>
-                    </div>
-                    <div class="col-md-2 stat-card">
-                        <div class="stat-title">No. of Refunds</div>
-                        <div class="value">47</div>
+                        <div class="value" id="repeatPurchase">0%</div>
                     </div>
                 </div>
             </div>
 
             <!-- Chart Container -->
-            <div class="chart-container bg-white p-4 shadow-sm rounded">
+            <div class="chart-container bg-white p-4 shadow-sm rounded" id="chartContainer">
                 <canvas id="salesChart"></canvas>
             </div>
 
@@ -100,47 +108,8 @@
                             <th style="width: 80%;">Top Selling Products</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>245</td>
-                            <td>Product A</td>
-                        </tr>
-                        <tr>
-                            <td>215</td>
-                            <td>Product B</td>
-                        </tr>
-                        <tr>
-                            <td>210</td>
-                            <td>Product C</td>
-                        </tr>
-                        <tr>
-                            <td>180</td>
-                            <td>Product D</td>
-                        </tr>
-                        <tr>
-                            <td>176</td>
-                            <td>Product E</td>
-                        </tr>
-                        <tr>
-                            <td>150</td>
-                            <td>Product F</td>
-                        </tr>
-                        <tr>
-                            <td>138</td>
-                            <td>Product G</td>
-                        </tr>
-                        <tr>
-                            <td>115</td>
-                            <td>Product H</td>
-                        </tr>
-                        <tr>
-                            <td>90</td>
-                            <td>Product I</td>
-                        </tr>
-                        <tr>
-                            <td>78</td>
-                            <td>Product J</td>
-                        </tr>
+                    <tbody id="topProductsTable">
+                        <!-- Dynamically populated -->
                     </tbody>
                 </table>
             </div>
@@ -152,19 +121,27 @@
     <script>
         let salesChart = null;
 
+        // Function to calculate the difference in days between two dates
+        function getDaysDifference(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const diffTime = Math.abs(end - start);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
         // Function to initialize or update the chart
         function updateChart(labels, data) {
             const ctx = document.getElementById('salesChart').getContext('2d');
             if (salesChart) {
-                salesChart.destroy(); // Destroy previous chart instance
+                salesChart.destroy();
             }
             salesChart = new Chart(ctx, {
-                type: 'line', // Changed to line graph
+                type: 'line',
                 data: {
-                    labels: labels, // Dates or time periods
+                    labels: labels,
                     datasets: [{
                         label: 'Total Sales (₱)',
-                        data: data, // Simulated or fetched sales data
+                        data: data,
                         fill: false,
                         borderColor: '#1F4529',
                         borderWidth: 2,
@@ -204,20 +181,11 @@
             });
         }
 
-        // Initial dummy data for line graph (replace with real data)
-        function loadInitialChart() {
-            const dummyLabels = [
-                '2024-10-01', '2024-10-02', '2024-10-03', '2024-10-04', '2024-10-05',
-                '2024-10-06', '2024-10-07', '2024-10-08', '2024-10-09', '2024-10-10'
-            ];
-            const dummyData = [1000, 1200, 1150, 1300, 1250, 1400, 1350, 1450, 1300, 1500];
-            updateChart(dummyLabels, dummyData);
-        }
-
-        // Fetch and update chart based on date range
-        function fetchChartData(startDate, endDate) {
+        // Function to fetch analytics data and update the page
+        function fetchAnalyticsData(startDate, endDate) {
             const filterBtn = document.getElementById('filterBtn');
             const filterSpinner = document.getElementById('filterSpinner');
+            const chartContainer = document.getElementById('chartContainer');
             filterBtn.disabled = true;
             filterSpinner.style.display = 'inline-block';
 
@@ -227,9 +195,31 @@
                     return response.json();
                 })
                 .then(data => {
-                    const labels = data.labels || [];
-                    const salesData = data.sales || [];
-                    updateChart(labels, salesData);
+                    // Update stat cards
+                    document.getElementById('totalSales').textContent = `₱${data.totalSales.toFixed(2)}`;
+                    document.getElementById('newUsers').textContent = data.newUsers;
+                    document.getElementById('repeatPurchase').textContent = `${data.repeatPurchase.toFixed(1)}%`;
+
+                    // Update chart based on date range
+                    const daysDiff = getDaysDifference(startDate, endDate);
+                    if (daysDiff < 5) {
+                        chartContainer.style.display = 'none';
+                    } else {
+                        chartContainer.style.display = 'block';
+                        updateChart(data.chartLabels, data.chartData);
+                    }
+
+                    // Update top selling products table
+                    const topProductsTable = document.getElementById('topProductsTable');
+                    topProductsTable.innerHTML = '';
+                    data.topProducts.forEach(product => {
+                        const row = `<tr>
+                            <td>${product.quantity}</td>
+                            <td>${product.product_name}</td>
+                        </tr>`;
+                        topProductsTable.insertAdjacentHTML('beforeend', row);
+                    });
+
                     filterBtn.disabled = false;
                     filterSpinner.style.display = 'none';
                 })
@@ -246,14 +236,17 @@
                 });
         }
 
-        // Initialize chart on page load
+        // Initialize on page load with default dates
         document.addEventListener('DOMContentLoaded', function() {
-            loadInitialChart();
+            const startDate = document.getElementById('start').value;
+            const endDate = document.getElementById('end').value;
+            fetchAnalyticsData(startDate, endDate);
+
             document.getElementById('filterBtn').addEventListener('click', function() {
                 const startDate = document.getElementById('start').value;
                 const endDate = document.getElementById('end').value;
                 if (startDate && endDate && startDate <= endDate) {
-                    fetchChartData(startDate, endDate);
+                    fetchAnalyticsData(startDate, endDate);
                 } else {
                     Swal.fire({
                         icon: 'warning',

@@ -7,31 +7,21 @@
   <title>Admin Dashboard - Manage Orders</title>
 
   <!-- Bootstrap CSS -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 
   <!-- Additional Fonts/Icons -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap"
-    rel="stylesheet"
-  />
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
 
   <!-- Optional Custom CSS -->
   <link rel="stylesheet" href="style2.css" />
 
   <style>
-    /* ----- POPUP STYLES (Modal-like) ----- */
     .popup, .zoom-popup {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      display: none; /* hidden by default */
+      display: none;
       align-items: center; 
       justify-content: center;
       background-color: rgba(0, 0, 0, 0.5);
@@ -51,8 +41,6 @@
       font-size: 1.5rem;
       cursor: pointer;
     }
-
-    /* For table scrolling if needed */
     .table-container {
       overflow-x: auto;
       margin-top: 1rem;
@@ -68,20 +56,17 @@
       word-wrap: break-word;
       text-align: left;
     }
-
-    /* Receipt & Zoom popups */
     #receiptPopup .popup-content {
       max-width: 600px;
     }
     #zoomPopup {
-      z-index: 10000; /* place above receipt popup if both appear */
+      z-index: 10000;
     }
     #zoomPopup img {
       max-width: 90%; 
       max-height: 90%;
       object-fit: contain;
     }
-    /* Subtle styling for the "Review Payment" link */
     a#reviewPayment {
       color: #0d6efd;
       text-decoration: none;
@@ -89,6 +74,22 @@
     }
     a#reviewPayment:hover {
       text-decoration: underline;
+    }
+    th.sortable {
+      cursor: pointer;
+    }
+    th.sortable:hover {
+      background-color: #f0f0f0;
+    }
+    th.sortable:after {
+      content: " ↕";
+      opacity: 0.5;
+    }
+    th.sorted-asc:after {
+      content: " ↑";
+    }
+    th.sorted-desc:after {
+      content: " ↓";
     }
   </style>
 </head>
@@ -119,26 +120,30 @@
       <div class="col-md-10 p-4 main-content">
         <h3 class="mt-4 text-center">Orders Table</h3>
         <div class="d-flex justify-content-end align-items-center mb-3">
-          <!-- Search Input -->
+          <select id="filterStatus" class="form-select me-2" style="width: auto;">
+            <option value="">All Statuses</option>
+            <option value="Waiting for Payment">Waiting for Payment</option>
+            <option value="Processing">Processing</option>
+            <option value="Shipped">Shipped</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
           <input type="text" id="searchOrder" class="form-control w-25 me-2" placeholder="Search Order" />
         </div>
 
-        <!-- Orders Table -->
         <div class="bg-white p-4 rounded shadow-sm">
           <table class="table table-bordered text-center">
             <thead>
               <tr class="table-success">
                 <th>Order ID</th>
                 <th>Number of Items</th>
-                <th>Total</th>
-                <th>Status</th>
+                <th class="sortable" onclick="sortTable('total')">Total</th>
+                <th class="sortable" onclick="sortTable('status')">Status</th>
                 <th>Tracking Link</th>
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody id="ordersTable">
-              <!-- Will be loaded via AJAX from fetchorders.php -->
-            </tbody>
+            <tbody id="ordersTable"></tbody>
           </table>
         </div>
       </div>
@@ -148,7 +153,7 @@
   <!-- ORDER DETAILS POPUP -->
   <div id="orderPopup" class="popup">
     <div class="popup-content">
-      <span class="close" onclick="closePopup()">&times;</span>
+      <span class="close" onclick="closePopup()">×</span>
       <h4>Order Details</h4>
       <div class="table-container">
         <table class="table table-bordered">
@@ -169,7 +174,6 @@
           </thead>
           <tbody>
             <tr>
-              <!-- Plain text display instead of input boxes -->
               <td><div id="orderDateDisplay" class="form-control-plaintext"></div></td>
               <td><div id="productIDDisplay" class="form-control-plaintext"></div></td>
               <td><div id="productNameDisplay" class="form-control-plaintext"></div></td>
@@ -179,10 +183,11 @@
               <td><div id="paymentOptionDisplay" class="form-control-plaintext"></div></td>
               <td>
                 <select id="status" name="status" class="form-select">
-                  <option value="invalidate">Invalidate</option>
-                  <option value="pending">Pending</option>
-                  <option value="shipped">Shipped</option>
-                  <option value="delivered">Delivered</option>
+                  <option value="Waiting for Payment">Waiting for Payment</option>
+                  <option value="Processing">Processing</option>
+                  <option value="Shipped">Shipped</option>
+                  <option value="Delivered">Delivered</option>
+                  <option value="Cancelled">Cancelled</option>
                 </select>
               </td>
               <td><div id="totalDisplay" class="form-control-plaintext"></div></td>
@@ -211,17 +216,17 @@
   <!-- RECEIPT POPUP -->
   <div id="receiptPopup" class="popup">
     <div class="popup-content">
-      <span class="close" onclick="closeReceiptPopup()">&times;</span>
+      <span class="close" onclick="closeReceiptPopup()">×</span>
       <h4>Payment Receipt</h4>
       <div class="text-center">
-        <img id="receiptImage" src="images/gkas.jpeg" alt="Receipt Image" class="img-fluid" style="max-width: 100%; max-height: 500px; cursor: pointer;" onclick="openZoomedImage()" />
+        <img id="receiptImage" src="" alt="Receipt Image" class="img-fluid" style="max-width: 100%; max-height: 500px; cursor: pointer;" onclick="openZoomedImage()" />
       </div>
     </div>
   </div>
 
   <!-- ZOOMED IMAGE POPUP -->
   <div id="zoomPopup" class="zoom-popup">
-    <span class="close" onclick="closeZoomedImage()">&times;</span>
+    <span class="close" onclick="closeZoomedImage()">×</span>
     <img id="zoomedImage" src="" alt="Zoomed Image" />
   </div>
 
@@ -231,41 +236,61 @@
 
   <script>
     let isChanged = false;
+    let currentOrderID = null;
+    let sortField = '';
+    let sortOrder = 'asc';
+    let originalStatus = ''; // To store the original status of the order
 
     // 1. Load orders from fetchorders.php
-    function loadOrders(query = "") {
-      document.getElementById("ordersTable").innerHTML =
-        "<tr><td colspan='6'>Loading...</td></tr>";
-      fetch(`fetchorders.php?search=${query}`)
+    function loadOrders(query = "", filterStatus = "", sort = '', order = 'asc') {
+      document.getElementById("ordersTable").innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
+      const url = `fetchorders.php?search=${encodeURIComponent(query)}&filter=${encodeURIComponent(filterStatus)}&sort=${encodeURIComponent(sort)}&order=${encodeURIComponent(order)}`;
+      fetch(url)
         .then(response => response.text())
         .then(data => {
           document.getElementById("ordersTable").innerHTML = data;
+          document.querySelectorAll('th.sortable').forEach(th => th.classList.remove('sorted-asc', 'sorted-desc'));
+          if (sort) {
+            const th = document.querySelector(`th.sortable[onclick="sortTable('${sort}')"]`);
+            if (th) th.classList.add(sortOrder === 'asc' ? 'sorted-asc' : 'sorted-desc');
+          }
         })
         .catch(error => {
           console.error("Error loading orders:", error);
-          document.getElementById("ordersTable").innerHTML =
-            "<tr><td colspan='6' class='text-danger'>Failed to load data</td></tr>";
+          document.getElementById("ordersTable").innerHTML = "<tr><td colspan='6' class='text-danger'>Failed to load data</td></tr>";
         });
     }
 
     document.addEventListener("DOMContentLoaded", () => {
       loadOrders();
       document.getElementById("searchOrder").addEventListener("input", function () {
-        loadOrders(this.value);
+        loadOrders(this.value, document.getElementById("filterStatus").value, sortField, sortOrder);
+      });
+      document.getElementById("filterStatus").addEventListener("change", function () {
+        loadOrders(document.getElementById("searchOrder").value, this.value, sortField, sortOrder);
       });
     });
 
-    // 2. Open the details popup
+    // 2. Sort and filter table
+    function sortTable(field) {
+      if (sortField === field) {
+        sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortField = field;
+        sortOrder = 'asc';
+      }
+      loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
+    }
+
+    // 3. Open the details popup
     function openPopup(orderID) {
+      currentOrderID = orderID;
       fetch(`getorderdetails.php?orderID=${orderID}`)
         .then(response => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
+          if (!response.ok) throw new Error("Network response was not ok");
           return response.json();
         })
         .then(data => {
-          // Populate plain text fields using textContent
           document.getElementById("orderDateDisplay").textContent = data.order_date || "";
           document.getElementById("productIDDisplay").textContent = data.productID || "";
           document.getElementById("productNameDisplay").textContent = data.product_name || "";
@@ -275,26 +300,35 @@
           document.getElementById("paymentOptionDisplay").textContent = data.payment_option || "";
           document.getElementById("totalDisplay").textContent = "₱" + (data.price_total || "");
           
-          // Editable fields
-          document.getElementById("status").value = data.status || "pending";
+          document.getElementById("status").value = data.status || "Waiting for Payment";
+          originalStatus = data.status || "Waiting for Payment"; // Store original status
           document.getElementById("confirmPayment").checked = (data.isApproved == 1);
           document.getElementById("trackingLink").value = data.trackingLink || "";
+          document.getElementById("receiptImage").src = data.payment_proof || "images/placeholder.jpg";
 
           isChanged = false;
           document.getElementById("orderPopup").style.display = "flex";
         })
         .catch(error => {
           console.error("Error fetching order details:", error);
+          Swal.fire({
+            title: "Error",
+            text: "Failed to load order details.",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
         });
     }
 
-    // 3. Close the details popup
+    // 4. Close the details popup
     function closePopup() {
       if (isChanged) {
         const confirmClose = confirm("You have unsaved changes. Do you want to discard them?");
         if (!confirmClose) return;
       }
       document.getElementById("orderPopup").style.display = "none";
+      currentOrderID = null;
+      originalStatus = '';
     }
 
     function discardChanges() {
@@ -310,7 +344,7 @@
     document.getElementById("confirmPayment").addEventListener("change", () => { isChanged = true; });
     document.getElementById("trackingLink").addEventListener("input", () => { isChanged = true; });
 
-    // 4. Receipt popup
+    // 5. Receipt popup
     document.getElementById("reviewPayment").addEventListener("click", (event) => {
       event.preventDefault();
       openReceiptPopup();
@@ -323,7 +357,7 @@
       document.getElementById("receiptPopup").style.display = "none";
     }
 
-    // 5. Zoomed image
+    // 6. Zoomed image
     function openZoomedImage() {
       const receiptImageSrc = document.getElementById("receiptImage").src;
       document.getElementById("zoomedImage").src = receiptImageSrc;
@@ -333,17 +367,47 @@
       document.getElementById("zoomPopup").style.display = "none";
     }
 
-    // 6. Save changes to the order
+    // 7. Save changes to the order
     function saveChanges() {
-      const status = document.getElementById("status").value;
+      let status = document.getElementById("status").value;
       const isPaymentConfirmed = document.getElementById("confirmPayment").checked;
-      const trackingLink = document.getElementById("trackingLink").value;
+      const trackingLink = document.getElementById("trackingLink").value.trim();
+
+      // Auto-update status based on conditions
+      if (isPaymentConfirmed && status === "Waiting for Payment") {
+        status = "Processing";
+        document.getElementById("status").value = status;
+      }
+      if (trackingLink && (status === "Processing" || status === "Waiting for Payment")) {
+        status = "Shipped";
+        document.getElementById("status").value = status;
+      }
+
+      // Prevent setting to "Delivered" unless the order is "Shipped" and has a tracking link
+      if (status === "Delivered" && originalStatus !== "Shipped") {
+        Swal.fire({
+          title: "Invalid Status Change",
+          text: "Order must be in 'Shipped' status before marking as 'Delivered'.",
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+        return;
+      }
+      if (status === "Delivered" && !trackingLink) {
+        Swal.fire({
+          title: "Missing Tracking Link",
+          text: "A tracking link is required before marking an order as 'Delivered'.",
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+        return;
+      }
 
       fetch("updateorder.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // If your backend still needs orderID, store it somewhere hidden or in a global variable.
+          orderID: currentOrderID,
           status: status,
           isApproved: isPaymentConfirmed,
           trackingLink: trackingLink,
@@ -357,8 +421,10 @@
               text: result.message,
               icon: "success",
               confirmButtonText: "OK",
+            }).then(() => {
+              loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
+              closePopup();
             });
-            // Optionally reload orders
           } else {
             Swal.fire({
               title: "Error",
@@ -379,7 +445,6 @@
         });
 
       isChanged = false;
-      closePopup();
     }
   </script>
 </body>

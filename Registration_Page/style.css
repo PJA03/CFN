@@ -192,13 +192,6 @@ p{
     text-align: left;
 }
 
-
-.btn { 
-    color: #ffffff !important;
-    background-color: #1F4529 !important; 
-    cursor: pointer;
-}
-
 .bkg {
     background-color: #1F4529;
     color: #ffffff;
@@ -353,4 +346,65 @@ input::-ms-clear {
     text-align: center;
     margin-left: 10px;
     margin-right: 10px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px; /* Thin scrollbar */
+    height: 6px; /* Thin scrollbar for horizontal scrolling */
+}
+
+::-webkit-scrollbar-track {
+    background: #E8ECD7; /* Light background */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #FF8666; /* Soft green thumb */
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1F4529; /* Darker green when hovered */
+}
+
+.modal-body {
+    text-align: justify;
+    align-items: center;
+}
+
+.modal-header {
+    color:  whitesmoke;
+}
+
+.modal-dialog {
+    max-width: 40%; /* Adjust as needed */
+}
+
+.modal-content {
+   max-height: 70vh; /* Adjust height */
+   overflow-y: auto; /* Enables scrolling if content is too long */
+}
+
+.btn-close {
+    transition: background-color 0.3s ease;
+    opacity: 1;
+    cursor: pointer;
+}
+
+.btn-close:hover {
+    background-color:#C0D171
+}
+
+.btn { 
+    color: #ffffff !important;
+    background-color: #1F4529 !important; 
+    cursor: pointer;
+    opacity: 1;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color:#C0D171
 }

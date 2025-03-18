@@ -117,14 +117,31 @@
 
     <!-- Modal -->
     <div class="modal fade" id="ModalTerms" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
-                <div class="modal-header" style="background-color: #EED3B1;">
+                <div class="modal-header" style="background-color: #1F4529;">
                     <h5 class="modal-title" id="exampleModalLongTitle" style="font-weight: bold;">CFN Naturale Terms and Conditions</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Terms terms terms
+<b>1. Introduction</b><br>
+Welcome to Cosmeticas Fraiche Naturale. By accessing or using our website, you agree to comply with these Terms of Use. If you do not agree, please do not use our services.<br><br>
+<b>2. Use of Website</b><br>
+You must be at least 16 years old to use our website. You agree to use the website only for lawful purposes and in accordance with these terms.<br><br>
+<b>3. Account Registration</b><br>
+To make purchases, you may need to create an account. You are responsible for maintaining the confidentiality of your account and password.<br><br>
+<b>4. Orders and Payments</b><br>
+All prices are listed in Philippine Peso. We reserve the right to refuse or cancel orders at our discretion. Payments must be completed before orders are processed.<br><br>
+<b>5. Shipping and Cancellation of Orders</b><br>
+We strive to deliver products in a timely manner. All sales are final, and we do not accept returns or exchanges. As for cancellations, it is allowed as long as the orders are not confirmed yet.<br><br>
+<b>6. Intellectual Property</b><br>
+All content on this site, including logos, text, and images, is owned by Cosmeticas Fraiche Naturale and may not be used without permission.<br><br>
+<b>7. Limitation of Liability</b><br>
+We are not responsible for any indirect, incidental, or consequential damages arising from the use of our website or products.<br><br>
+<b>8. Changes to Terms</b><br>
+We may update these terms at any time. Continued use of the website means you accept the updated terms.<br><br>
+<b>9. Contact Information</b><br>
+For any questions, contact us at cosmeticasfraichenaturale@gmail.com.
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn" id="accept-terms" data-bs-dismiss="modal">Accept</button>
@@ -136,14 +153,29 @@
 
     <!-- Modal Privacy Policy -->
     <div class="modal fade" id="ModalPrivacy" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
-                <div class="modal-header" style="background-color: #EED3B1;">
+                <div class="modal-header" style="background-color: #1F4529;">
                     <h5 class="modal-title" id="exampleModalLongTitle" style="font-weight: bold;">CFN Naturale Privacy Policy</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    PeePee PeePee PeePee
+<b>1. Information We Collect</b><br>
+We collect personal information, such as your name, email, shipping address, and payment details when you make a purchase or create an account.<br><br>
+<b>2. How We Use Your Information</b><br>
+We use your information to process orders, improve our website, and communicate with you about promotions or support inquiries.<br><br>
+<b>3. Sharing of Information</b><br>
+We do not sell your personal information. However, we may share it with third-party service providers for payment processing or shipping.<br><br>
+<b>4. Cookies and Tracking</b><br>
+We use cookies to enhance your browsing experience. You can disable cookies in your browser settings, but some features may not function properly.<br><br>
+<b>5. Data Security</b><br>
+We implement security measures to protect your data but cannot guarantee complete security due to internet vulnerabilities.<br><br>
+<b>6. Your Rights</b><br>
+You have the right to access, update, or delete your personal information. Contact us at cosmeticasfraichenaturale@gmail.com for any requests.<br><br>
+<b>7. Changes to Privacy Policy</b><br>
+We may update this policy. Continued use of our services after updates means you accept the revised policy.<br><br>
+<b>8. Contact Information</b><br>
+For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn" id="accept-terms" data-bs-dismiss="modal">Accept</button>
