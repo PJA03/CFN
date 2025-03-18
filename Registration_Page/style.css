@@ -1,3 +1,4 @@
+
 * {
     margin: 0;
     padding: 0;
@@ -375,6 +376,15 @@ input::-ms-clear {
 
 .modal-header {
     color:  whitesmoke;
+}
+
+.modal-dialog {
+    max-width: 40%; /* Adjust as needed */
+}
+
+.modal-content {
+   max-height: 70vh; /* Adjust height */
+   overflow-y: auto; /* Enables scrolling if content is too long */
 }
 
 .btn-close {
