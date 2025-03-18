@@ -354,3 +354,24 @@ input::-ms-clear {
     margin-left: 10px;
     margin-right: 10px;
 }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px; /* Thin scrollbar */
+    height: 6px; /* Thin scrollbar for horizontal scrolling */
+}
+
+::-webkit-scrollbar-track {
+    background: #E8ECD7; /* Light background */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #FF8666; /* Soft green thumb */
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1F4529; /* Darker green when hovered */
+}
