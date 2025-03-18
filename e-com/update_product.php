@@ -13,59 +13,66 @@ $dbname = "db_cfn";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
-    die(json_encode(["status" => "error", "message" => "Connection failed: " . $conn->connect_error]));
+    die("Connection failed: " . $conn->connect_error);
 }
 
 $productID = intval($_POST['productID']);
-$productName = $_POST['productName']; // Removed real_escape_string
-$productDescription = $_POST['productDescription']; // Removed real_escape_string
-$category = $_POST['category']; // Removed real_escape_string
+$productName = $conn->real_escape_string($_POST['productName']);
+$productDescription = $conn->real_escape_string($_POST['productDescription']);
+$category = $conn->real_escape_string($_POST['category']);
 
 // Optional: Limit description length (e.g., 10,000 characters)
 $maxDescriptionLength = 10000;
 if (strlen($productDescription) > $maxDescriptionLength) {
-    die(json_encode(["status" => "error", "message" => "Description exceeds maximum length of $maxDescriptionLength characters."]));
+    die("Description exceeds maximum length of $maxDescriptionLength characters.");
 }
 
 // Handle image upload if provided
 $productImagePath = "";
+$sql = "SELECT product_image FROM tb_products WHERE productID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $productID);
+$stmt->execute();
+$result = $stmt->get_result();
+$product = $result->fetch_assoc();
+$existingImagePath = $product['product_image'] ?? '';
+
 if (isset($_FILES['productImage']) && $_FILES['productImage']['error'] === UPLOAD_ERR_OK) {
-    $targetDir = __DIR__ . "/uploads/"; // Use absolute path
-    if (!file_exists($targetDir)) {
-        mkdir($targetDir, 0755, true);
+    $uploadDir = 'uploads/'; // Relative to the script's directory
+    if (!file_exists($uploadDir)) {
+        mkdir($uploadDir, 0755, true);
     }
     $fileName = basename($_FILES["productImage"]["name"]);
-    $targetFilePath = $targetDir . $fileName;
-    $imageFileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
-    $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
-    if (!in_array($imageFileType, $allowedTypes)) {
-        die(json_encode(["status" => "error", "message" => "Invalid file type. Only JPG, JPEG, PNG, and GIF files are allowed."]));
+    $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+    $allowedExts = ['jpg', 'jpeg', 'png', 'gif'];
+    if (!in_array($fileExt, $allowedExts)) {
+        die("Invalid file type. Only JPG, JPEG, PNG, and GIF files are allowed.");
     }
+    // Generate a unique filename to avoid overwriting
+    $newFileName = uniqid() . '_' . time() . '.' . $fileExt;
+    $targetFilePath = $uploadDir . $newFileName;
     if (move_uploaded_file($_FILES["productImage"]["tmp_name"], $targetFilePath)) {
-        $productImagePath = $targetFilePath;
+        $productImagePath = $uploadDir . $newFileName; // Store the relative path
+        // Optionally delete the old image if it exists and is different
+        if (!empty($existingImagePath) && file_exists($existingImagePath) && $existingImagePath != $targetFilePath) {
+            unlink($existingImagePath);
+        }
     } else {
-        die(json_encode(["status" => "error", "message" => "Error uploading image."]));
+        die("Error uploading image.");
     }
 } else {
-    $sql = "SELECT product_image FROM tb_products WHERE productID = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $productID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $product = $result->fetch_assoc();
-    $productImagePath = $product['product_image'] ?? '';
-    $stmt->close();
+    $productImagePath = $existingImagePath; // Retain the existing image path
 }
 
 // Update main product record
 $sql = "UPDATE tb_products SET product_name = ?, product_desc = ?, category = ?, product_image = ?, updated_at = NOW() WHERE productID = ?";
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
-    die(json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]));
+    die("Prepare failed: " . $conn->error);
 }
 $stmt->bind_param("ssssi", $productName, $productDescription, $category, $productImagePath, $productID);
 if (!$stmt->execute()) {
-    die(json_encode(["status" => "error", "message" => "Update failed: " . $stmt->error]));
+    die("Update failed: " . $stmt->error);
 }
 $stmt->close();
 
@@ -90,35 +97,38 @@ if (isset($_POST['variant_id']) && is_array($_POST['variant_id'])) {
     }
     $stmt->close();
 
-    $updateStmt = $conn->prepare("UPDATE tb_productvariants SET variant_name = ?, price = ?, stock = ?, sku = ?, updated_at = NOW() WHERE variant_id = ? AND productID = ?");
+    $updateStmt = $conn->prepare("UPDATE tb_productvariants SET variant_name = ?, price = ?, stock = ?, sku = ?, is_default = ?, updated_at = NOW() WHERE variant_id = ? AND productID = ?");
     $insertStmt = $conn->prepare("INSERT INTO tb_productvariants (productID, variant_name, price, stock, sku, is_default, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 0, NOW(), NOW())");
 
     for ($i = 0; $i < count($variantNames); $i++) {
         $v_id = $submittedVariantIDs[$i] ?? 0;
-        $v_name = $variantNames[$i];
+        $v_name = $conn->real_escape_string($variantNames[$i]);
         $v_price = floatval($variantPrices[$i]);
         $v_stock = intval($variantStocks[$i]);
-        $v_sku = $variantSKUs[$i] ?? "";
+        $v_sku = $conn->real_escape_string($variantSKUs[$i] ?? "");
+        $isDefault = ($i == $defaultVariantIndex) ? 1 : 0;
 
         if ($v_id > 0) {
-            $updateStmt->bind_param("sdisii", $v_name, $v_price, $v_stock, $v_sku, $v_id, $productID);
+            $updateStmt->bind_param("sdissii", $v_name, $v_price, $v_stock, $v_sku, $isDefault, $v_id, $productID);
             $updateStmt->execute();
         } else {
-            $insertStmt->bind_param("isdsi", $productID, $v_name, $v_price, $v_stock, $v_sku);
+            $insertStmt->bind_param("isdssi", $productID, $v_name, $v_price, $v_stock, $v_sku, $isDefault);
             $insertStmt->execute();
             $v_id = $conn->insert_id;
         }
 
-        $isDefault = ($i == $defaultVariantIndex) ? 1 : 0;
-        $setDefaultStmt = $conn->prepare("UPDATE tb_productvariants SET is_default = ? WHERE variant_id = ? AND productID = ?");
-        $setDefaultStmt->bind_param("iii", $isDefault, $v_id, $productID);
-        $setDefaultStmt->execute();
-        $setDefaultStmt->close();
+        // Ensure only one default variant
+        if ($isDefault) {
+            $setDefaultStmt = $conn->prepare("UPDATE tb_productvariants SET is_default = 0 WHERE productID = ? AND variant_id != ?");
+            $setDefaultStmt->bind_param("ii", $productID, $v_id);
+            $setDefaultStmt->execute();
+            $setDefaultStmt->close();
+        }
     }
 
     $variantsToDelete = array_diff($existingVariantIDs, array_filter($submittedVariantIDs));
     if (!empty($variantsToDelete)) {
-        $deleteStmt = $conn->prepare("DELETE FROM tb_productvariants WHERE variant_id = ? AND productID = ?");
+        $deleteStmt = $conn->prepare("DELETE FROM tb_productvariants WHERE variant_id = ? AND projectID = ?");
         foreach ($variantsToDelete as $deleteID) {
             $deleteStmt->bind_param("ii", $deleteID, $productID);
             $deleteStmt->execute();
@@ -133,13 +143,3 @@ if (isset($_POST['variant_id']) && is_array($_POST['variant_id'])) {
 $conn->close();
 header("Location: manageproductsA.php?update=success");
 exit;
-?>
-
-<script>
-    // Optional: Handle response if you switch to JSON
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('update') === 'success') {
-        alert('Product updated successfully.');
-        window.location.href = 'manageproductsA.php';
-    }
-</script>

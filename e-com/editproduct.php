@@ -25,6 +25,13 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
         $result = $stmt->get_result();
         if ($result->num_rows > 0) {
             $product = $result->fetch_assoc();
+            // Ensure the image path is relative to the web root
+            if (!empty($product['product_image']) && strpos($product['product_image'], 'uploads/') === 0) {
+                $product['product_image'] = $product['product_image']; // Already relative
+            } elseif (!empty($product['product_image'])) {
+                // Adjust if the path is absolute or malformed
+                $product['product_image'] = 'uploads/' . basename($product['product_image']);
+            }
         } else {
             $errorMessage = "Product not found.";
             $alertType = "danger";
@@ -85,9 +92,17 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
             <div class="col-md-10 p-4 main-content">
                 <!-- Alert Container -->
-                <div id="alert-message" class="alert alert-<?php echo isset($alertType) ? $alertType : ''; ?> alert-dismissible" role="alert" style="<?php echo isset($errorMessage) ? 'display: block;' : 'display: none;'; ?>">
+                <div id="alert-message" class="alert alert-<?php echo isset($alertType) ? $alertType : ''; ?> alert-dismissible" role="alert" style="<?php echo isset($errorMessage) || (isset($_GET['update']) && $_GET['update'] === 'success') ? 'display: block;' : 'display: none;'; ?>">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    <span id="alert-text"><?php echo isset($errorMessage) ? $errorMessage : ''; ?></span>
+                    <span id="alert-text">
+                        <?php 
+                        if (isset($errorMessage)) {
+                            echo $errorMessage;
+                        } elseif (isset($_GET['update']) && $_GET['update'] === 'success') {
+                            echo "Product updated successfully.";
+                        }
+                        ?>
+                    </span>
                 </div>
 
                 <?php if (!isset($errorMessage)): // Only show form if no fatal error ?>
@@ -97,7 +112,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
                         <input type="hidden" name="productID" value="<?= htmlspecialchars($product['productID']); ?>">
 
                         <div class="image-container text-center mb-3">
-                            <img id="productImage" src="<?= !empty($product['product_image']) ? $product['product_image'] : 'images/cfn_logo.png'; ?>" alt="Product Image" class="product-preview" style="max-width:300px;">
+                            <img id="productImage" src="<?= !empty($product['product_image']) ? '/CFN/e-com/' . htmlspecialchars($product['product_image']) : 'images/cfn_logo.png'; ?>" alt="Product Image" class="product-preview" style="max-width:300px;">
                             <div class="d-flex justify-content-end mt-2">
                                 <input type="file" id="imageUpload" name="productImage" accept="image/*" class="d-none">
                                 <button type="button" class="btn btn-danger edit-image-btn" onclick="document.getElementById('imageUpload').click();">Edit Image</button>
@@ -230,6 +245,19 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
             nextVariantIndex++;
             showAlert("New variant added.", "success");
         }
+
+        // Show success alert if redirected from update
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('update') === 'success') {
+                showAlert("Product updated successfully.", "success");
+                // Optionally auto-hide the alert after a few seconds
+                setTimeout(() => {
+                    const alert = document.getElementById("alert-message");
+                    alert.style.display = 'none';
+                }, 3000);
+            }
+        });
     </script>
 </body>
 </html>
