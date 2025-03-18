@@ -331,3 +331,26 @@ input::-ms-clear {
 .input-group-text .fa {
     font-size: 1.2em;
 }
+
+.btn-noBG {
+    background: none; /* Removes the background */
+    border: none; /* Removes the border */
+    outline: none; /* Removes the outline */
+    color: inherit; /* Inherits the text color */
+    cursor: pointer; /* Changes the cursor to a pointer */
+    padding: 0; /* Removes padding */
+    font-size: inherit; /* Ensures the font size matches surrounding text */
+    text-decoration: underline;
+    color: blue; /* Optional: Adds underline to make it look like a link */
+}
+
+.btn-noBG:hover {
+    text-decoration: none; /* Removes underline on hover (optional) */
+    color: #007bff; /* Optional: Changes text color on hover */
+}
+
+.label{
+    text-align: center;
+    margin-left: 10px;
+    margin-right: 10px;
+}
