@@ -85,6 +85,23 @@
             }
 
         ?>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.querySelector("form").addEventListener("submit", function (event) {
+            const emailInput = document.getElementById("email1").value.trim();
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/; // Regex for email validation
+
+            if (!emailPattern.test(emailInput)) {
+                event.preventDefault(); // Prevent form submission
+                Swal.fire({
+                    icon: "error",
+                    title: "Invalid Email",
+                    text: "Please enter a valid email address.",
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 

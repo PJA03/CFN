@@ -144,7 +144,8 @@ We may update these terms at any time. Continued use of the website means you ac
 For any questions, contact us at cosmeticasfraichenaturale@gmail.com.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn" id="accept-terms" data-bs-dismiss="modal">Accept</button>
+                <button type="button" class="btn" id="deny-terms" data-bs-dismiss="modal">Deny</button>
                 </div>
             </div>
         </div>
@@ -177,7 +178,8 @@ We may update this policy. Continued use of our services after updates means you
 For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn" id="accept-terms" data-bs-dismiss="modal">Accept</button>
+                    <button type="button" class="btn" id="deny-terms" data-bs-dismiss="modal">Deny</button>
                 </div>
             </div>
         </div>
@@ -436,6 +438,26 @@ if (isset($_POST['login'])) {
     
   });
 
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const registerButton = document.querySelector("input[name='signup']");
+        const acceptButton = document.getElementById("accept-terms");
+        const denyButton = document.getElementById("deny-terms");
+
+        // Initially disable the register button
+        registerButton.disabled = true;
+
+        // Enable the register button when "Accept" is clicked
+        acceptButton.addEventListener("click", function () {
+            registerButton.disabled = false;
+        });
+
+        // Disable the register button when "Deny" is clicked
+        denyButton.addEventListener("click", function () {
+            registerButton.disabled = true;
+        });
+    });
 </script>
 
 <style>
