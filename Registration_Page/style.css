@@ -348,3 +348,9 @@ input::-ms-clear {
     text-decoration: none; /* Removes underline on hover (optional) */
     color: #007bff; /* Optional: Changes text color on hover */
 }
+
+.label{
+    text-align: center;
+    margin-left: 10px;
+    margin-right: 10px;
+}

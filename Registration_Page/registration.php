@@ -82,22 +82,22 @@
                         </div>
                         </div>
 
-                        <span class="text-center mt-3">By creating an account, you agree to our 
+                        <span class="label mt-3">By creating an account, you agree to our 
                             <button type="button" class="btn-noBG" data-bs-toggle="modal" data-bs-target="#ModalTerms">
                             Terms
                         </button>
                          and acknowledge our
                         <button type="button" class="btn-noBG" data-bs-toggle="modal" data-bs-target="#ModalPrivacy">
-                            Privacy Policy
+                            Privacy Policy.
                         </button>
 
-                        .</span>
+                        </span>
                         <br>
                         <div class="button d-flex justify-content-center align-items-center mt-3">
                             <input type="submit" class="btn bkg" name="signup" value = "Register Account">
                         </div>
                     </form>
-                    <br><br>
+                    <br><br><br>
                    <p>Already have an account? <button class="swipe btnSign-in btn-noBG">Login</button>. </p>
                 </div>
             </div>
@@ -119,8 +119,8 @@
     <div class="modal fade" id="ModalTerms" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">CFN Naturale Terms and Conditions</h5>
+                <div class="modal-header" style="background-color: #EED3B1;">
+                    <h5 class="modal-title" id="exampleModalLongTitle" style="font-weight: bold;">CFN Naturale Terms and Conditions</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -137,8 +137,8 @@
     <div class="modal fade" id="ModalPrivacy" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">CFN Naturale Privacy Policy</h5>
+                <div class="modal-header" style="background-color: #EED3B1;">
+                    <h5 class="modal-title" id="exampleModalLongTitle" style="font-weight: bold;">CFN Naturale Privacy Policy</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

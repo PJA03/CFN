@@ -13,6 +13,7 @@ body {
     width: 100%;
     background-color: #E8ECD7 !important;
     line-height: 1.6;
+    overflow: auto;
 }
 
 /* Headings styling */
@@ -38,10 +39,27 @@ h3 {
     /* color: #FF8666 !important;    Override any conflicts */
 }
 
+.col-md-5, .col-md-7{
+    line-height: 2;
+    text-wrap: wrap;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+.usernamedisplay{
+    display: flex;
+    justify-content: center;
+    color: #EED3B1;  
+    padding-top:15px;
+    font-size: 20px;
+    font-style: italic;
+}
+
 /* Logo */
 .logo {
     display: flex;
     align-items: center;
+    margin-left: 40px;;
     gap: 10px; /* Adjust spacing between the image and text */
 }
 
@@ -61,6 +79,7 @@ header {
     width: 100%; /* Ensure the header uses the full width */
     box-sizing: border-box; /* Prevent layout shift */
     position: relative;
+    height: auto;
 }
 
 /* Logo Styling */
@@ -75,7 +94,7 @@ header {
     justify-content: flex-start;
     gap: 20px;
     flex-grow: 1; /* Allow navbar to use available space */
-    margin-left: 1050px; /* Add space between the logo and navbar */
+    margin-left: 70vw; /* Add space between the logo and navbar */
 }
 
 /* Search Bar Styling */
@@ -94,20 +113,17 @@ header {
 .icons {
     display: flex;
     align-items: center;
+    justify-items: center;
     gap: 15px;
+    margin-left: 3vh;
 }
 
 /* Font Awesome Icon Styles */
-.icon-profile {
-    font-size: 1.5rem;
+.icon-profile, .home, .cart {
+    font-size: 1.6rem;
     color: #EED3B1;
     cursor: pointer;
-}
 
-.burger-menu {
-    font-size: 1.8rem;
-    color: #EED3B1;
-    cursor: pointer;
 }
 
 
@@ -117,6 +133,7 @@ body {
     padding: 0;
 }
 
+
 .active{
     text-decoration: underline;
     color: white;
@@ -124,9 +141,10 @@ body {
 }
 
 .transparent-button{
+    display: flex;
     background-color: transparent;
     border: none;
-    margin: none;
+    margin-left: 10px;
     color: white;
 }
 
@@ -135,14 +153,13 @@ body {
     justify-content: center;
     flex-direction: column;
     margin-top: 50px;
-    width: 80vw;
+    width: 50vw;
     margin: auto;
     margin-top: 50px;
     /* background-color: #FF8666; */
-    height: 80vh;
-    background: whitesmoke;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
+    height: 60vh;
+    /* background: whitesmoke; */
+   
 
 }
 
@@ -153,19 +170,27 @@ body {
     text-align: center;
     background: #1F4529;
     color: white;
-    border-radius: 20px;
-    padding-top: 40px;
-    height: 80vh;
+    /* border-radius: 20px; */
+    padding-top: 50px;
+    height: 60vh;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    overflow: auto;
     
 
 }
 
 .right-panel{
+    display: flex;
+    align-items: center;
     background: whitesmoke;
-    padding-top: 30px;
+    /* padding-top: 30px; */
     /* padding: 10px; */
-    height: 80vh;
-    border-radius: 20px;
+    height: 60vh;
+    /* border-radius: 20px; */
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    overflow: auto;
 
 
 }
@@ -240,3 +265,104 @@ body {
     align-items:end;
 }
 
+.Edit {
+    background-color: gray;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 20px;
+    cursor: pointer;
+    border: none;
+    width: 110px;
+    text-align: center;
+}
+
+.Edit:hover{
+    background-color: #a5b461 !important; 
+}
+
+
+/*footer*/
+footer {
+    background-color: #1F4529;
+    color: white;
+    padding: 20px 50px;
+    display: flex;
+    flex-direction: column; /* Stack footer elements vertically */
+    width: 100%;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.footer-left {
+    display: flex;
+    align-items: center;
+}
+
+.footer-logo {
+    height: 200px; /* Adjust according to your logo size */
+    margin-left: 100px;
+}
+
+.footer-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.footer-right {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+}
+
+.footer-nav {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 40px;
+}
+
+.footer-nav li {
+    font-family: "Bebas Neue", serif !important;
+    font-size: 20px;
+}
+
+.footer-nav a {
+    color: white;
+    text-decoration: none;
+}
+
+.social-icons {
+    flex-direction: column; /* Keeps the SOCIALS text on top and icons underneath */
+    align-items: flex-start; /* Aligns items to the left */
+    margin-bottom: 100px;
+}
+
+.social-icons a {
+    color: white;
+    font-size: 18px;
+    text-decoration: none;
+    gap: 10px;
+    margin-left: 4px;
+}
+
+.social-icons p {
+    color: white;
+    font-size: 20px;
+    font-family: "Bebas Neue", serif !important;
+    margin-bottom:0px; /* Space between SOCIALS text and icons */
+    margin-top: 0;  /* Optional, removes unnecessary margin */
+}
+
+.footer-center {
+    text-align: center;
+    width: 100%;
+    font-size: 14px;
+    margin-top: 10px;  /* Space between content and copyright */
+}
