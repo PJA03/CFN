@@ -1,4 +1,4 @@
-<?php
+<?php   
     session_start();
 ?>
 <!DOCTYPE html>
@@ -31,7 +31,7 @@
                 <br><br>
                     <h1>Login</h1>
                     <br><br>
-                    <form action="registration.php" method="post">
+                    <form action="registration.php" method="post" id="loginForm">
                         <div class="mb-3">
                             <input type="email" class="form-control" id="logemail" name="logemail" placeholder="Email" required>
                         </div>
@@ -54,13 +54,13 @@
                     <br>
                 </div>
             </div>
-    
+            <!-- sign up -->
             <div class="form log_in">
                 <div class="col p-5 rounded" style="background-color: #ffffff;">
                     <br>
                     <h1>Register</h1>
                     <br>
-                    <form action="registration.php" method="post">
+                    <form action="registration.php" method="post" id="registrationForm">
                         <div class="mb-3">
                             <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
                             <div id="usernameFeedback" class="invalid-feedback d-none">
@@ -94,7 +94,7 @@
                         </span>
                         <br>
                         <div class="button d-flex justify-content-center align-items-center mt-3">
-                            <input type="submit" class="btn bkg" name="signup" value = "Register Account">
+                            <input type="submit" class="btn bkg" name="signup" id="signup" value = "Register Account">
                         </div>
                     </form>
                     <br><br><br>
@@ -192,19 +192,22 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
         //account registration
         $registrationFailed = false;
         if (isset($_POST['signup'])) {
-            $username = $_POST['username'];
-            $email = $_POST['regisemail'];
-            $password = password_hash($_POST['regispassword'], PASSWORD_BCRYPT);
+            $username = htmlspecialchars(trim($_POST['username']), ENT_QUOTES, 'UTF-8');
+            $email = filter_var(trim($_POST['regisemail']), FILTER_SANITIZE_EMAIL);
+            $password = password_hash(trim($_POST['regispassword']), PASSWORD_BCRYPT);
             $validated = 0;
             
             //TODO: change back to user role when done testing
-            $role = "admin";
+            $role = "user";
             $token = rand(000000,999999);
             $token_created_at = date("Y-m-d H:i:s");
 
             // Check if email is already registered
-            $check_email = "SELECT * FROM tb_user WHERE email = '$email'";
-            $result_email = $conn->query($check_email);
+            $check_email = "SELECT * FROM tb_user WHERE email = ?";
+            $stmt_email = $conn->prepare($check_email);
+            $stmt_email->bind_param("s", $email);
+            $stmt_email->execute();
+            $result_email = $stmt_email->get_result();
 
             // Check if username is already taken
             $check_username = "SELECT * FROM tb_user WHERE username = ?";
@@ -259,9 +262,12 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                 </script>
                 <?php
             } else {
-                // Insert statement to register account
-                $signup = "INSERT INTO tb_user(username, email, pass, validated, role, token, token_created_at) values ('$username','$email','$password', '$validated', '$role', '$token', '$token_created_at')";
-                $result = $conn->query($signup);
+                // Insert new user into the database
+                $signup = "INSERT INTO tb_user (username, email, pass, validated, role, token, token_created_at) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?)";
+                $stmt_signup = $conn->prepare($signup);
+                $stmt_signup->bind_param("sssssss", $username, $email, $password, $validated, $role, $token, $token_created_at);
+                $result = $stmt_signup->execute();
                 
                 if ($result == true) {
                     // Call email verification function
@@ -286,92 +292,99 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
         }
 
         // Login account
-if (isset($_POST['login'])) {
-    $email = $_POST['logemail'];
-    $password = $_POST['logpassword'];
-    $_SESSION['email'] = $email;
-
-    // Query to fetch user data
-    $loginsql = "SELECT * FROM tb_user WHERE email='$email'";
-    $result = $conn->query($loginsql);
-
-    if ($result === FALSE) {
-        die("Error in SELECT query: " . $conn->error);
-    }
-
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-
-        // Verify password
-        if (password_verify($password, $user['pass'])) {
-            if ($user['validated'] == 1) { // Check if account is validated
-                // Store user data in session
-                $_SESSION['username'] = $user['username'];
-                $_SESSION['first_name'] = $user['first_name'];
-                $_SESSION['last_name'] = $user['last_name'];
-                $_SESSION['contact_no'] = $user['contact_no'];
-                $_SESSION['address'] = $user['address'];
-                $_SESSION['profile_image'] = $user['profile_image'];
-                $_SESSION['role'] = $user['role'];
-                
-                // Redirect based on role
-                if ($user['role'] == 'admin') {
-                    ?>
-                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                    <script>
-                        window.location.href = '../e-com/manageproductsA.php'; // Redirect to admin page
-                    </script>
-                    <?php
+        if (isset($_POST['login'])) {
+            $email = $_POST['logemail'];
+            $password = $_POST['logpassword'];
+            $_SESSION['email'] = $email;
+        
+            // Query to fetch user data using prepared statements
+            $loginsql = "SELECT * FROM tb_user WHERE email = ?";
+            $stmt = $conn->prepare($loginsql);
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        
+            if ($result === false) {
+                die("Error in SELECT query: " . $conn->error);
+            }
+        
+            if ($result->num_rows > 0) {
+                $user = $result->fetch_assoc();
+        
+                // Verify password
+                if (password_verify($password, $user['pass'])) {
+                    if ($user['validated'] == 1) { // Check if account is validated
+                        // Store user data in session
+                        $_SESSION['username'] = $user['username'];
+                        $_SESSION['first_name'] = $user['first_name'];
+                        $_SESSION['last_name'] = $user['last_name'];
+                        $_SESSION['contact_no'] = $user['contact_no'];
+                        $_SESSION['address'] = $user['address'];
+                        $_SESSION['profile_image'] = $user['profile_image'];
+                        $_SESSION['role'] = $user['role'];
+                        
+                        // Redirect based on role
+                        if ($user['role'] == 'admin') {
+                            ?>
+                            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                            <script>
+                                window.location.href = '../e-com/manageproductsA.php'; // Redirect to admin page
+                            </script>
+                            <?php
+                            session_regenerate_id(true);
+                        } else {
+                            ?>
+                            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                            <script>
+                                window.location.href = '../Home_Page/home.php'; // Redirect to home page
+                            </script>
+                            <?php
+                            session_regenerate_id(true);
+                        }
+                    } else {
+                        // Email not validated
+                        ?>
+                        <script>
+                            Swal.fire({
+                                position: "center",
+                                icon: "error",
+                                title: "Email not validated",
+                                showConfirmButton: true
+                            });
+                        </script>
+                        <?php
+                    }
                 } else {
+                    // Incorrect password
                     ?>
-                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                     <script>
-                        window.location.href = '../Home_Page/home.php'; // Redirect to home page
+                        Swal.fire({
+                            position: "center",
+                            icon: "error",
+                            title: "Login failed",
+                            text: "Incorrect email or password.",
+                            showConfirmButton: true
+                        });
                     </script>
                     <?php
                 }
             } else {
-                // Email not validated
+                // Incorrect email
                 ?>
                 <script>
                     Swal.fire({
                         position: "center",
                         icon: "error",
-                        title: "Email not validated",
+                        title: "Login failed",
+                        text: "Incorrect email or password.",
                         showConfirmButton: true
                     });
                 </script>
                 <?php
             }
-        } else {
-            // Incorrect password
-            ?>
-            <script>
-                Swal.fire({
-                    position: "center",
-                    icon: "error",
-                    title: "Login failed",
-                    text: "Incorrect email or password.",
-                    showConfirmButton: true
-                });
-            </script>
-            <?php
         }
-    } else {
-        // Incorrect email
-        ?>
-        <script>
-            Swal.fire({
-                position: "center",
-                icon: "error",
-                title: "Login failed",
-                text: "Incorrect email or password.",
-                showConfirmButton: true
-            });
-        </script>
-        <?php
-    }
-}
+
+
     ?>
     <!-- link script -->
     <script src="main.js"></script>
@@ -459,24 +472,6 @@ if (isset($_POST['login'])) {
         });
     });
 </script>
-
-<style>
-    #eyeicon {
-        width: 20px; 
-        height: 20px; 
-        cursor: pointer;
-    }
-
-    .form-control {
-    width: 100%; /* Ensures uniform width */
-    height: 40px; /* Adjust height to match other inputs */
-    }
-
-    .input-group-text img {
-    width: 18px; 
-    height: 18px;
-    }
-</style>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const registerButton = document.querySelector("input[name='signup']");
@@ -520,6 +515,67 @@ if (isset($_POST['login'])) {
         registerButton.disabled = true;
     });
 </script>
-</script>
+<script>
+        document.addEventListener("DOMContentLoaded", function () {
+        // Login Form Validation
+        const loginForm = document.getElementById("loginForm");
+        const logemailInput = document.getElementById("logemail");
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/; // Regex for email validation
+
+        loginForm.addEventListener("submit", function (event) {
+            const emailValue = logemailInput.value.trim();
+
+            if (!emailPattern.test(emailValue)) {
+                event.preventDefault(); // Prevent form submission
+                Swal.fire({
+                    icon: "error",
+                    title: "Invalid Email",
+                    text: "Please enter a valid email address.",
+                    confirmButtonColor: '#1F4529'
+                });
+            }
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+    // Registration Form Validation
+    const registrationForm = document.getElementById("registrationForm");
+    const regisemailInput = document.getElementById("regisemail");
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/; // Regex for email validation
+
+    registrationForm.addEventListener("submit", function (event) {
+        const emailValue = regisemailInput.value.trim();
+
+        if (!emailPattern.test(emailValue)) {
+            event.preventDefault(); // Prevent form submission
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Email",
+                text: "Please enter a valid email address.",
+                confirmButtonColor: '#1F4529'
+            });
+        }
+    });
+});
+ 
+    </script>    
+
+    <style>
+    #eyeicon {
+        width: 20px; 
+        height: 20px; 
+        cursor: pointer;
+    }
+
+    .form-control {
+    width: 100%; /* Ensures uniform width */
+    height: 40px; /* Adjust height to match other inputs */
+    }
+
+    .input-group-text img {
+    width: 18px; 
+    height: 18px;
+    }
+</style>
 </body>
 </html>

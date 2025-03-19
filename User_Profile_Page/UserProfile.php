@@ -52,8 +52,8 @@ if (isset($_POST['logout'])) {
             <img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image" />
         </div>
         <div class="navbar">
-            <p class = "usernamedisplay">Bonjour, <?php echo isset($user['username']) ? $user['username'] : ''; ?>!</p>
-            <div class="icons">
+                <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>            
+                <div class="icons">
                 <i class="fa-solid fa-house home"></i>
                 <i class="fa-solid fa-cart-shopping cart"></i>
                 <i class="far fa-user-circle fa-2x icon-profile"></i>
@@ -65,7 +65,7 @@ if (isset($_POST['logout'])) {
         <div class="row">
             <div class="col-md-4 left-panel">
                 <!-- profile picture -->
-                <img src="<?php echo isset($user['profile_image']) && !empty($user['profile_image']) ? $user['profile_image'] : '../Resources/profile.png'; ?>" alt="Profile Icon" name="icon" id="icon" class="profile-icon" width="150" style="margin: 10px;"/>
+                <img src="<?php echo htmlspecialchars(isset($user['profile_image']) && !empty($user['profile_image']) ? $user['profile_image'] : '../Resources/profile.png', ENT_QUOTES, 'UTF-8'); ?>" alt="Profile Icon" name="icon" id="icon" class="profile-icon" width="150" style="margin: 10px;">
                 <br>
                 <h2 style="color:whitesmoke">My Account</h2>
                 <a href="UserProfile.php" class="active">Profile</a>

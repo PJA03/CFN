@@ -2,11 +2,17 @@
 require_once "../conn.php";
 session_start();
 
+// Regenerate session ID
+session_regenerate_id(true);
+
+
 if (isset($_SESSION['email'])) {
     $email = $_SESSION['email'];
 
-    $sql = "SELECT username, email, first_name, last_name, contact_no, address, profile_image FROM tb_user WHERE email = '$email'";
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare("SELECT username, email, first_name, last_name, contact_no, address, profile_image FROM tb_user WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
@@ -15,7 +21,7 @@ if (isset($_SESSION['email'])) {
     }
 } else {
     header('Location: ../Registration_Page/registration.php');
-    exit();
+    exit(); 
 }
 
 if (isset($_POST['logout'])) {
@@ -85,7 +91,7 @@ if (isset($_POST['logout'])) {
                                     <p>Username: </p>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" name="username" id="username" class="editable form-control profile-input" value="<?php echo isset($user['username']) ? $user['username'] : ''; ?>" required>
+                                    <input type="text" name="username" id="username" class="editable form-control profile-input" value="<?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>" required>
                                 </div>
                             </div>
                             <div class="row">
@@ -93,7 +99,7 @@ if (isset($_POST['logout'])) {
                                     <p>Email:</p>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="email" name="email" class="editable form-control profile-input" value="<?php echo isset($user['email']) ? $user['email'] : ''; ?>" required pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" title="Please enter a valid email address">
+                                    <input type="email" name="email" class="editable form-control profile-input" value="<?php echo htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?>" required pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" title="Please enter a valid email address">
                                 </div>
                             </div>
                             <div class="row">
@@ -101,7 +107,7 @@ if (isset($_POST['logout'])) {
                                     <p>First Name:</p>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" name="first_name" class="editable form-control profile-input" value="<?php echo isset($user['first_name']) ? $user['first_name'] : ''; ?>" required>
+                                    <input type="text" name="first_name" class="editable form-control profile-input" value="<?php echo htmlspecialchars($user['first_name'], ENT_QUOTES, 'UTF-8'); ?>" required>
                                 </div>
                             </div>
                             <div class="row">
@@ -109,7 +115,7 @@ if (isset($_POST['logout'])) {
                                     <p>Last Name: </p>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" name="last_name" class="editable form-control profile-input" value="<?php echo isset($user['last_name']) ? $user['last_name'] : ''; ?>" required>
+                                    <input type="text" name="last_name" class="editable form-control profile-input" value="<?php echo htmlspecialchars($user['last_name'], ENT_QUOTES, 'UTF-8'); ?>" required>
                                 </div>
                             </div>
                             <div class="row">
@@ -117,7 +123,7 @@ if (isset($_POST['logout'])) {
                                     <p>Contact No.:</p>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" name="contact_no" class="editable form-control profile-input" value="<?php echo isset($user['contact_no']) ? $user['contact_no'] : ''; ?>" required pattern="^\d{11}$" title="Please enter a valid 11-digit phone number">
+                                    <input type="text" name="contact_no" class="editable form-control profile-input" value="<?php echo htmlspecialchars($user['contact_no'], ENT_QUOTES, 'UTF-8'); ?>" required pattern="^\d{11}$" title="Please enter a valid 11-digit phone number">
                                 </div>
                             </div>
                             <div class="row">
@@ -125,7 +131,7 @@ if (isset($_POST['logout'])) {
                                     <p>Delivery Address: </p>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" name="address" class="editable form-control profile-input" value="<?php echo isset($user['address']) ? $user['address'] : ''; ?>" required>
+                                    <input type="text" name="address" class="editable form-control profile-input" value="<?php echo htmlspecialchars($user['address'], ENT_QUOTES, 'UTF-8'); ?>" required>
                                 </div>
                             </div>
                             <div class="row">
@@ -142,7 +148,7 @@ if (isset($_POST['logout'])) {
                         </form>
                     </div>
                     <div class="col-md-5 text-center">
-                        <img src="<?php echo isset($user['profile_image']) ? $user['profile_image'] : '../Resources/profile.png'; ?>" alt="Profile Icon" name="icon" id="icon" class="profile-icon" width="100" style="margin: 10px;"/>
+                        <img src="<?php echo htmlspecialchars(isset($user['profile_image']) && !empty($user['profile_image']) ? $user['profile_image'] : '../Resources/profile.png', ENT_QUOTES, 'UTF-8'); ?>" alt="Profile Icon" name="icon" id="icon" class="profile-icon" width="100" style="margin: 10px;"/>
                     </div>
                 </div>    
             </div>
@@ -154,13 +160,39 @@ if (isset($_POST['logout'])) {
         $noChanges = false;        
 
         if (isset($_POST['save'])) {
-            $username = $_POST['username'];
-            $email = $_POST['email'];
-            $first_name = $_POST['first_name'];
-            $last_name = $_POST['last_name'];
-            $contact_no = $_POST['contact_no'];
-            $address = $_POST['address'];
+            $username = htmlspecialchars(trim($_POST['username']), ENT_QUOTES, 'UTF-8');
+            $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+            $first_name = htmlspecialchars(trim($_POST['first_name']), ENT_QUOTES, 'UTF-8');
+            $last_name = htmlspecialchars(trim($_POST['last_name']), ENT_QUOTES, 'UTF-8');
+            $contact_no = htmlspecialchars(trim($_POST['contact_no']), ENT_QUOTES, 'UTF-8');
+            $address = htmlspecialchars(trim($_POST['address']), ENT_QUOTES, 'UTF-8');
+            
+            // Handle file upload
             $profile_image = $user['profile_image'];
+            if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == UPLOAD_ERR_OK) {
+                $fileTmpPath = $_FILES['profile_image']['tmp_name'];
+                $fileName = $_FILES['profile_image']['name'];
+                $fileSize = $_FILES['profile_image']['size'];
+                $fileType = $_FILES['profile_image']['type'];
+                $fileNameCmps = explode(".", $fileName);
+                $fileExtension = strtolower(end($fileNameCmps));
+
+                $allowedfileExtensions = array('jpg', 'jpeg', 'png');
+                if (in_array($fileExtension, $allowedfileExtensions)) {
+                    $uploadFileDir = '../uploads/';
+                    $dest_path = $uploadFileDir . $fileName;
+
+                    if (move_uploaded_file($fileTmpPath, $dest_path)) {
+                        $profile_image = $dest_path;
+                    } else {
+                        $user = ['error' => 'There was an error moving the uploaded file.'];
+                    }
+                } else {
+                    $user = ['error' => 'Upload failed. Allowed file types: ' . implode(',', $allowedfileExtensions)];
+                }
+            }
+
+
         
              // Check if username exists and is not the current user's
              $checkUsername = $conn->prepare("SELECT * FROM tb_user WHERE username = ? AND email != ?");
