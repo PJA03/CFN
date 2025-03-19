@@ -49,14 +49,20 @@ if (isset($_POST['logout'])) {
 <body>
     <header>
         <div class="logo">
-            <img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image" />
+            <img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/>
         </div>
         <div class="navbar">
                 <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>            
                 <div class="icons">
-                <i class="fa-solid fa-house home"></i>
-                <i class="fa-solid fa-cart-shopping cart"></i>
-                <i class="far fa-user-circle fa-2x icon-profile"></i>
+                <a href="../Home_Page/home.php">
+                    <i class="fa-solid fa-house home"></i>
+                </a>
+                <a href="../drew/cart.php">
+                    <i class="fa-solid fa-cart-shopping cart"></i>
+                </a>
+                <a href="../User_Profile_Page/UserProfile.php">
+                    <i class="far fa-user-circle fa-2x icon-profile"></i>
+                </a>    
             </div>
         </div>
     </header>
@@ -75,7 +81,7 @@ if (isset($_POST['logout'])) {
             </div>
             <div class="col-md-8 right-panel">
                 <div class="row">
-                        <h2 class="lead">Profile Details </h2>
+                        <h2 class="lead">Profile Details</h2>
                         <div class="row">
                             <div class="col-md-5">
                                 <b>Username: </b>
