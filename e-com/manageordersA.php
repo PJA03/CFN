@@ -132,18 +132,19 @@
         </div>
 
         <div class="bg-white p-4 rounded shadow-sm">
-          <table class="table table-bordered text-center">
-            <thead>
-              <tr class="table-success">
-                <th>Order ID</th>
-                <th>Number of Items</th>
-                <th class="sortable" onclick="sortTable('total')">Total</th>
-                <th class="sortable" onclick="sortTable('status')">Status</th>
-                <th>Tracking Link</th>
-                <th>Action</th>
-              </tr>
+        <table class="table table-bordered text-center">
+        <thead>
+         <tr class="table-success">
+      <th>Order ID</th>
+      <th>Number of Items</th>
+      <th class="sortable" onclick="sortTable('total')">Total</th>
+      <th class="sortable" onclick="sortTable('status')">Status</th>
+      <th>Tracking Link</th>
+      <th>Address</th> <!-- New column header -->
+      <th>Action</th>
+           </tr>
             </thead>
-            <tbody id="ordersTable"></tbody>
+         <tbody id="ordersTable"></tbody>
           </table>
         </div>
       </div>
