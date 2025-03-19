@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 17, 2025 at 01:32 PM
+-- Generation Time: Mar 19, 2025 at 05:04 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -33,6 +33,21 @@ CREATE TABLE `tb_bestsellers` (
   `display_order` int(11) DEFAULT 0,
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tb_cart`
+--
+
+CREATE TABLE `tb_cart` (
+  `cart_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `productID` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 1,
+  `price` decimal(10,2) NOT NULL,
+  `price_total` decimal(10,2) GENERATED ALWAYS AS (`price` * `quantity`) STORED
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -89,36 +104,36 @@ CREATE TABLE `tb_products` (
 --
 
 INSERT INTO `tb_products` (`productID`, `product_name`, `product_desc`, `brand`, `category`, `product_image`, `created_at`, `updated_at`) VALUES
-(8, 'Buster D’ Acne Foam Wash 100ml w/ Silicone Brush', 'It is for rinsing away dirt, excess sebum, and\\r\\nother impurities without stripping the skin of\\r\\nits natural moisture balance.', 'BUSTER D’ ACNE', 'Buster D’ Acne Set', 'uploads/img_67c438d0d2ee75.43147062.jpg', '2025-03-02 18:54:08', '2025-03-02 18:54:08'),
-(9, 'Buster D’ Acne Toner 100ml', 'This toner serves as an astringent for oily\\\\r\\\\nand acne-prone skin that nourishes and\\\\r\\\\nprotects the skin, minimizes pores, and\\\\r\\\\ncalms redness due to skin irritants.', 'BUSTER D’ ACNE', 'Buster D’ Acne Set', 'uploads/Picture1.jpg', '2025-03-02 18:54:49', '2025-03-02 18:55:00'),
-(10, 'Buster D’ Acne Serum 30ml', 'Best for oily and acne-prone skin. It is a\\\\\\\\r\\\\\\\\nmattifying, pore-refining treatment that\\\\\\\\r\\\\\\\\nleaves skin flawless.', 'BUSTER D’ ACNE', 'Buster D’ Acne Set', 'uploads/Screenshot 2025-03-02 185610.jpg', '2025-03-02 18:55:50', '2025-03-02 18:56:34'),
-(11, 'Elixir Day Cream SPF50 PA+++ 50g', 'It contains safe natural chemicals and minerals\\\\r\\\\nthat are used as a sunscreen to whiten, lubricate,\\\\r\\\\n\\\\r\\\\nand provide sun protection. It provides broad-\\\\r\\\\nspectrum UVA and UVB protection. Easy to\\\\r\\\\n\\\\r\\\\napply, water-resistant, with sun pro', 'BUSTER D’ ACNE', 'Buster D’ Acne Set', 'uploads/Screenshot 2025-03-02 194023.jpg', '2025-03-02 18:57:49', '2025-03-02 19:40:34'),
-(12, 'SET + Box Packaging', 'It is formulated to treat acne-prone & oily\\r\\nskin and minimize pores. It reduces sebum\\r\\nproduction and kills bacteria to modulate oil\\r\\nand prevent pimples and breakouts.\\r\\nThis set comes with the Elixir Day Cream\\r\\nfor all skin types.', 'BUSTER D’ ACNE', 'Buster D’ Acne Set', 'uploads/img_67c439cfa57c16.10447680.jpg', '2025-03-02 18:58:23', '2025-03-02 18:58:23'),
-(13, 'Biocare ReVitagen Foam Wash 100ml w/ Silicone Brush', 'A mild, non-sulfate\\r\\ncleansing foam wash\\r\\nthat gently removes\\r\\ndebris, revitalizes skin,\\r\\ngives anti-aging effects,\\r\\nand reduces oil\\r\\ninstantly.', 'BIOCARE REVITAGEN', 'Biocare ReVitaGen Set', '', '2025-03-02 19:00:22', '2025-03-02 19:00:22'),
-(14, 'Biocare ReVitagen Toner 100ml', 'A mild toner that helps\\r\\ndecrease the appearance of\\r\\nfine lines and wrinkles,\\r\\ncounteract oxidative stress,\\r\\nand restore skin barriers.', 'BIOCARE REVITAGEN', 'Biocare ReVitaGen Set', '', '2025-03-02 19:01:00', '2025-03-02 19:01:00'),
-(15, 'Biocare ReVitagen Serum 30ml', 'An anti-aging serum that\\r\\nserves as a muscle relaxant,\\r\\nreducing the appearance of\\r\\ncrow\\\'s feet, or creases and\\r\\nwrinkles around the eyes.', 'BIOCARE REVITAGEN', 'Biocare ReVitaGen Set', '', '2025-03-02 19:01:56', '2025-03-02 19:01:56'),
-(16, 'SET + Box Packaging', 'It is a facial treatment and regimen that revitalize and\\r\\nregenerate the skin for a healthier and younger look.', 'BIOCARE REVITAGEN', 'Biocare ReVitaGen Set', '', '2025-03-02 19:03:49', '2025-03-02 19:03:49'),
-(17, 'CollaBoost Foam Wash 100ml w/ Silicone Brush', 'A hydrating cleanser that washes\\r\\naway dirt, makeup residue, and\\r\\nexcess oil leaving the skin smooth,\\r\\nsupple, and soft.', 'COLLABOOST', 'Collaboost Set', '', '2025-03-02 19:04:43', '2025-03-02 19:04:43'),
-(18, 'CollaBoost Toner 100ml', 'It hydrates and conditions\\r\\nthe skin, promoting a healthy\\r\\nand vivid complexion while\\r\\npreventing dryness.', 'COLLABOOST', 'Collaboost Set', '', '2025-03-02 19:05:23', '2025-03-02 19:05:23'),
-(19, 'CollaBoost BabyColla Serum 30ml', 'It makes the skin softer\\r\\nand more resilient, similar\\r\\nto newborn skin.', 'COLLABOOST', 'Collaboost Set', '', '2025-03-02 19:06:04', '2025-03-02 19:06:04'),
-(20, 'SET + Box Packaging', 'It is formulated with type III collagen\\r\\nclinically proven to restore skin\\r\\nsoftness and resilience by producing\\r\\nand nurturing soft baby collagen.\\r\\nThis set comes with the Elixir Day\\r\\nCream for all skin types.', 'COLLABOOST', 'Collaboost Set', '', '2025-03-02 19:11:56', '2025-03-02 19:11:56'),
-(21, 'Bright Radiance Foam Wash 100ml w/ Silicone Brush', 'It is a foaming cleanser that dissolves\\r\\nmakeup and grime as a defense for daily\\r\\npollutants, for radiant, youthful-looking\\r\\nskin.', 'BRIGHT RADIANCE', 'Bright Radiance Set', '', '2025-03-02 19:13:16', '2025-03-02 19:13:16'),
-(22, 'Bright Radiance Toner 100ml', 'It is a toner that calms redness that helps\\r\\nminimize pores and helps brighten and\\r\\nlightens skin.', 'BRIGHT RADIANCE', 'Bright Radiance Set', '', '2025-03-02 19:13:49', '2025-03-02 19:13:49'),
-(23, 'Bright Radiance Serum 30ml', 'It enhances skin tone by brightening and\\r\\nlightening the skin while decreasing\\r\\nshine.', 'BRIGHT RADIANCE', 'Bright Radiance Set', '', '2025-03-02 19:14:36', '2025-03-02 19:14:36'),
+(8, 'Buster D’ Acne Foam Wash 100ml w/ Silicone Brush', 'It is for rinsing away dirt, excess sebum, and other impurities without stripping the skin of its natural moisture balance.', 'BUSTER D’ ACNE', 'Buster D’ Acne Set', 'uploads/img_67c438d0d2ee75.43147062.jpg', '2025-03-02 18:54:08', '2025-03-19 21:27:21'),
+(9, 'Buster D’ Acne Toner 100ml', 'This toner serves as an astringent for oily and acne-prone skin that nourishes and protects the skin, minimizes pores, and calms redness due to skin irritants.', 'BUSTER D’ ACNE', 'Buster D’ Acne Set', 'uploads/67d997147fea2_1742313236.png', '2025-03-02 18:54:49', '2025-03-19 21:27:39'),
+(10, 'Buster D’ Acne Serum 30ml', 'Best for oily and acne-prone skin. It is a mattifying, pore-refining treatment that eaves skin flawless.', 'BUSTER D’ ACNE', 'Buster D’ Acne Set', 'uploads/Screenshot 2025-03-02 185610.jpg', '2025-03-02 18:55:50', '2025-03-19 21:27:56'),
+(11, 'Elixir Day Cream SPF50 PA+++ 50g', 'It contains safe, natural chemicals and minerals that are used as sunscreen to whiten, lubricate, and provide sun protection. It provides broad-spectrum UVA and UVB protection. Easy to apply, water-resistant, with sun protection.', 'BUSTER D’ ACNE', 'Buster D’ Acne Set', 'uploads/Screenshot 2025-03-02 194023.jpg', '2025-03-02 18:57:49', '2025-03-19 21:30:22'),
+(12, 'SET + Box Packaging', 'It is formulated to treat acne-prone & oily skin and minimize pores. It reduces sebum production and kills bacteria to modulate oil and prevent pimples and breakouts. This set comes with the Elixir Day Cream for all skin types.', 'BUSTER D’ ACNE', 'Buster D’ Acne Set', 'uploads/img_67c439cfa57c16.10447680.jpg', '2025-03-02 18:58:23', '2025-03-19 21:30:49'),
+(13, 'Biocare ReVitagen Foam Wash 100ml w/ Silicone Brush', 'A mild, non-sulfate cleansing foam wash that gently removes debris, revitalizes skin, gives anti-aging effects, and reduces oil instantly.', 'BIOCARE REVITAGEN', 'Biocare ReVitaGen Set', '', '2025-03-02 19:00:22', '2025-03-19 21:31:14'),
+(14, 'Biocare ReVitagen Toner 100ml', 'A mild toner that helps decrease the appearance of fine lines and wrinkles, counteract oxidative stress, and restore skin barriers.', 'BIOCARE REVITAGEN', 'Biocare ReVitaGen Set', '', '2025-03-02 19:01:00', '2025-03-19 21:31:29'),
+(15, 'Biocare ReVitagen Serum 30ml', 'An anti-aging serum that serves as a muscle relaxant, reducing the appearance of crow\\\'s feet or creases and wrinkles around the eyes.', 'BIOCARE REVITAGEN', 'Biocare ReVitaGen Set', 'uploads/67d997563fe6a_1742313302.png', '2025-03-02 19:01:56', '2025-03-19 21:32:36'),
+(16, 'SET + Box Packaging', 'It is a facial treatment and regimen that revitalize and regenerate the skin for a healthier and younger look.', 'BIOCARE REVITAGEN', 'Biocare ReVitaGen Set', '', '2025-03-02 19:03:49', '2025-03-19 21:33:23'),
+(17, 'CollaBoost Foam Wash 100ml w/ Silicone Brush', 'A hydrating cleanser that washes away dirt, makeup residue, and excess oil, leaving the skin smooth, supple, and soft.', 'COLLABOOST', 'Collaboost Set', '', '2025-03-02 19:04:43', '2025-03-19 21:33:18'),
+(18, 'CollaBoost Toner 100ml', 'It hydrates and conditions the skin, promoting a healthy and vivid complexion while preventing dryness.', 'COLLABOOST', 'Collaboost Set', 'uploads/67d9972ea67c9_1742313262.png', '2025-03-02 19:05:23', '2025-03-19 21:33:27'),
+(19, 'CollaBoost BabyColla Serum 30ml', 'It makes the skin softer and more resilient, similar to newborn skin.', 'COLLABOOST', 'Collaboost Set', '', '2025-03-02 19:06:04', '2025-03-19 21:33:42'),
+(20, 'SET + Box Packaging', 'It is formulated with type III collagen clinically proven to restore skin softness and resilience by producing and nurturing soft baby collagen. This set comes with the Elixir Day Cream for all skin types.', 'COLLABOOST', 'Collaboost Set', '', '2025-03-02 19:11:56', '2025-03-19 21:35:11'),
+(21, 'Bright Radiance Foam Wash 100ml w/ Silicone Brush', 'It is a foaming cleanser that dissolves makeup and grime as a defense for daily pollutants, for radiant, youthful-looking skin.', 'BRIGHT RADIANCE', 'Bright Radiance Set', '', '2025-03-02 19:13:16', '2025-03-19 21:34:31'),
+(22, 'Bright Radiance Toner 100ml', 'It is a toner that calms redness that helps minimize pores and helps brighten and lightens skin.', 'BRIGHT RADIANCE', 'Bright Radiance Set', '', '2025-03-02 19:13:49', '2025-03-19 21:34:46'),
+(23, 'Bright Radiance Serum 30ml', 'It enhances skin tone by brightening and lightening the skin while decreasing shine.', 'BRIGHT RADIANCE', 'Bright Radiance Set', '', '2025-03-02 19:14:36', '2025-03-19 21:35:17'),
 (24, 'SET + Box Packaging', 'It can boost micro-circulation just beneath\\r\\nthe skin’s surface that improves the skin tone\\r\\nand illuminate radiance.', 'BRIGHT RADIANCE', 'Bright Radiance Set', '', '2025-03-02 19:15:23', '2025-03-02 19:15:23'),
 (25, '250ml Gluta Kojic InstaWhite SPF50 Body Lotion', 'No description yet.', 'Gluta', 'Skin Care', '', '2025-03-02 19:29:16', '2025-03-02 19:29:16'),
 (26, '50ml Advance White Corrector Cream', 'No description yet.', 'N/A', 'Skin Care', '', '2025-03-02 19:30:27', '2025-03-02 19:30:27'),
 (27, '100g Buster D’ Acne Face and Body Soap', 'No description yet.', 'BUSTER D’ ACNE', 'Skin Care', '', '2025-03-02 19:31:54', '2025-03-02 19:31:54'),
-(28, '100g Clear Blanc Face and Body Soap', 'No description yet', 'N/A', 'Skin Care', '', '2025-03-02 19:32:30', '2025-03-02 19:32:30'),
-(29, '100g Pour Homme and Body Soap', 'No description yet', 'N/A', 'Skin Care', '', '2025-03-02 19:32:58', '2025-03-02 19:32:58'),
+(28, '100g Clear Blanc Face and Body Soap', 'A Multi-functional 17-in1 all-natural Anti-Aging, Whitening & Skin Brightening Soap. It decreases age spots on the face and smoothens the body. Regular use results in whiter and brighter skin in four weeks. ', 'N/A', 'Skin Care', '', '2025-03-02 19:32:30', '2025-03-19 21:35:58'),
+(29, '100g Pour Homme and Body Soap', 'A Moisturizing, Anti-aging, Pore Minimizing, Oil-control, and Antiperspirant soap bar specially formulated for men. It contains all-natural plant extracts and is free from harmful chemicals. Regular use results in lighter and smoother skin. \\r\\n\\r\\nActive', 'N/A', 'Skin Care', '', '2025-03-02 19:32:58', '2025-03-19 21:36:33'),
 (30, '100g Ceramide Oat Face and Body Soap', 'No description yet.', 'N/A', 'Skin Care', '', '2025-03-02 19:33:24', '2025-03-02 19:33:24'),
 (31, 'Shampoo Bar 50g (Conditioning, Clarifying, Hair Growth & Scalp Care) with BOX', 'Formulated for Hair Fall Control &\\r\\nHair Growth.', 'N/A', 'Shampoo and Conditioner Bars', '', '2025-03-02 19:34:50', '2025-03-02 19:34:50'),
 (32, 'Conditioner Bar 60g (Argan Repairing, Aloe Vera, Keratin) with BOX', 'Formulated to treat, hydrate, and\\r\\nmoisturize hair leaving it silky soft.', 'N/A', 'Shampoo and Conditioner Bars', '', '2025-03-02 19:36:41', '2025-03-02 19:36:41'),
 (33, '30ml Hair Biotin Serum', 'It can suppress root sheath aging,\\r\\nand activate root sheath and\\r\\ndermal papilla adhesion proteins.\\r\\nIt increases hair development by\\r\\nacting on hair follicles.', 'N/A', 'Shampoo and Conditioner Bars', '', '2025-03-02 19:38:39', '2025-03-02 19:38:39'),
-(34, '100ml Hair Activator Spray', 'It can strengthen hair\\r\\nfollicle structure,\\r\\ndelay the aging\\r\\nprocess of hair\\r\\nfollicles, stop hair\\r\\nloss, and instantly\\r\\ngive hair moisture\\r\\nand plumpness.', 'N/A', 'Shampoo and Conditioner Bars', '', '2025-03-02 19:39:10', '2025-03-02 19:39:10'),
-(35, 'AMOII Parfum 85ml with BOX(HOMME)', 'No description yet.', 'N/A', 'Perfume', '', '2025-03-02 19:44:25', '2025-03-02 19:54:35'),
+(34, '100ml Hair Activator Spray', 'It can strengthen hair\\\\r\\\\nfollicle structure,\\\\r\\\\ndelay the aging\\\\r\\\\nprocess of hair\\\\r\\\\nfollicles, stop hair\\\\r\\\\nloss, and instantly\\\\r\\\\ngive hair moisture\\\\r\\\\nand plumpness.', 'N/A', 'Shampoo and Conditioner Bars', 'uploads/67d9970765864_1742313223.png', '2025-03-02 19:39:10', '2025-03-18 23:53:43'),
+(35, 'AMOII Parfum 85ml with BOX(HOMME)', 'No description yet.', 'N/A', 'Perfume', 'uploads/67d9978fcba27_1742313359.png', '2025-03-02 19:44:25', '2025-03-18 23:55:59'),
 (36, 'AMOII Parfum 60ml with BOX (HOMME)', 'No description yet.', 'N/A', 'Perfume', '', '2025-03-02 19:46:39', '2025-03-02 19:47:41'),
-(37, 'AMOII Parfum 85ml with BOX (FEMME)', 'No description yet.', 'N/A', 'Perfume', '', '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
+(37, 'AMOII Parfum 85ml with BOX (FEMME)', 'AMOII which means \\\'beauty\\\' is an inspired perfume formulated with long-lasting distinct fragrances that elevate your fashion and boost your confidence with its finishing touch.\\r\\n\\r\\nCAUTION:\\r\\nKeep away from children\\\'s reach. Avoid contact with eyes', 'N/A', 'Perfume', 'uploads/67d997ab41804_1742313387.png', '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
 (38, 'AMOII Parfum 60ml with BOX (FEMME)', 'No description yet.', 'N/A', 'Perfume', '', '2025-03-02 20:03:58', '2025-03-02 20:03:58');
 
 -- --------------------------------------------------------
@@ -144,47 +159,47 @@ CREATE TABLE `tb_productvariants` (
 --
 
 INSERT INTO `tb_productvariants` (`variant_id`, `productID`, `variant_name`, `price`, `stock`, `sku`, `is_default`, `created_at`, `updated_at`) VALUES
-(10, 8, 'Default', 220.00, 1, '', 1, '2025-03-02 18:54:08', '2025-03-02 18:54:08'),
-(11, 9, 'Default', 140.00, 1, '', 1, '2025-03-02 18:54:49', '2025-03-02 18:55:00'),
-(12, 10, 'Default', 130.00, 1, '', 1, '2025-03-02 18:55:50', '2025-03-02 18:56:34'),
-(13, 11, 'Default', 190.00, 1, '', 1, '2025-03-02 18:57:49', '2025-03-02 19:40:34'),
-(14, 12, 'Default', 720.00, 1, '', 1, '2025-03-02 18:58:23', '2025-03-02 18:58:23'),
-(15, 13, 'Default', 180.00, 1, '', 1, '2025-03-02 19:00:22', '2025-03-02 19:00:22'),
-(16, 14, 'Default', 130.00, 1, '', 1, '2025-03-02 19:01:00', '2025-03-02 19:01:00'),
-(17, 15, 'Default', 180.00, 1, '', 1, '2025-03-02 19:01:56', '2025-03-02 19:01:56'),
-(18, 16, 'default', 720.00, 1, '', 1, '2025-03-02 19:03:49', '2025-03-02 19:03:49'),
-(19, 17, 'Default', 190.00, 1, '', 1, '2025-03-02 19:04:43', '2025-03-02 19:04:43'),
-(20, 18, 'default', 120.00, 1, '', 1, '2025-03-02 19:05:23', '2025-03-02 19:05:23'),
-(21, 19, 'Default', 180.00, 1, '', 1, '2025-03-02 19:06:04', '2025-03-02 19:06:04'),
-(22, 20, 'Default', 720.00, 1, '', 1, '2025-03-02 19:11:56', '2025-03-02 19:11:56'),
-(23, 21, 'Default', 180.00, 1, '', 1, '2025-03-02 19:13:16', '2025-03-02 19:13:16'),
-(24, 22, 'Default', 120.00, 1, '', 1, '2025-03-02 19:13:49', '2025-03-02 19:13:49'),
-(25, 23, 'Default', 130.00, 1, '', 1, '2025-03-02 19:14:36', '2025-03-02 19:14:36'),
+(10, 8, 'Default', 220.00, 1, '', 1, '2025-03-02 18:54:08', '2025-03-19 21:27:21'),
+(11, 9, 'Default', 140.00, 1, '', 1, '2025-03-02 18:54:49', '2025-03-19 21:27:39'),
+(12, 10, 'Default', 130.00, 1, '', 1, '2025-03-02 18:55:50', '2025-03-19 21:27:56'),
+(13, 11, 'Default', 190.00, 1, '', 1, '2025-03-02 18:57:49', '2025-03-19 21:30:22'),
+(14, 12, 'Default', 720.00, 1, '', 1, '2025-03-02 18:58:23', '2025-03-19 21:30:49'),
+(15, 13, 'Default', 180.00, 1, '', 1, '2025-03-02 19:00:22', '2025-03-19 21:31:14'),
+(16, 14, 'Default', 130.00, 1, '', 1, '2025-03-02 19:01:00', '2025-03-19 21:31:29'),
+(17, 15, 'Default', 180.00, 1, '', 1, '2025-03-02 19:01:56', '2025-03-19 21:32:36'),
+(18, 16, 'default', 720.00, 1, '', 1, '2025-03-02 19:03:49', '2025-03-19 21:33:23'),
+(19, 17, 'Default', 190.00, 1, '', 1, '2025-03-02 19:04:43', '2025-03-19 21:33:18'),
+(20, 18, 'default', 120.00, 1, '', 1, '2025-03-02 19:05:23', '2025-03-19 21:33:27'),
+(21, 19, 'Default', 180.00, 1, '', 1, '2025-03-02 19:06:04', '2025-03-19 21:33:42'),
+(22, 20, 'Default', 720.00, 1, '', 1, '2025-03-02 19:11:56', '2025-03-19 21:35:11'),
+(23, 21, 'Default', 180.00, 1, '', 1, '2025-03-02 19:13:16', '2025-03-19 21:34:31'),
+(24, 22, 'Default', 120.00, 1, '', 1, '2025-03-02 19:13:49', '2025-03-19 21:34:46'),
+(25, 23, 'Default', 130.00, 1, '', 1, '2025-03-02 19:14:36', '2025-03-19 21:35:17'),
 (26, 24, 'Default', 660.00, 1, '', 1, '2025-03-02 19:15:23', '2025-03-02 19:15:23'),
 (27, 25, 'Default', 280.00, 1, '', 1, '2025-03-02 19:29:16', '2025-03-02 19:29:16'),
 (28, 26, 'Default', 290.00, 1, '', 1, '2025-03-02 19:30:27', '2025-03-02 19:30:27'),
 (29, 27, 'Default', 99.00, 1, '', 1, '2025-03-02 19:31:54', '2025-03-02 19:31:54'),
-(30, 28, 'Default', 145.00, 1, '', 1, '2025-03-02 19:32:30', '2025-03-02 19:32:30'),
-(31, 29, 'Default', 112.00, 1, '', 1, '2025-03-02 19:32:58', '2025-03-02 19:32:58'),
+(30, 28, 'Default', 145.00, 1, '', 1, '2025-03-02 19:32:30', '2025-03-19 21:35:58'),
+(31, 29, 'Default', 112.00, 1, '', 1, '2025-03-02 19:32:58', '2025-03-19 21:36:33'),
 (32, 30, 'Default', 102.00, 1, '', 1, '2025-03-02 19:33:24', '2025-03-02 19:33:24'),
 (33, 31, 'Default', 164.00, 1, '', 1, '2025-03-02 19:34:50', '2025-03-02 19:34:50'),
 (34, 32, 'Default', 266.00, 1, '', 1, '2025-03-02 19:36:41', '2025-03-02 19:36:41'),
 (35, 33, 'Default', 180.00, 1, '', 1, '2025-03-02 19:38:39', '2025-03-02 19:38:39'),
-(36, 34, 'Default', 230.00, 1, '', 1, '2025-03-02 19:39:10', '2025-03-02 19:39:10'),
-(37, 35, 'Confident', 350.00, 1, '', 1, '2025-03-02 19:44:25', '2025-03-02 19:54:35'),
-(38, 35, 'Vibrant', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-02 19:54:35'),
-(39, 35, 'Modern', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-02 19:54:35'),
-(40, 35, 'Zesty', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-02 19:54:35'),
-(41, 35, 'Fresh Aqua M', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-02 19:54:35'),
-(42, 35, 'Musk', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-02 19:54:35'),
-(43, 35, 'Spunky', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-02 19:54:35'),
-(44, 35, 'Sporty', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-02 19:54:35'),
-(45, 35, 'Aqua Aromatica', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-02 19:54:35'),
-(46, 35, 'Desir Bleu', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-02 19:54:35'),
-(47, 35, 'Victorious', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-02 19:54:35'),
-(48, 35, 'Spontaneous M', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-02 19:54:35'),
-(49, 35, 'Revealing', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-02 19:54:35'),
-(50, 35, 'Impressive', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-02 19:54:35'),
+(36, 34, 'Default', 230.00, 1, '', 1, '2025-03-02 19:39:10', '2025-03-18 23:53:43'),
+(37, 35, 'Confident', 350.00, 1, '', 1, '2025-03-02 19:44:25', '2025-03-18 23:55:59'),
+(38, 35, 'Vibrant', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-18 23:55:59'),
+(39, 35, 'Modern', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-18 23:55:59'),
+(40, 35, 'Zesty', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-18 23:55:59'),
+(41, 35, 'Fresh Aqua M', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-18 23:55:59'),
+(42, 35, 'Musk', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-18 23:55:59'),
+(43, 35, 'Spunky', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-18 23:55:59'),
+(44, 35, 'Sporty', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-18 23:55:59'),
+(45, 35, 'Aqua Aromatica', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-18 23:55:59'),
+(46, 35, 'Desir Bleu', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-18 23:55:59'),
+(47, 35, 'Victorious', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-18 23:55:59'),
+(48, 35, 'Spontaneous M', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-18 23:55:59'),
+(49, 35, 'Revealing', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-18 23:55:59'),
+(50, 35, 'Impressive', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-18 23:55:59'),
 (51, 36, 'Confident', 280.00, 1, '', 1, '2025-03-02 19:46:39', '2025-03-02 19:47:41'),
 (52, 36, 'Vibrant', 280.00, 1, '', 0, '2025-03-02 19:46:39', '2025-03-02 19:47:41'),
 (53, 36, 'Modern', 280.00, 1, '', 0, '2025-03-02 19:46:39', '2025-03-02 19:47:41'),
@@ -199,31 +214,31 @@ INSERT INTO `tb_productvariants` (`variant_id`, `productID`, `variant_name`, `pr
 (62, 36, 'Spontaneous M', 280.00, 1, '', 0, '2025-03-02 19:46:39', '2025-03-02 19:47:41'),
 (63, 36, 'Revealing', 280.00, 1, '', 0, '2025-03-02 19:46:39', '2025-03-02 19:47:41'),
 (64, 36, 'Impressive', 280.00, 1, '', 0, '2025-03-02 19:46:39', '2025-03-02 19:47:41'),
-(65, 37, 'Cantaloupe', 350.00, 1, '', 1, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(66, 37, 'Fruity', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(67, 37, 'Fresh Blossom', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(68, 37, 'Active', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(69, 37, 'Fresh Aqua W', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(70, 37, 'Casual', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(71, 37, 'Le Delice', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(72, 37, 'Sparkling', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(73, 37, 'Elegant', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(74, 37, 'Luscious', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(75, 37, 'Diamant', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(76, 37, 'Candid', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(77, 37, 'Mulberry', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(78, 37, 'Glorious', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(79, 37, 'Chic', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(80, 37, 'Captivating', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(81, 37, 'Stunning', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(82, 37, 'Pleasant', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(83, 37, 'Naive', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(84, 37, 'Seductive', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(85, 37, 'Lovely', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(86, 37, 'Spontaneous W', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(87, 37, 'Claire Bleu', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(88, 37, 'Sweet', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
-(89, 37, 'Dynamic', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-02 19:52:13'),
+(65, 37, 'Cantaloupe', 350.00, 1, '', 1, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(66, 37, 'Fruity', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(67, 37, 'Fresh Blossom', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(68, 37, 'Active', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(69, 37, 'Fresh Aqua W', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(70, 37, 'Casual', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(71, 37, 'Le Delice', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(72, 37, 'Sparkling', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(73, 37, 'Elegant', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(74, 37, 'Luscious', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(75, 37, 'Diamant', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(76, 37, 'Candid', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(77, 37, 'Mulberry', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(78, 37, 'Glorious', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(79, 37, 'Chic', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(80, 37, 'Captivating', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(81, 37, 'Stunning', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(82, 37, 'Pleasant', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(83, 37, 'Naive', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(84, 37, 'Seductive', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(85, 37, 'Lovely', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(86, 37, 'Spontaneous W', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(87, 37, 'Claire Bleu', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(88, 37, 'Sweet', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
+(89, 37, 'Dynamic', 350.00, 1, '', 0, '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
 (90, 38, 'Cantaloupe', 280.00, 1, '', 1, '2025-03-02 20:03:58', '2025-03-02 20:03:58'),
 (91, 38, 'Fruity', 280.00, 1, '', 0, '2025-03-02 20:03:58', '2025-03-02 20:03:58'),
 (92, 38, 'Fresh Blossom', 280.00, 1, '', 0, '2025-03-02 20:03:58', '2025-03-02 20:03:58'),
@@ -277,13 +292,19 @@ CREATE TABLE `tb_user` (
 --
 
 INSERT INTO `tb_user` (`user_id`, `username`, `email`, `pass`, `first_name`, `last_name`, `contact_no`, `address`, `role`, `profile_image`, `validated`, `token`, `token_created_at`) VALUES
-(69, 'ironm111', 'princessjamie.galias.cics@ust.edu.ph', '$2y$10$v3UZxJJSrDUip7tu3c.9OOEgz12qoua.wy/tLYXgAUKsRDBWUwhjq', 'US-Letter', 'x 11', '09669463472', 'Blk 1 Lot 1 Ibañez St', NULL, NULL, 1, '', '2025-02-17 13:18:09'),
-(72, 'ironman123', 'pjarahgalias27@gmail.com', '$2y$10$ADKB6wCkyA4XlCiZaAGrn.lxH/Hp3ndcNjU8olRh6aQTC0024ymHK', 'Arah', 'Galias', '09669463472', 'Blk 1 Lot 1 Ibañez St', NULL, '../uploads/ey.png', 1, '', '2025-03-05 13:10:47'),
-(79, 'Admin', 'galias.pja@gmail.com', '$2y$10$xZh8zzSPbdyxUa7cng7aDu7LsPboC1x29eitjMxjd/gTU0GP3bcL.', NULL, NULL, NULL, NULL, 'admin', NULL, 1, '', '2025-03-10 19:50:28');
+(72, 'ironman123', 'pjarahgalias27@gmail.com', '$2y$10$ADKB6wCkyA4XlCiZaAGrn.lxH/Hp3ndcNjU8olRh6aQTC0024ymHK', 'Arah', 'Galias', '09669463472', 'Blk 1 Lot 1 I bañezSt gfjsdgfjsdfghsdfdddddddddddd', NULL, '../uploads/ey.png', 1, '8496', '2025-03-05 13:10:47'),
+(79, 'Admin', 'galias.pja@gmail.com', '$2y$10$xZh8zzSPbdyxUa7cng7aDu7LsPboC1x29eitjMxjd/gTU0GP3bcL.', NULL, NULL, NULL, NULL, 'admin', NULL, 1, '', '2025-03-10 19:50:28'),
+(89, 'pjarahgalias27', 'princessjamie.galias.cics@ust.edu.ph', '$2y$10$iSWy.9Kp9yJ7mZD4q9/THOGG31y3aRyXI98axhH4Ahb0Vj2MUYfYi', 'Arah', 'Galias', '09669463472', 'Blk 1 Lot 1 Ibañez St', 'user', '../uploads/100ml-frost-glass-bottle-silver-spray-1.png', 1, '', '2025-03-19 07:05:30');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `tb_cart`
+--
+ALTER TABLE `tb_cart`
+  ADD PRIMARY KEY (`cart_id`);
 
 --
 -- Indexes for table `tb_user`
@@ -296,10 +317,16 @@ ALTER TABLE `tb_user`
 --
 
 --
+-- AUTO_INCREMENT for table `tb_cart`
+--
+ALTER TABLE `tb_cart`
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `tb_user`
 --
 ALTER TABLE `tb_user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
