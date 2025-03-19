@@ -138,7 +138,7 @@
                             }
                             ?>
                         </div>
-                        <button class="add-to-cart" data-product-id="<?= $product['productID']; ?>">Add to Cart</button>
+                        <button class="add-to-cart" data-product-id="<?= $product['productID']; ?>" onclick="window.location.href='../e-com/productpage.php?id=<?= $product['productID']; ?>'">Add to Cart</button>
                     </div>
                     <?php
                 }

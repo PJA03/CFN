@@ -270,6 +270,10 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                 $result = $stmt_signup->execute();
                 
                 if ($result == true) {
+                     // Get the user_id of the newly registered user
+                    $user_id = $conn->insert_id; // Get the last inserted ID
+                    $_SESSION['user_id'] = $user_id; // Store user_id in the session
+
                     // Call email verification function
                     send_verification($email, $token); 
                     ?>
@@ -315,6 +319,7 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                 if (password_verify($password, $user['pass'])) {
                     if ($user['validated'] == 1) { // Check if account is validated
                         // Store user data in session
+                        $_SESSION['user_id'] = $user['user_id']; // Store user_id in the session
                         $_SESSION['username'] = $user['username'];
                         $_SESSION['first_name'] = $user['first_name'];
                         $_SESSION['last_name'] = $user['last_name'];
@@ -431,25 +436,44 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
 
     </script>
     <script>
-  $(document).ready(function () {
-  
-     //  Toggle  Password Start
-     $("#togglePassword").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
-     $("#togglePassword").click(function() {
-        const passwordInput = $("#logpassword");
-        const type = passwordInput.attr("type");
+document.addEventListener("DOMContentLoaded", function () {
+    const togglePassword = document.getElementById("eyeicon-login"); // Target the toggle icon
+    const passwordInput = document.getElementById("logpassword"); // Target the password input field
 
+    togglePassword.addEventListener("click", function () {
+        // Toggle the type attribute between "password" and "text"
+        const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+        passwordInput.setAttribute("type", type);
+
+        // Toggle the icon image
         if (type === "password") {
-            passwordInput.attr("type", "text");
-            $("#togglePassword").removeClass("fa fa-eye-slash").addClass("fa fa-eye");
+            togglePassword.src = "eye-close.jpg"; // Set to "eye-close" icon
         } else {
-            passwordInput.attr("type", "password");
-            $("#togglePassword").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
+            togglePassword.src = "eye-open.jpg"; // Set to "eye-open" icon
         }
     });
-    //  Toggle  Password End
-    
-  });
+});
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const togglePasswordRegis = document.getElementById("eyeicon-regis"); // Target the toggle icon
+    const passwordInputRegis = document.getElementById("regispassword"); // Target the password input field
+
+    togglePasswordRegis.addEventListener("click", function () {
+        // Toggle the type attribute between "password" and "text"
+        const type = passwordInputRegis.getAttribute("type") === "password" ? "text" : "password";
+        passwordInputRegis.setAttribute("type", type);
+
+        // Toggle the icon image
+        if (type === "password") {
+            togglePasswordRegis.src = "eye-close.jpg"; // Set to "eye-close" icon
+        } else {
+            togglePasswordRegis.src = "eye-open.jpg"; // Set to "eye-open" icon
+        }
+    });
+});
+
+
 
 </script>
 <script>

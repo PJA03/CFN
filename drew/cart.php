@@ -2,32 +2,28 @@
 session_start();
 include 'conn.php'; // Ensure this file connects to your database
 
-// Initialize cart session if not set
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
+
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    //TODO: Make it an alert tapos stay on the product details page
+    die("You must be logged in to view your cart.");
 }
 
-// Handle adding items to cart
-if (isset($_POST['add_to_cart'])) {
-    $product_id = $_POST['product_id'];
-    
-    $query = "SELECT * FROM products WHERE id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param('i', $product_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $product = $result->fetch_assoc();
+$user_id = $_SESSION['user_id'];
 
-    if ($product) {
-        $_SESSION['cart'][$product_id] = [
-            'name' => $product['name'],
-            'price' => $product['price'],
-            'image' => $product['image'], // Ensure your DB has an 'image' column
-            'quantity' => isset($_SESSION['cart'][$product_id]) ? $_SESSION['cart'][$product_id]['quantity'] + 1 : 1
-        ];
-    }
-    header('Location: cart.php');
-    exit;
+// Fetch cart data from the database
+$query = "SELECT c.productID, c.quantity, c.price, p.product_name, p.product_image 
+          FROM tb_cart c
+          JOIN tb_products p ON c.productID = p.productID
+          WHERE c.user_id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$cart_items = [];
+while ($row = $result->fetch_assoc()) {
+    $cart_items[] = $row;
 }
 
 // Handle checkout
@@ -81,27 +77,29 @@ if (isset($_POST['confirm_checkout'])) {
                         </tr>
                     </thead>
                     <tbody>
-    <?php if (!empty($_SESSION['cart'])): ?>
-        <?php foreach ($_SESSION['cart'] as $id => $item): ?>
-            <tr data-product-id="<?php echo $id; ?>">
-                <td class="product-info">
-                    <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>" class="product-image">
-                    <span><?php echo $item['name']; ?></span>
-                </td>
-                <td class="product-quantity">
-                    <button class="quantity-btn minus-btn">-</button>
-                    <span class="quantity-value"><?php echo $item['quantity']; ?></span>
-                    <button class="quantity-btn plus-btn">+</button>
-                    <i class="fas fa-trash delete-icon"></i>
-                </td>
-                <td class="product-price">₱<span class="price-value"><?php echo number_format($item['price'], 2); ?></span></td>
-            </tr>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <tr>
-            <td colspan="3">Your cart is empty</td>
-        </tr>
-    <?php endif; ?>
+                    <?php if (!empty($cart_items)): ?>
+                    <?php foreach ($cart_items as $item): ?>
+                        <tr data-product-id="<?php echo $item['productID']; ?>">
+                            <td class="product-info">
+                            <img src="<?php echo htmlspecialchars('../e-com/' . $item['product_image'], ENT_QUOTES, 'UTF-8'); ?>" 
+                            alt="<?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                    class="product-image">
+                                <span><?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?></span>
+                            </td>
+                            <td class="product-quantity">
+                                <button class="quantity-btn minus-btn">-</button>
+                                <span class="quantity-value"><?php echo $item['quantity']; ?></span>
+                                <button class="quantity-btn plus-btn">+</button>
+                                <i class="fas fa-trash delete-icon"></i>
+                            </td>
+                            <td class="product-price">₱<span class="price-value"><?php echo number_format($item['price'], 2); ?></span></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="3">Your cart is empty</td>
+                    </tr>
+                <?php endif; ?>
 </tbody>
                 </table>
 
@@ -109,8 +107,9 @@ if (isset($_POST['confirm_checkout'])) {
                     <div class="price-breakdown">
                         <?php
                         $netPrice = 0;
-                        if (!empty($_SESSION['cart'])) {
-                            foreach ($_SESSION['cart'] as $item) {
+                        $netPrice = 0;
+                        if (!empty($cart_items)) {
+                            foreach ($cart_items as $item) {
                                 $netPrice += $item['price'] * $item['quantity'];
                             }
                         }
