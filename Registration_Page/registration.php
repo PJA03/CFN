@@ -178,8 +178,8 @@ We may update this policy. Continued use of our services after updates means you
 For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn" id="accept-terms" data-bs-dismiss="modal">Accept</button>
-                    <button type="button" class="btn" id="deny-terms" data-bs-dismiss="modal">Deny</button>
+                    <button type="button" class="btn" id="accept-privacy" data-bs-dismiss="modal">Accept</button>
+                    <button type="button" class="btn" id="deny-privacy" data-bs-dismiss="modal">Deny</button>
                 </div>
             </div>
         </div>
@@ -477,27 +477,49 @@ if (isset($_POST['login'])) {
     height: 18px;
     }
 </style>
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    function togglePassword(eyeIconId, passwordInputId) {
-        var eyeicon = document.getElementById(eyeIconId);
-        var passwordInput = document.getElementById(passwordInputId);
+        const registerButton = document.querySelector("input[name='signup']");
+        const acceptTermsButton = document.getElementById("accept-terms");
+        const denyTermsButton = document.getElementById("deny-terms");
+        const acceptPrivacyButton = document.getElementById("accept-privacy");
+        const denyPrivacyButton = document.getElementById("deny-privacy");
 
-        eyeicon.addEventListener("click", function () {
-            if (passwordInput.type === "password") {
-                passwordInput.type = "text";
-                eyeicon.src = "eye-open.jpg";
-            } else {
-                passwordInput.type = "password";
-                eyeicon.src = "eye-close.jpg";
-            }
+        // Track the acceptance state of both modals
+        let termsAccepted = false;
+        let privacyAccepted = false;
+
+        // Function to update the state of the register button
+        function updateRegisterButtonState() {
+            registerButton.disabled = !(termsAccepted && privacyAccepted);
+        }
+
+        // Handle "Accept" and "Deny" for Terms and Conditions
+        acceptTermsButton.addEventListener("click", function () {
+            termsAccepted = true;
+            updateRegisterButtonState();
         });
-    }
 
-    togglePassword("eyeicon-login", "logpassword");
-    togglePassword("eyeicon-regis", "regispassword");
-});
+        denyTermsButton.addEventListener("click", function () {
+            termsAccepted = false;
+            updateRegisterButtonState();
+        });
+
+        // Handle "Accept" and "Deny" for Privacy Policy
+        acceptPrivacyButton.addEventListener("click", function () {
+            privacyAccepted = true;
+            updateRegisterButtonState();
+        });
+
+        denyPrivacyButton.addEventListener("click", function () {
+            privacyAccepted = false;
+            updateRegisterButtonState();
+        });
+
+        // Initially disable the register button
+        registerButton.disabled = true;
+    });
+</script>
 </script>
 </body>
 </html>
