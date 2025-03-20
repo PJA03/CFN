@@ -50,49 +50,34 @@ $totalPrice = $_SESSION['total_price'] ?? 0;
     <main>
         <h1 class="cart-title">Payment Method</h1>
         <section class="cart-container">
-            <!-- Payment Method Section -->
-            <div class="payment-method">
-                <h2>SELECT PAYMENT METHOD</h2>
-                
-                <!-- Display error message if any -->
-                <?php if (isset($_SESSION['payment_error'])): ?>
-                <div class="alert alert-danger">
-                    <?php echo $_SESSION['payment_error']; unset($_SESSION['payment_error']); ?>
-                </div>
-                <?php endif; ?>
-                
-                <div class="payment-options">
-                    <div class="payment-option">
-                        <a href="uploadpayment.php?type=gcash">
-                            <img src="gcash_logo.png" alt="GCash" class="payment-logo">
-                            <p>GCash</p>
-                        </a>
-                    </div>
-                    
-                    <div class="payment-option">
-                        <a href="uploadpayment.php?type=paymaya">
-                            <img src="paymaya_logo.png" alt="PayMaya" class="payment-logo">
-                            <p>PayMaya</p>
-                        </a>
-                    </div>
-                    
-                    <div class="payment-option">
-                        <a href="uploadpayment.php?type=instapay">
-                            <img src="instapay.png" alt="Instapay" class="payment-logo">
-                            <p>Instapay</p>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="cart-summary">
+<!-- Payment Method Section -->
+<div class="payment-method">
+    <h2>SELECT PAYMENT METHOD</h2>
+    
+    <!-- Display error message if any -->
+    <?php if (isset($_SESSION['payment_error'])): ?>
+    <div class="alert alert-danger">
+        <?php echo $_SESSION['payment_error']; unset($_SESSION['payment_error']); ?>
+    </div>
+    <?php endif; ?>
+    
+    <div class="payment-option" style="width: 150px; height: 150px; background-color: #f0f0f0; border: 2px dashed #1F4529; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+    <a href="uploadpayment.php?type=instapay" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; text-decoration: none; color: inherit;">
+        <img src="instapay.png" alt="Instapay" class="payment-logo" style="max-width: 60%; max-height: 60%; margin-bottom: 10px;">
+        <p style="margin: 0; font-weight: 500;">Instapay</p>
+    </a>
+</div>
+    
+    <div class="cart-summary">
+        <!-- Rest of your cart summary code -->
+
                     <h3>Order Summary</h3>
                     <div class="price-breakdown">
                        
                         <p>Total Price: <strong id="total-price">₱<?php echo number_format($totalPrice, 2); ?></strong></p>
                     </div>
                 </div>
-            </div>
-
+           
             <div class="cart-actions">
                 <a href="cart.php" class="btn cancel-btn">Back to Cart</a>
             </div>

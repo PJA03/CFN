@@ -1,6 +1,5 @@
 <?php
 session_start();
-require_once "../conn.php";
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -54,7 +53,6 @@ $_SESSION['total_price'] = $totalPrice;
 if (isset($_POST['cancel_order'])) {
     unset($_SESSION['order']);
     header("Location: cart.php");
-
     exit();
 }
 

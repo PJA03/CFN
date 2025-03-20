@@ -10,21 +10,27 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
+// Handle adding items to cart
+if (isset($_POST['add_to_cart'])) {
+    $product_id = $_POST['product_id'];
+    
+    $query = "SELECT * FROM products WHERE id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param('i', $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $product = $result->fetch_assoc();
 
-// Fetch cart data from the database
-$query = "SELECT c.productID, c.quantity, c.price, p.product_name, p.product_image 
-          FROM tb_cart c
-          JOIN tb_products p ON c.productID = p.productID
-          WHERE c.user_id = ?";
-$stmt = $conn->prepare($query);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-$cart_items = [];
-while ($row = $result->fetch_assoc()) {
-    $cart_items[] = $row;
+    if ($product) {
+        $_SESSION['cart'][$product_id] = [
+            'name' => $product['name'],
+            'price' => $product['price'],
+            'image' => $product['image'], // Ensure your DB has an 'image' column
+            'quantity' => isset($_SESSION['cart'][$product_id]) ? $_SESSION['cart'][$product_id]['quantity'] + 1 : 1
+        ];
+    }
+    header('Location: cart.php');
+    exit;
 }
 
 // Handle checkout

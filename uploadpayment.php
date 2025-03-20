@@ -58,7 +58,7 @@ if ($qr_type == 'paymaya') {
                 <div class="qr-and-text">
                     <!-- QR Code Image -->
                     <div class="qr-code-placeholder">
-                        <img src="<?php echo $qr_image; ?>" alt="QR Code" class="qr-code-image">
+                        <img src="gcashqr.jpg" alt="QR Code" class="qr-code-image">
                     </div>
                     <!-- Text Content -->
                     <div class="text-content">

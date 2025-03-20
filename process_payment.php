@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'conn.php';
+include 'conn.php'; // Ensure this file connects to your database
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -44,8 +44,8 @@ if ($file_size > 5242880) {
 }
 
 // Generate unique filename
-$new_file_name = uniqid('payment_') . '.' . $file_ext;
-$upload_path = 'uploads/' . $new_file_name;
+$new_filename = uniqid('payment') . '.' . $file_ext;
+$upload_path = 'uploads/' . $new_filename;
 
 // Create uploads directory if it doesn't exist
 if (!is_dir('uploads')) {
@@ -62,46 +62,45 @@ if (!move_uploaded_file($file_tmp, $upload_path)) {
 // Get user ID - assuming user is logged in
 $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1; // Default to 1 if not set
 
-// Calculate total amount
-$total_amount = 0;
-foreach ($_SESSION['order'] as $item) {
-    $total_amount += $item['price'] * $item['quantity'];
-}
+$user_query = $conn->prepare("SELECT email, first_name, last_name FROM tb_user WHERE user_id = ?");
+$user_query->bind_param("i", $user_id);
+$user_query->execute();
+$user_result = $user_query->get_result();
 
-// Add VAT and delivery fee
-$vat = $total_amount * 0.12;
-$delivery_fee = 40.00;
-$total_amount = $total_amount + $vat + $delivery_fee;
-
-// Current date and time
-$order_date = date('Y-m-d H:i:s');
-
-// Insert order into database
-$stmt = $conn->prepare("INSERT INTO tb_orders (user_id, order_date, total_amount, status, payment_proof) VALUES (?, ?, ?, ?, ?)");
-$status = "Pending"; // Initial status
-$stmt->bind_param("isdss", $user_id, $order_date, $total_amount, $status, $upload_path);
-
-if (!$stmt->execute()) {
-    $_SESSION['payment_error'] = "Failed to process order. Please try again. Error: " . $stmt->error;
+if ($user_result->num_rows > 0) {
+    $user_data = $user_result->fetch_assoc();
+    $email = $user_data['email'];
+    $first_name = $user_data['first_name'];
+    $last_name = $user_data['last_name'];
+} else {
+    // Handle the case where user data is not found
+    $_SESSION['payment_error'] = "User data not found. Please log in again.";
     header('Location: paymentmethod.php');
     exit;
 }
 
-// Get the order ID
-$order_id = $stmt->insert_id;
+// Current date and time
+$order_date = date('Y-m-d H:i:s');
 
-// Insert order items
+// Insert each product in the order as a separate row in tb_orders
 foreach ($_SESSION['order'] as $product_id => $item) {
-    $price = $item['price'];
+    $product_name = $item['product_name'];
     $quantity = $item['quantity'];
-    $subtotal = $price * $quantity;
-    
-    $stmt = $conn->prepare("INSERT INTO tb_order_items (order_id, product_id, quantity, price, subtotal) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("iiidi", $order_id, $product_id, $quantity, $price, $subtotal);
-    
+    $price = $item['price'];
+    $price_total = $price * $quantity;
+
+    // Insert order into database
+    $stmt = $conn->prepare("INSERT INTO tb_orders (order_date, productID, product_name, user_id, email, first_name, last_name, quantity, status, payment_option, payment_proof, isApproved, price_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $status = "Waiting for Payment"; // Initial status
+    $payment_option = "QR Code"; // Default payment option
+    $isApproved = 0; // Default to not approved
+
+    $stmt->bind_param("sisssssisssid", $order_date, $product_id, $product_name, $user_id, $email, $first_name, $last_name, $quantity, $status, $payment_option, $upload_path, $isApproved, $price_total);
+
     if (!$stmt->execute()) {
-        // Log error but continue processing
-        error_log("Failed to insert order item: " . $stmt->error);
+        $_SESSION['payment_error'] = "Failed to process order. Please try again. Error: " . $stmt->error;
+        header('Location: paymentmethod.php');
+        exit;
     }
 }
 
@@ -111,7 +110,6 @@ $_SESSION['order'] = array();
 
 // Redirect to success page
 $_SESSION['order_success'] = true;
-$_SESSION['order_id'] = $order_id;
 header('Location: checkout_success.php');
 exit;
 ?>
