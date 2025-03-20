@@ -1,40 +1,44 @@
 <?php
 session_start();
+require_once "../conn.php";
 
-// Check if order data exists in session
-if (isset($_SESSION['order']) && !empty($_SESSION['order'])) {
-    $orderItems = $_SESSION['order'];
-    
-    // Calculate total price
-    $totalNetPrice = 0;
-    foreach ($orderItems as $item) {
-        $totalNetPrice += floatval($item['price']) * intval($item['quantity']);
-    }
-    $vat = $totalNetPrice * 0.12;
-    $deliveryFee = 40.00;
-    $totalPrice = $totalNetPrice + $vat + $deliveryFee;
-} else if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
-    // If no order exists but cart does, use cart data
-    $orderItems = $_SESSION['cart'];
-    
-    // Calculate total price
-    $totalNetPrice = 0;
-    foreach ($orderItems as $item) {
-        $totalNetPrice += floatval($item['price']) * intval($item['quantity']);
-    }
-    $vat = $totalNetPrice * 0.12;
-    $deliveryFee = 40.00;
-    $totalPrice = $totalNetPrice + $vat + $deliveryFee;
-} else {
-    // Redirect to cart if no data is available
-    header("Location: cart.php");
-    exit();
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    //TODO: Make it an alert tapos stay on the product details page
+    die("You must be logged in to view your cart.");
 }
+
+$user_id = $_SESSION['user_id'];
+
+// Fetch cart data from the database
+$query = "SELECT c.productID, c.quantity, c.price, p.product_name, p.product_image 
+          FROM tb_cart c
+          JOIN tb_products p ON c.productID = p.productID
+          WHERE c.user_id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$orderItems = [];
+$totalNetPrice = 0;
+
+while ($row = $result->fetch_assoc()) {
+    $orderItems[] = $row;
+    $totalNetPrice += floatval($row['price']) * intval($row['quantity']);
+}
+
+// Calculate VAT, delivery fee, and total price
+$vat = $totalNetPrice * 0.12;
+$deliveryFee = 40.00;
+$totalPrice = $totalNetPrice + $vat + $deliveryFee;
+
 
 // Handle order cancellation
 if (isset($_POST['cancel_order'])) {
     unset($_SESSION['order']);
     header("Location: cart.php");
+
     exit();
 }
 ?>
@@ -80,23 +84,26 @@ if (isset($_POST['cancel_order'])) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($orderItems as $id => $item): ?>
+                    <?php if (!empty($orderItems)): ?>
+                    <?php foreach ($orderItems as $item): ?>
                         <tr>
                             <td class="product-info">
-                                <?php if (isset($item['image']) && !empty($item['image'])): ?>
-                                <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>" class="product-image">
-                                <?php else: ?>
-                                <img src="description.png" alt="<?php echo $item['name']; ?>" class="product-image">
-                                <?php endif; ?>
-                                <span><?php echo $item['name']; ?></span>
+                            <img src="<?php echo htmlspecialchars('../e-com/' . $item['product_image'], ENT_QUOTES, 'UTF-8'); ?>" 
+                            alt="<?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                    class="product-image">
+                                <span><?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?></span>
                             </td>
                             <td class="product-quantity">
                                 <span class="quantity-value"><?php echo $item['quantity']; ?></span>
                             </td>
-                            <td class="product-price">₱<span class="price-value"><?php echo number_format($item['price'], 2); ?></span></td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
+                            <td class="product-price">₱<span class="price-value"><?php echo number_format($item['price'] * $item['quantity'], 2); ?></span></td>                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="3">Your cart is empty</td>
+                    </tr>
+                <?php endif; ?>
+                     </tbody>
                 </table>
 
                 <div class="cart-summary">
@@ -114,6 +121,7 @@ if (isset($_POST['cancel_order'])) {
 
             <div class="cart-actions">
                 <a href="paymentmethod.php" class="btn payment-btn">Payment</a>
+                
                 <button class="btn cancel-btn" id="cancel-order-btn">Cancel Order</button>
             </div>
         </section>
