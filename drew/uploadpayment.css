@@ -519,3 +519,20 @@ footer {
 .modal-buttons .decline-btn:hover {
     background-color: #7e7b7b;
 }
+
+#image-preview-container {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;    /* Center vertically */
+    margin-top: 10px;
+    height: 200px;          /* Set a fixed height for the container */
+    border: 1px dashed #ddd; /* Optional: Add a border to indicate the preview area */
+    border-radius: 5px;     /* Optional: Add rounded corners */
+    background-color: #f9f9f9; /* Optional: Add a light background color */
+}
+
+#image-preview {
+    max-width: 100%;
+    max-height: 100%;
+    display: none; /* Initially hidden */
+}

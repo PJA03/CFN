@@ -2,11 +2,14 @@
 session_start();
 include 'conn.php';
 
-// Check if the user has an order to process
-if (!isset($_SESSION['order']) || empty($_SESSION['order'])) {
-    header('Location: cart.php');
-    exit;
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    //TODO: Make it an alert tapos stay on the product details page
+    header('Location: ../Registration_Page/registration.php');
+    exit();
 }
+
+$user_id = $_SESSION['user_id'];
 
 // Check if the file was uploaded
 if (!isset($_FILES['payment_proof']) || $_FILES['payment_proof']['error'] != 0) {

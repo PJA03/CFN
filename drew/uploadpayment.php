@@ -1,11 +1,14 @@
 <?php
 session_start();
 
-// Redirect if order is empty or not set
-if (!isset($_SESSION['order']) || empty($_SESSION['order'])) {
-    header('Location: cart.php');
-    exit;
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    //TODO: Make it an alert tapos stay on the product details page
+    header('Location: ../Registration_Page/registration.php');
+    exit();
 }
+
+$user_id = $_SESSION['user_id'];
 
 // QR code that was selected
 $qr_type = isset($_GET['type']) ? $_GET['type'] : 'gcash';
@@ -75,6 +78,10 @@ if ($qr_type == 'paymaya') {
                         <input type="file" id="payment-proof" name="payment_proof" accept=".png, .jpeg, .jpg" required style="display: none;">
                         <p id="file-name"></p>
                     </div>
+                    <!-- Image Preview -->
+                    <div id="image-preview-container" style="margin-top: 10px;">
+                        <img id="image-preview" src="" alt="Image Preview" style="max-width: 100%; max-height: 200px; display: none;">
+                    </div>
                     <div class="submit-container">
                         <button type="submit" class="btn submit-btn">Submit Payment</button>
                     </div>
@@ -114,6 +121,35 @@ if ($qr_type == 'paymaya') {
         document.getElementById('payment-proof').addEventListener('change', function() {
             var fileName = this.files[0] ? this.files[0].name : '';
             document.getElementById('file-name').textContent = fileName;
+        });
+    </script>
+    <script>
+        document.getElementById('payment-proof').addEventListener('change', function () {
+            const fileInput = this;
+            const fileName = fileInput.files[0] ? fileInput.files[0].name : '';
+            const file = fileInput.files[0];
+            const previewContainer = document.getElementById('image-preview-container');
+            const previewImage = document.getElementById('image-preview');
+
+            // Display the file name
+            document.getElementById('file-name').textContent = fileName;
+
+            // Check if a file is selected and is an image
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+
+                // Load the image and set it as the src of the preview image
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block'; // Show the image
+                };
+
+                reader.readAsDataURL(file); // Read the file as a data URL
+            } else {
+                // Hide the preview if no valid image is selected
+                previewImage.src = '';
+                previewImage.style.display = 'none';
+            }
         });
     </script>
 </body>

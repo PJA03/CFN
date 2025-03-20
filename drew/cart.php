@@ -6,7 +6,8 @@ include 'conn.php'; // Ensure this file connects to your database
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
     //TODO: Make it an alert tapos stay on the product details page
-    die("You must be logged in to view your cart.");
+    header('Location: ../Registration_Page/registration.php');
+    exit();
 }
 
 $user_id = $_SESSION['user_id'];
@@ -77,50 +78,57 @@ if (isset($_POST['confirm_checkout'])) {
                         </tr>
                     </thead>
                     <tbody>
-                    <?php if (!empty($cart_items)): ?>
-                    <?php foreach ($cart_items as $item): ?>
-                        <tr data-product-id="<?php echo $item['productID']; ?>">
-                            <td class="product-info">
-                            <img src="<?php echo htmlspecialchars('../e-com/' . $item['product_image'], ENT_QUOTES, 'UTF-8'); ?>" 
-                            alt="<?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?>" 
-                                    class="product-image">
-                                <span><?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?></span>
-                            </td>
-                            <td class="product-quantity">
-                                <button class="quantity-btn minus-btn">-</button>
-                                <span class="quantity-value"><?php echo $item['quantity']; ?></span>
-                                <button class="quantity-btn plus-btn">+</button>
-                                <i class="fas fa-trash delete-icon"></i>
-                            </td>
-                            <td class="product-price">₱<span class="price-value"><?php echo number_format($item['price'], 2); ?></span></td>
+                        <?php if (!empty($cart_items)): ?>
+                        <?php foreach ($cart_items as $item): ?>
+                            <tr data-product-id="<?php echo $item['productID']; ?>">
+                                <td class="product-info">
+                                <img src="<?php echo htmlspecialchars('../e-com/' . $item['product_image'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                alt="<?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                        class="product-image">
+                                    <span><?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                </td>
+                                <td class="product-quantity">
+                                    <button class="quantity-btn minus-btn">-</button>
+                                    <span class="quantity-value"><?php echo $item['quantity']; ?></span>
+                                    <button class="quantity-btn plus-btn">+</button>
+                                    <i class="fas fa-trash delete-icon"></i>
+                                </td>
+                                <td class="product-price">₱<span class="price-value"><?php echo number_format($item['price'], 2); ?></span></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="3">Your cart is empty</td>
                         </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="3">Your cart is empty</td>
-                    </tr>
-                <?php endif; ?>
-</tbody>
+                    <?php endif; ?>
+                </tbody>
                 </table>
 
                 <div class="cart-summary">
                     <div class="price-breakdown">
                         <?php
                         $netPrice = 0;
-                        $netPrice = 0;
+                        $totalVAT = 0;
+                        $totalPrice = 0;
+                        
                         if (!empty($cart_items)) {
                             foreach ($cart_items as $item) {
-                                $netPrice += $item['price'] * $item['quantity'];
+                                $itemTotalPrice = $item['price'] * $item['quantity']; // Total price for this item
+                                $itemVAT = $itemTotalPrice * 0.12; // 12% VAT for this item
+                                $itemNetPrice = $itemTotalPrice - $itemVAT; // Net price for this item (price minus VAT)
+                        
+                                $netPrice += $itemNetPrice; // Accumulate net price
+                                $totalVAT += $itemVAT; // Accumulate VAT
+                                $totalPrice += $itemTotalPrice; // Accumulate total price
                             }
                         }
-                        $vat = $netPrice * 0.12;
-                        $deliveryFee = 40.00;
-                        $totalPrice = $netPrice + $vat + $deliveryFee;
                         ?>
                         <p>Net Price: <span id="net-price">₱<?php echo number_format($netPrice, 2); ?></span></p>
-                        <p>VAT: <span id="vat">₱<?php echo number_format($vat, 2); ?></span></p>
-                        <p>Delivery Fee: <span id="delivery-fee">₱<?php echo number_format($deliveryFee, 2); ?></span></p>
+                        <p>VAT (12%): <span id="vat">₱<?php echo number_format($totalVAT, 2); ?></span></p>
                         <p>Total Price: <strong id="total-price">₱<?php echo number_format($totalPrice, 2); ?></strong></p>
+                    </div>
+                    <div class="delivery-note">
+                        *Delivery fee is calculated by our third-party carrier.
                     </div>
                 </div>
             </div>
@@ -128,7 +136,7 @@ if (isset($_POST['confirm_checkout'])) {
 
         <div class="cart-actions">
             <a href="#" class="btn checkout-btn">Checkout</a>
-            <button class="btn back-btn">Back to Homepage</button>
+            <!-- <button class="btn back-btn">Back to Homepage</button> -->
         </div>
     </main>
 

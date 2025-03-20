@@ -4,8 +4,8 @@ require_once "../conn.php";
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    //TODO: Make it an alert tapos stay on the product details page
-    die("You must be logged in to view your cart.");
+    header('Location: ../Registration_Page/registration.php');
+    exit();
 }
 
 $user_id = $_SESSION['user_id'];
@@ -28,10 +28,26 @@ while ($row = $result->fetch_assoc()) {
     $totalNetPrice += floatval($row['price']) * intval($row['quantity']);
 }
 
-// Calculate VAT, delivery fee, and total price
-$vat = $totalNetPrice * 0.12;
-$deliveryFee = 40.00;
-$totalPrice = $totalNetPrice + $vat + $deliveryFee;
+
+// Calculate total price, VAT, and net price
+$netPrice = 0;
+$totalVAT = 0;
+$totalPrice = 0;
+
+if (!empty($orderItems)) {
+    foreach ($orderItems as $item) {
+        $itemTotalPrice = $item['price'] * $item['quantity']; // Total price for this item
+        $itemVAT = $itemTotalPrice * 0.12; // 12% VAT for this item
+        $itemNetPrice = $itemTotalPrice - $itemVAT; // Net price for this item (price minus VAT)
+
+        $netPrice += $itemNetPrice; // Accumulate net price
+        $totalVAT += $itemVAT; // Accumulate VAT
+        $totalPrice += $itemTotalPrice; // Accumulate total price
+    }
+}
+
+// Store the total price in the session
+$_SESSION['total_price'] = $totalPrice;
 
 
 // Handle order cancellation
@@ -41,6 +57,10 @@ if (isset($_POST['cancel_order'])) {
 
     exit();
 }
+
+// echo "<pre>";
+// print_r($_SESSION);
+// echo "</pre>";
 ?>
 
 <!DOCTYPE html>
@@ -85,34 +105,33 @@ if (isset($_POST['cancel_order'])) {
                     </thead>
                     <tbody>
                     <?php if (!empty($orderItems)): ?>
-                    <?php foreach ($orderItems as $item): ?>
+                        <?php foreach ($orderItems as $item): ?>
+                            <tr>
+                                <td class="product-info">
+                                    <img src="<?php echo htmlspecialchars('../e-com/' . $item['product_image'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                        alt="<?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                        class="product-image">
+                                    <span><?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                </td>
+                                <td class="product-quantity">
+                                    <span class="quantity-value"><?php echo $item['quantity']; ?></span>
+                                </td>
+                                <td class="product-price">₱<span class="price-value"><?php echo number_format($item['price'] * $item['quantity'], 2); ?></span></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
                         <tr>
-                            <td class="product-info">
-                            <img src="<?php echo htmlspecialchars('../e-com/' . $item['product_image'], ENT_QUOTES, 'UTF-8'); ?>" 
-                            alt="<?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?>" 
-                                    class="product-image">
-                                <span><?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?></span>
-                            </td>
-                            <td class="product-quantity">
-                                <span class="quantity-value"><?php echo $item['quantity']; ?></span>
-                            </td>
-                            <td class="product-price">₱<span class="price-value"><?php echo number_format($item['price'] * $item['quantity'], 2); ?></span></td>                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="3">Your cart is empty</td>
-                    </tr>
-                <?php endif; ?>
-                     </tbody>
+                            <td colspan="3">You have no orders yet.</td>
+                        </tr>
+                    <?php endif; ?>
+                    </tbody>
                 </table>
-
                 <div class="cart-summary">
-                    <div class="price-breakdown">
-                        <p>Net Price: <span id="net-price">₱<?php echo number_format($totalNetPrice, 2); ?></span></p>
-                        <p>VAT: <span id="vat">₱<?php echo number_format($vat, 2); ?></span></p>
-                        <p>Delivery Fee: <span id="delivery-fee">₱<?php echo number_format($deliveryFee, 2); ?></span></p>
-                        <p>Total Price: <strong id="total-price">₱<?php echo number_format($totalPrice, 2); ?></strong></p>
-                    </div>
+                <div class="price-breakdown">
+                    <p>Net Price: <span id="net-price">₱<?php echo number_format($netPrice, 2); ?></span></p>
+                    <p>VAT (12%): <span id="vat">₱<?php echo number_format($totalVAT, 2); ?></span></p>
+                    <p>Total Price: <strong id="total-price">₱<?php echo number_format($totalPrice, 2); ?></strong></p>
+                </div>
                     <div class="delivery-note">
                         *Delivery fee is calculated by our third-party carrier.
                     </div>
@@ -122,8 +141,7 @@ if (isset($_POST['cancel_order'])) {
             <div class="cart-actions">
                 <a href="paymentmethod.php" class="btn payment-btn">Payment</a>
                 
-                <button class="btn cancel-btn" id="cancel-order-btn">Cancel Order</button>
-            </div>
+                <button class="btn cancel-btn" id="cancel-order-btn" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel Order</button>            </div>
         </section>
     </main>
 
@@ -152,16 +170,23 @@ if (isset($_POST['cancel_order'])) {
     </footer>
 
     <!-- Cancel Order Confirmation Modal -->
-    <div id="cancelModal" class="modal-overlay">
-        <div class="modal-content">
-            <h2>CANCEL ORDER</h2>
-            <p>Are you sure you want to cancel your order?</p>
-            <div class="modal-buttons">
-                <form method="POST">
-                    <input type="hidden" name="cancel_order" value="1">
-                    <button type="submit" class="btn yes-btn">Yes</button>
-                </form>
-                <button id="cancelModalClose" class="btn no-btn">No</button>
+    <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelModalLabel">Cancel Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to cancel your order?
+                </div>
+                <div class="modal-footer">
+                    <form method="POST">
+                        <input type="hidden" name="cancel_order" value="1">
+                        <button type="submit" class="btn btn-danger" id="confirm-cancel-btn">Yes, Cancel</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                </div>
             </div>
         </div>
     </div>

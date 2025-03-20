@@ -1,13 +1,22 @@
 <?php
 session_start();
+include 'conn.php'; // Ensure this file connects to your database
+
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
     //TODO: Make it an alert tapos stay on the product details page
-    die("You must be logged in to view your cart.");
+    header('Location: ../Registration_Page/registration.php');
+    exit();
 }
 
 $user_id = $_SESSION['user_id'];
+
+$totalPrice = $_SESSION['total_price'] ?? 0;
+
+// echo "<pre>";
+// print_r($_SESSION);
+// echo "</pre>";
 
 ?>
 <!DOCTYPE html>
@@ -78,20 +87,7 @@ $user_id = $_SESSION['user_id'];
                 <div class="cart-summary">
                     <h3>Order Summary</h3>
                     <div class="price-breakdown">
-                        <?php
-                        $netPrice = 0;
-                        if (!empty($_SESSION['order'])) {
-                            foreach ($_SESSION['order'] as $item) {
-                                $netPrice += $item['price'] * $item['quantity'];
-                            }
-                        }
-                        $vat = $netPrice * 0.12;
-                        $deliveryFee = 40.00;
-                        $totalPrice = $netPrice + $vat + $deliveryFee;
-                        ?>
-                        <p>Net Price: <span id="net-price">₱<?php echo number_format($netPrice, 2); ?></span></p>
-                        <p>VAT: <span id="vat">₱<?php echo number_format($vat, 2); ?></span></p>
-                        <p>Delivery Fee: <span id="delivery-fee">₱<?php echo number_format($deliveryFee, 2); ?></span></p>
+                       
                         <p>Total Price: <strong id="total-price">₱<?php echo number_format($totalPrice, 2); ?></strong></p>
                     </div>
                 </div>
