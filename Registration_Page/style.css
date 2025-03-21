@@ -408,3 +408,13 @@ input::-ms-clear {
 .btn:hover {
     background-color:#C0D171
 }
+
+#accept-terms, #accept-privacy {
+    background-color: green !important; 
+    transition: background-color 0.3s ease;
+}
+
+#deny-terms, #deny-privacy {
+    background-color: red !important;
+    transition: background-color 0.3s ease;
+}
