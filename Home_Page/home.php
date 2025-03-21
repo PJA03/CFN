@@ -148,14 +148,14 @@ header {
     cursor: pointer;
 }
 
-.burger-menu {
-    font-size: 1.6rem;
+.fa-house {
+    font-size: 1.5rem;
     color: #EED3B1;
     cursor: pointer;
 }
 
 .fa-shopping-cart {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     color: #EED3B1;
     cursor: pointer;
 }
@@ -646,10 +646,10 @@ footer {
         <div class="navbar">
             <input type="text" class="search-bar" placeholder="Search Product" />
             <div class="icons">
+            <a href="../Home_Page/home.php"><i class="fa-solid fa-house"></i></a>
                 <a href="../User_Profile_Page/UserProfile.php">
         <i class="far fa-user-circle fa-2x icon-profile"></i>
     </a>
-                <i class="fas fa-bars burger-menu"></i>
             </div>
         </div>
     </header>
@@ -778,10 +778,10 @@ footer {
 
             <h2 class="section-title">SHOP BY CATEGORY</h2>
             <div class="category-grid">
-                <a href="skin.html" class="category-card-skin">SKIN</a>
-                <a href="hair.html" class="category-card-hair">HAIR</a>
-                <a href="face.html" class="category-card-face">FACE</a>
-                <a href="perfume.html" class="category-card-perfume">PERFUME</a>
+                <a href="ProductScroll.php?category=skin" class="category-card-skin">SKIN</a>
+                <a href="ProductScroll.php?category=hair" class="category-card-hair">HAIR</a>
+                <a href="ProductScroll.php?category=face" class="category-card-face">FACE</a>
+                <a href="ProductScroll.php?category=perfume" class="category-card-perfume">PERFUME</a>
             </div>
         </div>
 
