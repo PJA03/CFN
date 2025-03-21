@@ -1,0 +1,240 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Be Vietnam Pro", serif !important;
+    font-weight: 400;
+    font-style: normal;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #E8ECD7 !important;
+    line-height: 1.6;
+    overflow: auto;
+}
+
+/* Header Styling */
+header {
+    background-color: #1F4529;
+    color: #EED3B1;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    margin-left: 30px;
+    gap: 10px;
+}
+
+.logo-image {
+    height: 40px;
+    width: auto;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.icons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.3s ease, color 0.3s ease;
+    margin-left: 50px;
+    margin-right: 40px;
+}
+
+.icon-profile, .home, .cart {
+    font-size: 1.6rem;
+    color: #EED3B1;
+    cursor: pointer;
+    margin-left: 10px;
+    position: relative;
+}
+
+.icon-profile:hover, .home:hover, .cart:hover {
+    transform: scale(1.1);
+    color: whitesmoke;
+}
+
+.usernamedisplay {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    color: #EED3B1;
+    font-size: 20px;
+    font-style: italic;
+    padding-top: 15px;
+}
+
+/* Cart Container */
+.main {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    width: 80vw;
+    max-width: 1200px;
+    margin: 50px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cart-title {
+    font-family: "Bebas Neue", serif !important;
+    font-size: 50px;
+    color: #1F4529;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.cart-container {
+    width: 100%;
+}
+
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.cart-table th, .cart-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.cart-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.checkout-btn, .cancel-btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.checkout-btn {
+    background-color: #1F4529;
+    color: white;
+}
+
+.cancel-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Footer Styling */
+footer {
+    background-color: #1F4529;
+    color: white;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.footer-logo {
+    height: 150px;
+}
+
+.footer-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.footer-right {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.footer-nav {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 40px;
+}
+
+.footer-nav li {
+    font-family: "Bebas Neue", serif !important;
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.footer-nav a {
+    color: white;
+    text-decoration: none;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icons {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.social-icons a {
+    color: white;
+    font-size: 18px;
+    text-decoration: none;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icons a:hover, .footer-nav a:hover {
+    transform: scale(1.1);
+    color: #EED3B1;
+}
+
+.footer-center {
+    text-align: center;
+    width: 100%;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main {
+        width: 90vw;
+    }
+    .cart-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
