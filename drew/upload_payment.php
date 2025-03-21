@@ -1,42 +1,51 @@
 <?php
 session_start();
+require_once '../conn.php';
 
-// Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    //TODO: Make it an alert tapos stay on the product details page
-    header('Location: ../Registration_Page/registration.php');
+    echo "<script>alert('Please log in to proceed with payment.'); window.location.href='../Registration_Page/registration.php';</script>";
     exit();
 }
 
 $user_id = $_SESSION['user_id'];
+$qr_type = isset($_GET['type']) ? $_GET['type'] : null;
 
-// QR code that was selected
-$qr_type = isset($_GET['type']) ? $_GET['type'] : 'gcash';
-$qr_image = 'gcashqr.jpg'; // Default
+if (!isset($_SESSION['order']) || empty($_SESSION['order'])) {
+    echo "<script>alert('No items in your order. Please return to cart.'); window.location.href='cart.php';</script>";
+    exit();
+}
 
-// Adjust image based on type
-if ($qr_type == 'paymaya') {
-    $qr_image = 'paymayaqr.jpg';
-} elseif ($qr_type == 'instapay') {
-    $qr_image = 'instapay.png';
+// Fetch QR code from tb_payment_qr_codes based on qr_type
+if ($qr_type) {
+    $query = "SELECT qr_image FROM tb_payment_qr_codes WHERE payment_type = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("s", $qr_type);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $qr_row = $result->fetch_assoc();
+
+    if ($qr_row) {
+        $qr_image = '../uploads/qr/' . htmlspecialchars($qr_row['qr_image']);
+        $_SESSION['payment_option'] = $qr_type; // Store payment option in session
+    } else {
+        echo "<script>alert('Invalid payment method selected. Please choose a valid option.'); window.location.href='select_payment.php';</script>";
+        exit();
+    }
+} else {
+    echo "<script>alert('No payment method specified.'); window.location.href='select_payment.php';</script>";
+    exit();
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="uploadpayment.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Receipt</title>
+    <title>Upload Payment Receipt</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="uploadpayment.css">
 </head>
-
 <body>
     <header>
         <div class="logo">
@@ -45,7 +54,7 @@ if ($qr_type == 'paymaya') {
         <div class="navbar">
             <input type="text" class="search-bar" placeholder="Search Product" />
             <div class="icons">
-                <i class="far fa-user-circle fa-2x icon-profile"></i>
+                <a href="../User_Profile_Page/UserProfile.php"><i class="far fa-user-circle fa-2x icon-profile"></i></a>
                 <i class="fas fa-bars burger-menu"></i>
             </div>
         </div>
@@ -56,20 +65,17 @@ if ($qr_type == 'paymaya') {
             <div class="upload-receipt">
                 <h2>QR Payment</h2>
                 <div class="qr-and-text">
-                    <!-- QR Code Image -->
                     <div class="qr-code-placeholder">
-                        <img src="gcashqr.jpg" alt="QR Code" class="qr-code-image">
+                        <img src="<?php echo htmlspecialchars($qr_image); ?>" alt="QR Code" class="qr-code-image">
                     </div>
-                    <!-- Text Content -->
                     <div class="text-content">
-                        <p>QR PH (GCASH/PAYMAYA)</p>
+                        <p>QR PH (<?php echo strtoupper(str_replace('_', ' ', $qr_type)); ?>)</p>
                         <p>Scan the QR code to make your payment</p>
                         <p>SCAN TO PAY HERE</p>
                         <p>Kindly upload your E-receipt to verify your payment</p>
                     </div>
                 </div>
 
-                <!-- Upload Button with Form -->
                 <form action="process_payment.php" method="POST" enctype="multipart/form-data">
                     <div class="upload-container">
                         <label for="payment-proof" class="upload-btn">
@@ -78,7 +84,6 @@ if ($qr_type == 'paymaya') {
                         <input type="file" id="payment-proof" name="payment_proof" accept=".png, .jpeg, .jpg" required style="display: none;">
                         <p id="file-name"></p>
                     </div>
-                    <!-- Image Preview -->
                     <div id="image-preview-container" style="margin-top: 10px;">
                         <img id="image-preview" src="" alt="Image Preview" style="max-width: 100%; max-height: 200px; display: none;">
                     </div>
@@ -109,49 +114,29 @@ if ($qr_type == 'paymaya') {
                 <a href="#"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
-        <div class="footer-center">
-            &copy; COSMETICAS 2024
-        </div>
+        <div class="footer-center">© COSMETICAS 2024</div>
     </footer>
 
-    <!-- Bootstrap JS (with Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Display selected filename
-        document.getElementById('payment-proof').addEventListener('change', function() {
-            var fileName = this.files[0] ? this.files[0].name : '';
-            document.getElementById('file-name').textContent = fileName;
-        });
-    </script>
     <script>
         document.getElementById('payment-proof').addEventListener('change', function () {
             const fileInput = this;
             const fileName = fileInput.files[0] ? fileInput.files[0].name : '';
             const file = fileInput.files[0];
-            const previewContainer = document.getElementById('image-preview-container');
             const previewImage = document.getElementById('image-preview');
-
-            // Display the file name
             document.getElementById('file-name').textContent = fileName;
-
-            // Check if a file is selected and is an image
             if (file && file.type.startsWith('image/')) {
                 const reader = new FileReader();
-
-                // Load the image and set it as the src of the preview image
                 reader.onload = function (e) {
                     previewImage.src = e.target.result;
-                    previewImage.style.display = 'block'; // Show the image
+                    previewImage.style.display = 'block';
                 };
-
-                reader.readAsDataURL(file); // Read the file as a data URL
+                reader.readAsDataURL(file);
             } else {
-                // Hide the preview if no valid image is selected
                 previewImage.src = '';
                 previewImage.style.display = 'none';
             }
         });
     </script>
 </body>
-
 </html>

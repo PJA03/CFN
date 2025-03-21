@@ -119,32 +119,35 @@
       <!-- Main Content -->
       <div class="col-md-10 p-4 main-content">
         <h3 class="mt-4 text-center">Orders Table</h3>
-        <div class="d-flex justify-content-end align-items-center mb-3">
-          <select id="filterStatus" class="form-select me-2" style="width: auto;">
-            <option value="">All Statuses</option>
-            <option value="Waiting for Payment">Waiting for Payment</option>
-            <option value="Processing">Processing</option>
-            <option value="Shipped">Shipped</option>
-            <option value="Delivered">Delivered</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-          <input type="text" id="searchOrder" class="form-control w-25 me-2" placeholder="Search Order" />
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <a href="manage_qr_codes.php" class="btn btn-primary">Manage QR Codes</a> <!-- Added here -->
+          <div class="d-flex align-items-center">
+            <select id="filterStatus" class="form-select me-2" style="width: auto;">
+              <option value="">All Statuses</option>
+              <option value="Waiting for Payment">Waiting for Payment</option>
+              <option value="Processing">Processing</option>
+              <option value="Shipped">Shipped</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+            <input type="text" id="searchOrder" class="form-control w-25 me-2" placeholder="Search Order" />
+          </div>
         </div>
 
         <div class="bg-white p-4 rounded shadow-sm">
-        <table class="table table-bordered text-center">
-        <thead>
-         <tr class="table-success">
-      <th>Order ID</th>
-      <th>Number of Items</th>
-      <th class="sortable" onclick="sortTable('total')">Total</th>
-      <th class="sortable" onclick="sortTable('status')">Status</th>
-      <th>Tracking Link</th>
-      <th>Address</th> <!-- New column header -->
-      <th>Action</th>
-           </tr>
+          <table class="table table-bordered text-center">
+            <thead>
+              <tr class="table-success">
+                <th>Order ID</th>
+                <th>Number of Items</th>
+                <th class="sortable" onclick="sortTable('total')">Total</th>
+                <th class="sortable" onclick="sortTable('status')">Status</th>
+                <th>Tracking Link</th>
+                <th>Address</th> <!-- New column header -->
+                <th>Action</th>
+              </tr>
             </thead>
-         <tbody id="ordersTable"></tbody>
+            <tbody id="ordersTable"></tbody>
           </table>
         </div>
       </div>

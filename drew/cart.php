@@ -2,15 +2,17 @@
 session_start();
 require_once '../conn.php';
 
-// Check if the user is logged in
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../Registration_Page/registration.php');
     exit();
 }
-
 $user_id = $_SESSION['user_id'];
 
-// Fetch and merge cart data from the database
+// Fetch cart data
 $query = "SELECT c.productID, SUM(c.quantity) as quantity, c.price, p.product_name, p.product_image 
           FROM tb_cart c
           JOIN tb_products p ON c.productID = p.productID
@@ -18,7 +20,9 @@ $query = "SELECT c.productID, SUM(c.quantity) as quantity, c.price, p.product_na
           GROUP BY c.productID, c.price, p.product_name, p.product_image";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $user_id);
-$stmt->execute();
+if (!$stmt->execute()) {
+    die("Query failed: " . $stmt->error);
+}
 $result = $stmt->get_result();
 
 $cart_items = [];
@@ -26,100 +30,103 @@ while ($row = $result->fetch_assoc()) {
     $cart_items[] = $row;
 }
 
-// Calculate total price, VAT, and net price
+// Calculate prices
 $netPrice = 0;
 $totalVAT = 0;
 $totalPrice = 0;
-
 if (!empty($cart_items)) {
     foreach ($cart_items as $item) {
-        $itemTotalPrice = $item['price'] * $item['quantity'];
+        $itemTotalPrice = floatval($item['price']) * intval($item['quantity']);
         $itemVAT = $itemTotalPrice * 0.12;
         $itemNetPrice = $itemTotalPrice - $itemVAT;
-
         $netPrice += $itemNetPrice;
         $totalVAT += $itemVAT;
         $totalPrice += $itemTotalPrice;
     }
 }
-
-// Store the total price in the session
 $_SESSION['total_price'] = $totalPrice;
 
-// Handle adding items to cart
+// Add to cart
 if (isset($_POST['add_to_cart'])) {
     $product_id = filter_input(INPUT_POST, 'product_id', FILTER_SANITIZE_NUMBER_INT);
-    
-    $query = "SELECT * FROM products WHERE id = ?";
+    $query = "SELECT * FROM tb_products WHERE id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param('i', $product_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $product = $result->fetch_assoc();
-
     if ($product) {
         $query = "INSERT INTO tb_cart (user_id, productID, quantity, price) 
                   VALUES (?, ?, 1, ?) 
                   ON DUPLICATE KEY UPDATE quantity = quantity + 1";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("iid", $user_id, $product_id, $product['price']);
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            die("Insert failed: " . $stmt->error);
+        }
     }
     header('Location: cart.php');
     exit();
 }
 
-// Handle quantity increase
+// Quantity increase
 if (isset($_POST['increase_qty'])) {
     $product_id = filter_input(INPUT_POST, 'product_id', FILTER_SANITIZE_NUMBER_INT);
     $query = "UPDATE tb_cart SET quantity = quantity + 1 WHERE user_id = ? AND productID = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("ii", $user_id, $product_id);
-    $stmt->execute();
+    if (!$stmt->execute()) {
+        die("Update failed: " . $stmt->error);
+    }
     header('Location: cart.php');
     exit();
 }
 
-// Handle quantity decrease
+// Quantity decrease
 if (isset($_POST['decrease_qty'])) {
     $product_id = filter_input(INPUT_POST, 'product_id', FILTER_SANITIZE_NUMBER_INT);
     $query = "UPDATE tb_cart SET quantity = quantity - 1 WHERE user_id = ? AND productID = ? AND quantity > 1";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("ii", $user_id, $product_id);
-    $stmt->execute();
+    if (!$stmt->execute()) {
+        die("Update failed: " . $stmt->error);
+    }
     header('Location: cart.php');
     exit();
 }
 
-// Handle item removal
+// Remove item
 if (isset($_POST['remove_item'])) {
     $product_id = filter_input(INPUT_POST, 'product_id', FILTER_SANITIZE_NUMBER_INT);
     $query = "DELETE FROM tb_cart WHERE user_id = ? AND productID = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("ii", $user_id, $product_id);
-    $stmt->execute();
+    if (!$stmt->execute()) {
+        die("Delete failed: " . $stmt->error);
+    }
     header('Location: cart.php');
     exit();
 }
 
-// Handle checkout
+// Checkout
 if (isset($_POST['confirm_checkout'])) {
     $_SESSION['order'] = $cart_items;
-    header('Location: paymentmethod.php');
+    header('Location: select_payment.php');
     exit();
 }
 
-// Handle cart cancellation
+// Clear cart
 if (isset($_POST['cancel_cart'])) {
     $query = "DELETE FROM tb_cart WHERE user_id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $user_id);
-    $stmt->execute();
+    if (!$stmt->execute()) {
+        die("Clear cart failed: " . $stmt->error);
+    }
     header("Location: cart.php");
     exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -127,7 +134,7 @@ if (isset($_POST['cancel_cart'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="cart.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart</title>
+    <title>Shopping Cart</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -189,9 +196,7 @@ if (isset($_POST['cancel_cart'])) {
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <tr>
-                                <td colspan="3">Your cart is empty</td>
-                            </tr>
+                            <tr><td colspan="3">Your cart is empty</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
@@ -202,9 +207,7 @@ if (isset($_POST['cancel_cart'])) {
                         <p>VAT (12%): <span id="vat">₱<?php echo number_format($totalVAT, 2); ?></span></p>
                         <p>Total Price: <strong id="total-price">₱<?php echo number_format($totalPrice, 2); ?></strong></p>
                     </div>
-                    <div class="delivery-note">
-                        *Delivery fee is calculated by our third-party carrier.
-                    </div>
+                    <div class="delivery-note">*Delivery fee is calculated by our third-party carrier.</div>
                 </div>
             </div>
 
@@ -234,12 +237,9 @@ if (isset($_POST['cancel_cart'])) {
                 <a href="#"><i class="fab fa-instagram"></i></a>
             </div>            
         </div>
-        <div class="footer-center">
-            © COSMETICAS 2024
-        </div>
+        <div class="footer-center">© COSMETICAS 2024</div>
     </footer>
 
-    <!-- Checkout Confirmation Modal -->
     <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -247,9 +247,7 @@ if (isset($_POST['cancel_cart'])) {
                     <h5 class="modal-title" id="checkoutModalLabel">Confirm Checkout</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    Are you sure you want to proceed to payment?
-                </div>
+                <div class="modal-body">Are you sure you want to proceed to payment?</div>
                 <div class="modal-footer">
                     <form id="checkoutForm" method="POST">
                         <input type="hidden" name="confirm_checkout" value="1">
@@ -261,7 +259,6 @@ if (isset($_POST['cancel_cart'])) {
         </div>
     </div>
 
-    <!-- Cancel Cart Confirmation Modal -->
     <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -269,9 +266,7 @@ if (isset($_POST['cancel_cart'])) {
                     <h5 class="modal-title" id="cancelModalLabel">Clear Cart</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    Are you sure you want to clear your cart?
-                </div>
+                <div class="modal-body">Are you sure you want to clear your cart?</div>
                 <div class="modal-footer">
                     <form method="POST">
                         <input type="hidden" name="cancel_cart" value="1">
