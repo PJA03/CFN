@@ -120,7 +120,7 @@
       <div class="col-md-10 p-4 main-content">
         <h3 class="mt-4 text-center">Orders Table</h3>
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <a href="manage_qr_codes.php" class="btn btn-primary">Manage QR Codes</a> <!-- Added here -->
+          <a href="manage_qr_codes.php" class="btn btn-primary">Manage QR Codes</a>
           <div class="d-flex align-items-center">
             <select id="filterStatus" class="form-select me-2" style="width: auto;">
               <option value="">All Statuses</option>
@@ -143,7 +143,7 @@
                 <th class="sortable" onclick="sortTable('total')">Total</th>
                 <th class="sortable" onclick="sortTable('status')">Status</th>
                 <th>Tracking Link</th>
-                <th>Address</th> <!-- New column header -->
+                <th>Address</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -243,11 +243,11 @@
     let currentOrderID = null;
     let sortField = '';
     let sortOrder = 'asc';
-    let originalStatus = ''; // To store the original status of the order
+    let originalStatus = '';
 
     // 1. Load orders from fetchorders.php
     function loadOrders(query = "", filterStatus = "", sort = '', order = 'asc') {
-      document.getElementById("ordersTable").innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
+      document.getElementById("ordersTable").innerHTML = "<tr><td colspan='7'>Loading...</td></tr>";
       const url = `fetchorders.php?search=${encodeURIComponent(query)}&filter=${encodeURIComponent(filterStatus)}&sort=${encodeURIComponent(sort)}&order=${encodeURIComponent(order)}`;
       fetch(url)
         .then(response => response.text())
@@ -261,7 +261,7 @@
         })
         .catch(error => {
           console.error("Error loading orders:", error);
-          document.getElementById("ordersTable").innerHTML = "<tr><td colspan='6' class='text-danger'>Failed to load data</td></tr>";
+          document.getElementById("ordersTable").innerHTML = "<tr><td colspan='7' class='text-danger'>Failed to load data</td></tr>";
         });
     }
 
@@ -302,13 +302,16 @@
           document.getElementById("emailDisplay").textContent = data.email || "";
           document.getElementById("quantityDisplay").textContent = data.quantity || "";
           document.getElementById("paymentOptionDisplay").textContent = data.payment_option || "";
-          document.getElementById("totalDisplay").textContent = "₱" + (data.price_total || "");
+          document.getElementById("totalDisplay").textContent = "₱" + (data.price_total || "0.00");
           
           document.getElementById("status").value = data.status || "Waiting for Payment";
-          originalStatus = data.status || "Waiting for Payment"; // Store original status
+          originalStatus = data.status || "Waiting for Payment";
           document.getElementById("confirmPayment").checked = (data.isApproved == 1);
           document.getElementById("trackingLink").value = data.trackingLink || "";
-          document.getElementById("receiptImage").src = data.payment_proof || "images/placeholder.jpg";
+          
+          // Fix the receipt image path
+          const receiptPath = data.payment_proof ? `../uploads/receipts/${data.payment_proof}` : "images/placeholder.jpg";
+          document.getElementById("receiptImage").src = receiptPath;
 
           isChanged = false;
           document.getElementById("orderPopup").style.display = "flex";
@@ -377,7 +380,6 @@
       const isPaymentConfirmed = document.getElementById("confirmPayment").checked;
       const trackingLink = document.getElementById("trackingLink").value.trim();
 
-      // Auto-update status based on conditions
       if (isPaymentConfirmed && status === "Waiting for Payment") {
         status = "Processing";
         document.getElementById("status").value = status;
@@ -387,7 +389,6 @@
         document.getElementById("status").value = status;
       }
 
-      // Prevent setting to "Delivered" unless the order is "Shipped" and has a tracking link
       if (status === "Delivered" && originalStatus !== "Shipped") {
         Swal.fire({
           title: "Invalid Status Change",
