@@ -158,32 +158,37 @@ header {
     background-color: #16331f; /* Darker shade on hover */
 }
 
-/* FOOTER */
+
+/* Footer */
 footer {
     background-color: #1F4529;
     color: white;
-    padding: 20px 50px;
+    padding: 40px 60px;
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
+    align-items: center;
     width: 100%;
 }
 
 .footer-container {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
     max-width: 1200px;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
+/* Footer Left */
 .footer-left {
     display: flex;
     align-items: center;
+    gap: 20px;
 }
 
 .footer-logo {
-    height: 200px;
-    margin-left: 100px;
+    height: 150px;
 }
 
 .footer-logo img {
@@ -192,55 +197,84 @@ footer {
     object-fit: contain;
 }
 
+/* Footer Right */
 .footer-right {
     display: flex;
     flex-direction: column;
-    text-align: right;
+    text-align: left;
+    gap: 20px;
 }
 
+/* Navigation */
 .footer-nav {
     list-style: none;
     padding: 0;
-    margin-bottom: 40px;
 }
 
 .footer-nav li {
-    font-family: "Bebas Neue", serif !important;
+    font-family: "Bebas Neue", serif;
     font-size: 20px;
+    margin-bottom: 8px;
 }
 
 .footer-nav a {
     color: white;
     text-decoration: none;
+    transition: color 0.3s ease;
 }
 
+.footer-nav a:hover {
+    color: #EED3B1;
+}
+
+/* Social Icons */
 .social-icons {
-    flex-direction: column; 
-    align-items: flex-start; 
-    margin-bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.social-icons p {
+    font-size: 20px;
+    font-family: "Bebas Neue", serif;
+    margin: 0;
 }
 
 .social-icons a {
     color: white;
     font-size: 18px;
     text-decoration: none;
-    gap: 10px;
-    margin-left: 4px;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
-.social-icons p {
-    color: white;
-    font-size: 20px;
-    font-family: "Bebas Neue", serif !important;
-    margin-bottom: 0px;
-    margin-top: 0;
+.social-icons a:hover {
+    transform: scale(1.1);
+    color: #EED3B1;
 }
 
+/* Footer Center (Copyright) */
 .footer-center {
     text-align: center;
     width: 100%;
     font-size: 14px;
-    margin-top: 10px;
+    margin-top: 20px;
+    opacity: 0.8;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .footer-left,
+    .footer-right {
+        justify-content: center;
+        align-items: center;
+    }
 }
 
 /* Filter Section */

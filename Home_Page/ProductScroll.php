@@ -10,42 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="ProductScroll.css">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Be Vietnam Pro', sans-serif;
-            background-color: #f1f2d8;
-        }
-        .logo { display: flex; align-items: center; gap: 10px; }
-        .logo-image { height: 40px; width: auto; }
-        header { background-color: #1F4529; color: #EED3B1; padding: 20px; display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; position: relative; }
-        .navbar { display: flex; justify-content: flex-end; align-items: center; padding: 10px 20px; }
-        .search-bar { padding: 8px 12px; border-radius: 25px; border: none; outline: none; font-size: 1rem; width: 300px; background-color: #FFFFFF; margin-right: 20px; }
-        .icons { display: flex; align-items: center; gap: 15px; }
-        .icon-profile, .burger-menu, .fa-shopping-cart { font-size: 1.8rem; color: #EED3B1; cursor: pointer; }
-        .container-fluid { margin-top: 20px; }
-        .filter-container { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-        .filter-container i { font-size: 1.5rem; cursor: pointer; }
-        .category-dropdown { background-color: #1F4529; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 1rem; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-        .product-card { border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fff; padding: 15px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .product-card img { width: 100%; max-height: 150px; object-fit: cover; border-radius: 5px; }
-        .variant-options { margin-top: 10px; }
-        .variant-select { width: 100%; padding: 5px; margin-top: 5px; border-radius: 5px; border: 1px solid #e0e0e0; }
-        .add-to-cart { background-color: #1F4529; color: #fff; border: none; border-radius: 5px; padding: 8px 15px; cursor: pointer; margin-top: 10px; }
-        .add-to-cart:hover { background-color: #15432b; }
-        footer { background-color: #1F4529; color: white; padding: 20px 50px; display: flex; flex-direction: column; width: 100%; }
-        .footer-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; }
-        .footer-logo { height: 200px; margin-left: 100px; }
-        .footer-nav { list-style: none; padding: 0; margin-bottom: 40px; }
-        .footer-nav li { font-family: "Bebas Neue", serif; font-size: 20px; }
-        .footer-nav a { color: white; text-decoration: none; }
-        .social-icons { flex-direction: column; align-items: flex-start; margin-bottom: 100px; }
-        .social-icons a { color: white; font-size: 18px; text-decoration: none; gap: 10px; margin-left: 4px; }
-        .social-icons p { color: white; font-size: 20px; font-family: "Bebas Neue", serif; margin-bottom: 0; margin-top: 0; }
-        .footer-center { text-align: center; width: 100%; font-size: 14px; margin-top: 10px; }
-    </style>
+
 </head>
 <body>
     <header>
@@ -149,29 +114,29 @@
     }
     $conn->close();
     ?>
+    </div>
 </div>
 
-    <footer>
+  <footer>
         <div class="footer-container">
             <div class="footer-left">
                 <img src="cfn_logo.png" alt="Naturale Logo" class="footer-logo">
             </div>
             <div class="footer-right">
                 <ul class="footer-nav">
-                    <li><a href="#">ABOUT US</a></li>
-                    <li><a href="#">PRODUCTS</a></li>
-                    <li><a href="#">LOGIN</a></li>
-                    <li><a href="#">SIGN UP</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Terms and Conditions</a></li>
+                    <li><a href="#">Products</a></li>
                 </ul>
             </div>
             <div class="social-icons">
                 <p>SOCIALS</p>
                 <a href="#"><i class="fab fa-facebook"></i></a>
                 <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
+            </div>            
         </div>
         <div class="footer-center">
-            © COSMETICAS 2024
+            &copy; COSMETICAS 2024
         </div>
     </footer>
 
