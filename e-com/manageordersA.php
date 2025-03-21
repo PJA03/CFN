@@ -376,81 +376,79 @@
 
     // 7. Save changes to the order
     function saveChanges() {
-      let status = document.getElementById("status").value;
-      const isPaymentConfirmed = document.getElementById("confirmPayment").checked;
-      const trackingLink = document.getElementById("trackingLink").value.trim();
+  let status = document.getElementById("status").value;
+  const isPaymentConfirmed = document.getElementById("confirmPayment").checked ? 1 : 0;
+  const trackingLink = document.getElementById("trackingLink").value.trim();
 
-      if (isPaymentConfirmed && status === "Waiting for Payment") {
-        status = "Processing";
-        document.getElementById("status").value = status;
-      }
-      if (trackingLink && (status === "Processing" || status === "Waiting for Payment")) {
-        status = "Shipped";
-        document.getElementById("status").value = status;
-      }
+  if (isPaymentConfirmed && status === "Waiting for Payment") {
+    status = "Processing";
+    document.getElementById("status").value = status;
+  }
+  if (trackingLink && (status === "Processing" || status === "Waiting for Payment")) {
+    status = "Shipped";
+    document.getElementById("status").value = status;
+  }
 
-      if (status === "Delivered" && originalStatus !== "Shipped") {
-        Swal.fire({
-          title: "Invalid Status Change",
-          text: "Order must be in 'Shipped' status before marking as 'Delivered'.",
-          icon: "warning",
-          confirmButtonText: "OK",
-        });
-        return;
-      }
-      if (status === "Delivered" && !trackingLink) {
-        Swal.fire({
-          title: "Missing Tracking Link",
-          text: "A tracking link is required before marking an order as 'Delivered'.",
-          icon: "warning",
-          confirmButtonText: "OK",
-        });
-        return;
-      }
+  if (status === "Delivered" && originalStatus !== "Shipped") {
+    Swal.fire({
+      title: "Invalid Status Change",
+      text: "Order must be in 'Shipped' status before marking as 'Delivered'.",
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
+    return;
+  }
+  if (status === "Delivered" && !trackingLink) {
+    Swal.fire({
+      title: "Missing Tracking Link",
+      text: "A tracking link is required before marking an order as 'Delivered'.",
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
+    return;
+  }
 
-      fetch("updateorder.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          orderID: currentOrderID,
-          status: status,
-          isApproved: isPaymentConfirmed,
-          trackingLink: trackingLink,
-        }),
-      })
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            Swal.fire({
-              title: "Success!",
-              text: result.message,
-              icon: "success",
-              confirmButtonText: "OK",
-            }).then(() => {
-              loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
-              closePopup();
-            });
-          } else {
-            Swal.fire({
-              title: "Error",
-              text: result.message,
-              icon: "error",
-              confirmButtonText: "OK",
-            });
-          }
-        })
-        .catch(error => {
-          console.error("Error updating order:", error);
-          Swal.fire({
-            title: "Error",
-            text: "An error occurred while updating the order.",
-            icon: "error",
-            confirmButtonText: "OK",
-          });
-        });
-
-      isChanged = false;
+  fetch("updateorder.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      orderID: currentOrderID,
+      status: status,
+      isApproved: isPaymentConfirmed,
+      trackingLink: trackingLink,
+    }),
+  })
+  .then(response => {
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return response.json();
+  })
+  .then(result => {
+    if (result.success) {
+      Swal.fire({
+        title: "Success!",
+        text: result.message,
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
+        closePopup();
+      });
+    } else {
+      Swal.fire({
+        title: "Error",
+        text: result.message,
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
+  })
+  .catch(error => {
+    console.error("Error updating order:", error); // Log to console only
+    // No Swal.fire popup here
+  });
+
+  isChanged = false;
+}
   </script>
 </body>
 </html>
