@@ -1,29 +1,20 @@
 <?php
 session_start();
-include 'conn.php'; // Ensure this file connects to your database
+include '../conn.php';
+
+header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'User not logged in.']);
+    echo json_encode(['success' => false, 'message' => 'Not logged in']);
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
-$product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
+$product_id = $_POST['product_id'] ?? '';
 
-if ($product_id > 0) {
-    $stmt = $conn->prepare("DELETE FROM tb_cart WHERE user_id = ? AND productID = ?");
-    $stmt->bind_param("ii", $user_id, $product_id);
-
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Failed to remove item from cart.']);
-    }
-
-    $stmt->close();
+if ($product_id && isset($_SESSION['cart'][$product_id])) {
+    unset($_SESSION['cart'][$product_id]);
+    echo json_encode(['success' => true]);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Invalid product ID.']);
+    echo json_encode(['success' => false, 'message' => 'Item not found']);
 }
-
-$conn->close();
 ?>

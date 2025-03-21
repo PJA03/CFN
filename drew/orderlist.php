@@ -84,7 +84,7 @@ if (isset($_POST['cancel_order'])) {
         <div class="navbar">
             <input type="text" class="search-bar" placeholder="Search Product" />
             <div class="icons">
-                <i class="far fa-user-circle fa-2x icon-profile"></i>
+             <a href = "../User_Profile_Page/UserProfile.php">   <i class="far fa-user-circle fa-2x icon-profile"></i> </a>
                 <i class="fas fa-bars burger-menu"></i>
             </div>
         </div>

@@ -1,5 +1,3 @@
-
-
 body {
     margin: 0;
     padding: 0;
@@ -7,7 +5,7 @@ body {
     background-color: #f1f2d8;
 }
 
-/*NAVBAR*/
+/* NAVBAR */
 .logo {
     display: flex;
     align-items: center;
@@ -65,7 +63,7 @@ header {
     cursor: pointer;
 }
 
-.burger-menu {
+.fa-house {
     font-size: 1.8rem;
     color: #EED3B1;
     cursor: pointer;
@@ -91,44 +89,76 @@ header {
     margin-bottom: 20px;
 }
 
+/* PRODUCT BOX */
 .product-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensures content is spaced out, pushing button to bottom */
     border: 1px solid #e0e0e0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    overflow: hidden;
     background-color: #fff;
     margin-bottom: 20px;
-}
-
-.product-image {
-    height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f8f8f8;
-}
-
-.product-details {
     padding: 10px;
     text-align: center;
+    min-height: 300px; /* Minimum height instead of fixed */
+    overflow: visible; /* Remove overflow: hidden to see content */
 }
 
-/*PRODUCT BOX*/
-
-.card {
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.product-card img {
+    max-width: 100%;
+    height: auto;
+    max-height: 150px; /* Limit image height */
+    object-fit: cover;
+    margin-bottom: 10px; /* Space below image */
 }
 
-.card-img-top {
-    height: 150px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.product-card h5 {
+    font-size: 1.1em;
+    margin: 10px 0;
+    flex-grow: 0; /* Prevent h5 from taking extra space */
+    overflow: hidden; /* Prevent title overflow */
+    text-overflow: ellipsis; /* Add ellipsis for long titles */
+    white-space: nowrap; /* Keep title on one line */
 }
 
+.product-card p {
+    font-size: 0.9em;
+    margin: 5px 0;
+    flex-grow: 0; /* Prevent p from taking extra space */
+}
 
-/*footer*/
+.product-card .variant-options {
+    margin: 10px 0;
+    flex-grow: 0; /* Prevent variant options from taking extra space */
+}
+
+.product-card .variant-select {
+    width: 100%;
+    padding: 5px;
+    font-size: 0.9em;
+    max-height: 40px; /* Limit dropdown height */
+}
+
+.product-card .add-to-cart {
+    margin-top: auto; /* Pushes button to the bottom */
+    padding: 8px 15px;
+    background-color: #1F4529; /* Matches your brand color */
+    color: #EED3B1; /* Matches header text color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 1rem;
+    width: 100%; /* Full width for consistency */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.product-card .add-to-cart:hover {
+    background-color: #16331f; /* Darker shade on hover */
+}
+
+/* FOOTER */
 footer {
     background-color: #1F4529;
     color: white;
@@ -202,7 +232,7 @@ footer {
     color: white;
     font-size: 20px;
     font-family: "Bebas Neue", serif !important;
-    margin-bottom:0px;
+    margin-bottom: 0px;
     margin-top: 0;
 }
 
@@ -227,7 +257,7 @@ footer {
 }
 
 .category-dropdown {
-    background-color: #1F4529;;
+    background-color: #1F4529;
     color: white;
     border: none;
     padding: 8px 12px;
@@ -242,12 +272,3 @@ footer {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 15px;
 }
-
-.product-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #fff;
-    padding: 10px;
-    text-align: center;
-}
-

@@ -661,7 +661,7 @@ footer {
         <div>
             <h1>Cosmeticas</h1>
             <h3>Just Like Nature Intended</h3>
-            <button>SHOP NOW</button>
+            <a href = "ProductScroll.php"><button>SHOP NOW</button> </a>
         </div>
     </div>
 
