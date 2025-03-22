@@ -3,41 +3,26 @@ body {
     padding: 0;
     font-family: 'Be Vietnam Pro', sans-serif;
     background-color: #f1f2d8;
-}
-
-/* NAVBAR */
-.logo {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-direction: column;
+    min-height: 100vh; /* Ensures body takes up full viewport height */
 }
 
-.logo-image {
-    height: 40px;
-    width: auto;
-}
-
-header {
-    background-color: #1F4529;
-    color: #EED3B1;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+main {
+    flex: 1 0 auto; /* Allows main content to grow and push footer down */
     width: 100%;
-    box-sizing: border-box;
-    position: relative;
 }
 
-.logo img {
-    height: 40px;
-}
-
-.navbar {
+/*nav bar*/
+.usernamedisplay{
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 10px 20px;
+    justify-content: center;
+    text-align: center;
+    color: #EED3B1;  
+    font-size: 20px;
+    flex-wrap: wrap;
+    padding-top: 15px;
+    margin-right: 10px
 }
 
 .search-bar {
@@ -48,32 +33,69 @@ header {
     font-size: 1rem;
     width: 300px;
     background-color: #FFFFFF;
-    margin-right: 20px;
 }
 
+header {
+    background-color: #1F4529;
+    color: #EED3B1;
+    padding: 20px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Ensure the header uses the full width */
+    flex-wrap: wrap;
+}
+
+/* Logo Styling */
+.logo img {
+    height: 40px; /* Adjust logo size */
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+    margin-left: 30px;;
+    gap: 10px; /* Adjust spacing between the image and text */
+}
+
+.logo-image {
+    height: 40px; /* Adjust size as needed */
+    width: auto; /* Keep aspect ratio */
+}
+
+/* Navigation Bar Styling */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+/* Icons in Navigation */
 .icons {
     display: flex;
     align-items: center;
+    justify-items: center;
     gap: 15px;
+    transition: transform 0.3s ease, color 0.3s ease;
+    margin-right: 40px;
 }
 
-.icon-profile {
-    font-size: 1.5rem;
+/* Font Awesome Icon Styles */
+.icon-profile, .home, .cart {
+    font-size: 1.6rem;
     color: #EED3B1;
     cursor: pointer;
+    margin-left: 10px;
+    position: relative;
 }
 
-.fa-house {
-    font-size: 1.5rem;
-    color: #EED3B1;
-    cursor: pointer;
+.icon-profile:hover, .home:hover, .cart:hover {
+    transform: scale(1.1);
+    color: whitesmoke;
 }
 
-.fa-shopping-cart {
-    font-size: 1.5rem;
-    color: #EED3B1;
-    cursor: pointer;
-}
 
 .container-fluid {
     margin-top: 20px;
@@ -93,7 +115,7 @@ header {
 .product-card {
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Ensures content is spaced out, pushing button to bottom */
+    justify-content: space-between;
     border: 1px solid #e0e0e0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
@@ -101,89 +123,88 @@ header {
     margin-bottom: 20px;
     padding: 10px;
     text-align: center;
-    min-height: 300px; /* Minimum height instead of fixed */
-    overflow: visible; /* Remove overflow: hidden to see content */
+    min-height: 300px;
+    overflow: visible;
 }
 
 .product-card img {
     max-width: 100%;
     height: auto;
-    max-height: 150px; /* Limit image height */
+    max-height: 150px;
     object-fit: cover;
-    margin-bottom: 10px; /* Space below image */
+    margin-bottom: 10px;
 }
 
 .product-card h5 {
     font-size: 1.1em;
     margin: 10px 0;
-    flex-grow: 0; /* Prevent h5 from taking extra space */
-    overflow: hidden; /* Prevent title overflow */
-    text-overflow: ellipsis; /* Add ellipsis for long titles */
-    white-space: nowrap; /* Keep title on one line */
+    flex-grow: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .product-card p {
     font-size: 0.9em;
     margin: 5px 0;
-    flex-grow: 0; /* Prevent p from taking extra space */
+    flex-grow: 0;
 }
 
 .product-card .variant-options {
     margin: 10px 0;
-    flex-grow: 0; /* Prevent variant options from taking extra space */
+    flex-grow: 0;
 }
 
 .product-card .variant-select {
     width: 100%;
     padding: 5px;
     font-size: 0.9em;
-    max-height: 40px; /* Limit dropdown height */
+    max-height: 40px;
 }
 
 .product-card .add-to-cart {
-    margin-top: auto; /* Pushes button to the bottom */
+    margin-top: auto;
     padding: 8px 15px;
-    background-color: #1F4529; /* Matches your brand color */
-    color: #EED3B1; /* Matches header text color */
+    background-color: #1F4529;
+    color: #EED3B1;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 1rem;
-    width: 100%; /* Full width for consistency */
-    transition: background-color 0.3s ease; /* Smooth hover effect */
+    width: 100%;
+    transition: background-color 0.3s ease;
 }
 
 .product-card .add-to-cart:hover {
-    background-color: #16331f; /* Darker shade on hover */
+    background-color: #16331f;
 }
-
 
 /* Footer */
 footer {
     background-color: #1F4529;
     color: white;
     padding: 40px 60px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     width: 100%;
+    flex-shrink: 0; /* Prevents footer from shrinking */
+    display: flex; /* Add flexbox to the footer */
+    flex-direction: column; /* Stack container and center text vertically */
+    align-items: center; /* Center horizontally */
 }
 
 .footer-container {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    justify-content: space-between; /* Distributes items horizontally */
+    align-items: center; /* Vertically centers the items */
     width: 100%;
-    max-width: 1200px;
-    flex-wrap: wrap;
+    max-width: 1200px; /* Limits the width */
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
     gap: 20px;
 }
 
-/* Footer Left */
 .footer-left {
     display: flex;
-    align-items: center;
+    align-items: center; /* Vertically centers the logo */
     gap: 20px;
 }
 
@@ -197,7 +218,6 @@ footer {
     object-fit: contain;
 }
 
-/* Footer Right */
 .footer-right {
     display: flex;
     flex-direction: column;
@@ -205,10 +225,10 @@ footer {
     gap: 20px;
 }
 
-/* Navigation */
 .footer-nav {
     list-style: none;
     padding: 0;
+    margin: 0; /* Remove default margin */
 }
 
 .footer-nav li {
@@ -227,7 +247,6 @@ footer {
     color: #EED3B1;
 }
 
-/* Social Icons */
 .social-icons {
     display: flex;
     flex-direction: column;
@@ -253,27 +272,31 @@ footer {
     color: #EED3B1;
 }
 
-/* Footer Center (Copyright) */
 .footer-center {
     text-align: center;
     width: 100%;
     font-size: 14px;
-    margin-top: 20px;
     opacity: 0.8;
+    margin-top: 20px; /* Space between container and copyright */
 }
 
-/* Responsive Adjustments */
+/* Responsive adjustments */
 @media (max-width: 768px) {
     .footer-container {
         flex-direction: column;
-        align-items: center;
+        align-items: center; /* Center items vertically in column layout */
         text-align: center;
     }
     
     .footer-left,
-    .footer-right {
+    .footer-right,
+    .social-icons {
         justify-content: center;
         align-items: center;
+    }
+
+    .social-icons {
+        align-items: center; /* Center social icons in mobile view */
     }
 }
 
@@ -305,4 +328,43 @@ footer {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 15px;
+}
+
+/* No products message styling */
+#no-products-message {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #FF8666;
+    font-family: "Bebas Neue", serif;
+}
+
+.container {
+    flex: 1 0 auto; /* Ensures container grows to fill space */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1200px; /* Optional: limits container width */
+    margin: 0 auto; /* Centers the container */
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #E8ECD7;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #FF8666;
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1F4529;
 }

@@ -9,23 +9,28 @@ body {
     font-family: "Be Vietnam Pro", serif !important;
     font-weight: 400;
     font-style: normal;
-    min-height: 100vh;
-    width: 100%;
     background-color: #E8ECD7 !important;
     line-height: 1.6;
-    overflow: auto;
+    width: 100%;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+    display: flex; /* Add for sticky footer */
+    flex-direction: column; /* Stack children vertically */
 }
 
 /* Header Styling */
 header {
-    background-color: #1F4529;
-    color: #EED3B1;
-    padding: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: #1F4529;
+    color: #EED3B1;
     width: 100%;
-    flex-wrap: wrap;
+    padding: 20px 30px;
+    position: relative;
+    margin: 0;
 }
 
 .logo {
@@ -78,73 +83,186 @@ header {
     padding-top: 15px;
 }
 
-/* Cart Container */
-.main {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-    width: 80vw;
+main {
+    padding: 0 20px;
+    margin-bottom: 60px;
+    flex-grow: 1; /* Add for sticky footer */
+}
+
+/* Cart Page */
+.cart-container {
+    padding: 40px 20px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 40px auto;
     max-width: 1200px;
-    margin: 50px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .cart-title {
     font-family: "Bebas Neue", serif !important;
     font-size: 50px;
-    color: #1F4529;
+    color: #000000;
     text-align: center;
-    margin-bottom: 20px;
+    margin: 30px auto;
+    max-width: 1200px;
 }
 
-.cart-container {
-    width: 100%;
+.cart-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .cart-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
+    text-align: center;
 }
 
-.cart-table th, .cart-table td {
-    padding: 12px;
-    text-align: left;
+.cart-table thead {
+    background-color: #1F4529;
+    color: #FFFFFF;
+}
+
+.cart-table th,
+.cart-table td {
+    padding: 10px;
     border-bottom: 1px solid #ddd;
+    vertical-align: middle;
 }
 
+.cart-table tbody tr.divider,
+.cart-table tbody tr.spacer {
+    display: none;
+}
+
+.product-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.product-image {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+}
+
+.product-price,
+.cart-table th:nth-child(2) {
+    width: 140px;
+    text-align: center;
+}
+
+.quantity-value {
+    display: inline-block;
+    min-width: 30px;
+    text-align: center;
+}
+
+.quantity-btn {
+    background-color: #1F4529;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.quantity-btn:hover {
+    background-color: #EED3B1;
+    color: #1F4529;
+}
+
+/* Cart Summary */
+.cart-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 20px;
+    margin-bottom: 20px;
+}
+
+.price-breakdown {
+    text-align: right;
+}
+
+.price-breakdown p {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.price-breakdown span,
+.price-breakdown strong {
+    min-width: 100px;
+    text-align: right;
+}
+
+.delivery-note {
+    font-size: 12px;
+    color: gray;
+    text-align: right;
+}
+
+/* Cart Actions */
 .cart-actions {
     display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
 }
 
-.checkout-btn, .cancel-btn {
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-weight: bold;
+.cart-actions .btn {
+    padding: 12px 30px;
+    font-size: 18px;
+    font-family: "Bebas Neue", serif !important;
+    border-radius: 25px;
     cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    text-align: center;
+    display: inline-block;
+    min-width: 180px;
+    text-decoration: none;
 }
 
-.checkout-btn {
+.cart-actions .checkout-btn {
     background-color: #1F4529;
-    color: white;
+    color: #FFFFFF;
 }
 
-.cancel-btn {
-    background-color: #dc3545;
-    color: white;
+.cart-actions .checkout-btn:hover {
+    background-color: #EED3B1;
+    color: #1F4529;
 }
 
-/* Footer Styling */
+.cart-actions .cancel-btn {
+    background-color: #B0B0B0;
+    color: #1F4529;
+}
+
+.cart-actions .cancel-btn:hover {
+    background-color: #7e7b7b;
+    color: #FFFFFF;
+}
+
+/* Footer */
 footer {
     background-color: #1F4529;
     color: white;
-    padding: 40px;
+    padding: 40px 60px; /* Match ProductScroll.php */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -163,8 +281,7 @@ footer {
 
 .footer-left {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    align-items: center; /* Match ProductScroll.php */
     gap: 20px;
 }
 
@@ -182,12 +299,12 @@ footer {
     display: flex;
     flex-direction: column;
     text-align: left;
+    gap: 20px; /* Match ProductScroll.php */
 }
 
 .footer-nav {
     list-style: none;
     padding: 0;
-    margin-bottom: 40px;
 }
 
 .footer-nav li {
@@ -199,7 +316,11 @@ footer {
 .footer-nav a {
     color: white;
     text-decoration: none;
-    transition: transform 0.3s ease, color 0.3s ease;
+    transition: color 0.3s ease; /* Match ProductScroll.php */
+}
+
+.footer-nav a:hover {
+    color: #EED3B1;
 }
 
 .social-icons {
@@ -209,6 +330,12 @@ footer {
     gap: 10px;
 }
 
+.social-icons p {
+    font-size: 20px;
+    font-family: "Bebas Neue", serif !important;
+    margin: 0; /* Match ProductScroll.php */
+}
+
 .social-icons a {
     color: white;
     font-size: 18px;
@@ -216,7 +343,7 @@ footer {
     transition: transform 0.3s ease, color 0.3s ease;
 }
 
-.social-icons a:hover, .footer-nav a:hover {
+.social-icons a:hover {
     transform: scale(1.1);
     color: #EED3B1;
 }
@@ -228,7 +355,6 @@ footer {
     opacity: 0.8;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .main {
         width: 90vw;
@@ -237,4 +363,35 @@ footer {
         flex-direction: column;
         gap: 10px;
     }
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .footer-left,
+    .footer-right {
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #E8ECD7;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #FF8666;
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1F4529;
 }
