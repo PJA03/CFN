@@ -2,15 +2,14 @@
 header('Content-Type: application/json');
 require_once '../conn.php';
 
-$data = json_decode(file_get_contents('php://input'), true);
-$productID = $data['productID'] ?? '';
+$productID = $_GET['id'] ?? '';
 
 if (!$productID) {
     echo json_encode(['success' => false, 'error' => 'Product ID required']);
     exit;
 }
 
-$stmt = $conn->prepare("INSERT INTO tb_bestsellers (productID) VALUES (?)");
+$stmt = $conn->prepare("DELETE FROM tb_bestsellers WHERE productID = ?");
 $stmt->bind_param("i", $productID);
 
 if ($stmt->execute()) {
