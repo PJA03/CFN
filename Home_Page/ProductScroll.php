@@ -1,3 +1,59 @@
+<?php
+// Debugging: Check if search value is received
+if (isset($_GET['search'])) {
+    echo "Search term received: " . htmlspecialchars($_GET['search']);
+} else {
+    echo "No search term received.";
+}
+
+
+
+// Start the session (if needed)
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check if the user is logged in
+if (isset($_SESSION['email'])) {
+    $user = [
+        'username' => $_SESSION['username'],
+        'email' => $_SESSION['email'],
+        'first_name' => $_SESSION['first_name'],
+        'last_name' => $_SESSION['last_name'],
+        'contact_no' => $_SESSION['contact_no'],
+        'address' => $_SESSION['address'],
+        'profile_image' => $_SESSION['profile_image'],
+    ];
+} else {
+    $user = ['username' => 'Guest']; // Default for non-logged-in users
+}
+
+
+// Include database connection
+include '../conn.php'; 
+
+// Check if search term exists in the URL
+$search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
+
+// Base SQL query to get all products
+$sql = "SELECT p.productID, p.product_name, p.category, p.product_image, v.price, v.stock
+        FROM tb_products p
+        JOIN tb_productvariants v ON p.productID = v.productID
+        WHERE v.is_default = 1";
+
+// If search term is provided, filter products by name
+if (!empty($search)) {
+    $sql .= " AND p.product_name LIKE '%$search%'";
+}
+
+// Execute query
+$result = $conn->query($sql);
+
+// Debugging: Check if search value is received
+// echo "Search term: " . $search;
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,26 +106,45 @@
 <body>
     <header>
         <div class="logo">
-            <img src="/CFN/e-com/images/cfn_logo2.jpg" alt="Logo" class="logo-image" />
+            <img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/>
         </div>
         <div class="navbar">
-            <input type="text" class="search-bar" id="searchBar" placeholder="Search Product" />
-            <div class="icons">
+                <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
+                <input type="text" class="search-bar" id="searchBar" placeholder="Search Product" />            
+                <div class="icons">
+                <a href="../Home_Page/home.php">
+                    <i class="fa-solid fa-house home"></i>
+                </a>
+                <a href="../drew/cart.php">
+                    <i class="fa-solid fa-cart-shopping cart"></i>
+                </a>
                 <a href="../User_Profile_Page/UserProfile.php">
                     <i class="far fa-user-circle fa-2x icon-profile"></i>
-                </a>
-                <i class="fas fa-bars burger-menu"></i>
-                <i class="fas fa-shopping-cart"></i>
+                </a>    
             </div>
         </div>
     </header>
+
+
+    <?php
+    // Get category from URL or default to all products
+    $category = isset($_GET['category']) ? $_GET['category'] : '';
+    $query = "SELECT * FROM products";
+    
+        if (!empty($category)) {
+            $query .= " WHERE category = '$category'";
+        }
+
+    // Fetch products and display them
+    ?>
+
 
     <div class="container mt-4">
         <div class="filter-container">
             <i class="fas fa-filter"></i>
             <span>Search Filter</span>
-            <select class="category-dropdown" id="categoryFilter">
-                <option value="">Category</option>
+            <select class="category-dropdown" id="categoryFilter" onchange="filterCategory()">
+                <option value="">All Products</option>
                 <option value="skin">Skin</option>
                 <option value="hair">Hair</option>
                 <option value="face">Face</option>
@@ -77,27 +152,38 @@
             </select>
         </div>
 
-        <div class="product-grid" id="product-grid">
-            <?php
-            // Define base path for images
-            define('BASE_PATH', '/CFN/'); // Adjust if your server root differs
+    <div class="product-grid" id="product-grid">
+    
+    <?php
+    define('BASE_PATH', '/CFN/');
 
-            $servername = "localhost";
-            $username = "root";
-            $password = "";
-            $dbname = "db_cfn";
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "db_cfn";
 
-            $conn = new mysqli($servername, $username, $password, $dbname);
-            if ($conn->connect_error) {
-                die("Connection failed: " . $conn->connect_error);
-            }
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
 
-            $sql = "SELECT p.productID, p.product_name, p.category, p.product_image, v.price, v.stock, 
-                           (SELECT COUNT(*) FROM tb_productvariants WHERE productID = p.productID) as variant_count
-                    FROM tb_products p
-                    JOIN tb_productvariants v ON p.productID = v.productID
-                    WHERE v.is_default = 1";
-            $result = $conn->query($sql);
+    // Get selected category from URL
+    $categoryFilter = isset($_GET['category']) ? $_GET['category'] : '';
+
+    // Modify SQL query based on category filter
+    $sql = "SELECT p.productID, p.product_name, p.category, p.product_image, v.price, v.stock,
+           (SELECT COUNT(*) FROM tb_productvariants WHERE productID = p.productID) as variant_count
+            FROM tb_products p
+            JOIN tb_productvariants v ON p.productID = v.productID
+            WHERE v.is_default = 1";
+
+    if (!empty($categoryFilter)) {
+        $sql .= " AND p.category = '$categoryFilter'";
+    }
+
+    $result = $conn->query($sql);
+
+
 
             if (!$result) {
                 echo "<p>Error fetching products: " . $conn->error . "</p>";
@@ -199,6 +285,25 @@
             });
         });
 
+        document.addEventListener("DOMContentLoaded", function () {
+    var categoryDropdown = document.getElementById('categoryFilter');
+
+    // Get category from URL and set the dropdown value
+    var urlParams = new URLSearchParams(window.location.search);
+    var currentCategory = urlParams.get('category');
+    if (currentCategory) {
+        categoryDropdown.value = currentCategory;
+    }
+
+    // Function to change category and reload the page
+    window.filterCategory = function () {
+        var selectedCategory = categoryDropdown.value;
+        window.location.href = "../Home_Page/ProductScroll.php?category=" + selectedCategory;
+
+    };
+});
+
+
         // Filter products by category and search
         function filterProducts() {
             const category = document.getElementById('categoryFilter').value.toLowerCase();
@@ -214,6 +319,23 @@
                 product.style.display = (matchesCategory && matchesSearch) ? '' : 'none';
             });
         }
+
+        function filterCategory() {
+    var selectedCategory = document.getElementById('categoryFilter').value;
+    window.location.href = "ProductsScroll.php?category=" + selectedCategory;
+}
+
+document.getElementById('searchBar').addEventListener('keypress', function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault(); // Prevent form submission
+        const searchText = this.value.trim();
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('search', searchText);
+        window.location.search = urlParams.toString(); // Reload page with search query
+    }
+});
+
+
 
         // Add event listeners for filters
         document.getElementById('categoryFilter').addEventListener('change', filterProducts);

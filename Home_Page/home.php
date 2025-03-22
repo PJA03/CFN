@@ -18,6 +18,33 @@ if (isset($_SESSION['email'])) {
 } else {
     $user = ['username' => 'Guest']; // Default for non-logged-in users
 }
+
+// Include database connection
+include '../conn.php'; 
+
+// Check if the search query is set
+if (isset($_GET['search'])) {
+    $search = "%" . $_GET['search'] . "%";
+
+    // Prepare the SQL query
+    $stmt = $conn->prepare("SELECT * FROM tb_products WHERE product_name LIKE ? OR product_category LIKE ?");
+    $stmt->bind_param("ss", $search, $search);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Fetch results
+    $products = [];
+    while ($row = $result->fetch_assoc()) {
+        $products[] = $row;
+    }
+
+    $stmt->close();
+} else {
+    $products = []; // Default to empty if no search query
+}
+
+// Close connection
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -44,7 +71,10 @@ if (isset($_SESSION['email'])) {
             <img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/>
         </div>
         <div class="navbar">
-                <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>            
+                <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
+                <form action="../Home_Page/ProductScroll.php" method="GET">
+                    <input type="text" class="search-bar" id="searchBar" name="search" placeholder="Search Product">
+                </form>
                 <div class="icons">
                 <a href="../Home_Page/home.php">
                     <i class="fa-solid fa-house home"></i>
