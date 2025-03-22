@@ -138,7 +138,7 @@ $result = $conn->query($sql);
             <?php
                 }
             } else {
-                echo "<p>No products found in the database.</p>";
+                echo "<p>No products found.</p>";
             }
             $conn->close();
             ?>
@@ -229,6 +229,25 @@ $result = $conn->query($sql);
             }
             window.history.pushState({}, '', url);
         });
+
+        document.getElementById('categoryFilter').addEventListener('change', function() {
+            const newCategory = this.value;
+            const url = new URL(window.location);
+
+            // Remove search query and clear the search bar
+            url.searchParams.delete('search');
+            document.getElementById('searchBar').value = ""; // Clear input field
+
+            if (newCategory) {
+                url.searchParams.set('category', newCategory);
+            } else {
+            url.searchParams.delete('category');
+            }
+
+        window.history.pushState({}, '', url);
+        filterProducts();
+        });
+
 
         document.getElementById('searchBar').addEventListener('input', filterProducts);
 

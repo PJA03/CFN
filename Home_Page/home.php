@@ -73,8 +73,8 @@ $conn->close();
             
             <div class="icons">
                 <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
-                <form action="../Home_Page/ProductScroll.php" method="GET">
-                    <input type="text" class="search-bar" id="searchBar" name="search" placeholder="Search Product">
+                <form action="../Home_Page/ProductScroll.php" method="GET" class="search-form" onsubmit="return validateSearch()">
+                    <input type="text" name="search" class="search-bar" id="searchBar" placeholder="Search Product or Category">
                 </form>
                 <div class="icons">
                 <a href="../Home_Page/home.php"><i class="fa-solid fa-house"></i></a>
@@ -266,6 +266,15 @@ $conn->close();
                 }
             }
         });
+
+        function validateSearch() {
+            let searchInput = document.getElementById("searchBar").value.trim();
+                if (searchInput === "") {
+                    alert("Please enter a search term.");
+                return false;
+            }
+            return true;
+        }       
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
