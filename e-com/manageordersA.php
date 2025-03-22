@@ -115,7 +115,7 @@ require_once 'auth_check.php';
             <i class="bi bi-person-circle fs-4 me-2"></i>
             <span>Admin User</span>
           </div>
-          <a href="/CFN/logout.php" class="btn btn-danger">Logout</a>
+          <a href="/CFN/e-com/logout.php" class="btn btn-danger">Logout</a>
         </div>
       </div>
 
