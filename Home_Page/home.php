@@ -41,6 +41,11 @@ if (isset($_GET['search'])) {
     $products = []; // Default to empty if no search query
 }
 
+$query = "SELECT p.* FROM tb_bestsellers b
+          JOIN tb_products p ON b.productID = p.productID"; 
+
+$result = $conn->query($query);
+
 // Close connection
 $conn->close();
 ?>
@@ -61,6 +66,20 @@ $conn->close();
     <link rel="stylesheet" href="home.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
     <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
+
+<script>
+  var swiper = new Swiper(".swiper-container", {
+    slidesPerView: 3,
+    spaceBetween: 20,
+    loop: true,
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+  });
+</script>
+
 </head>
 
 <body>
@@ -93,104 +112,27 @@ $conn->close();
     </div>
 
     <section data-animate="fade-in">
-        <h2 class="section-title-best">Our Best Sellers</h2>
-        <div class="swiper-container">
-            <div class="swiper-wrapper">
+    <h2 class="section-title-best">Our Best Sellers</h2>
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+            <?php while ($row = $result->fetch_assoc()) { ?>
                 <div class="swiper-slide product-card" data-animate="fade-in">
                     <div class="product-image">
-                        <img src="https://via.placeholder.com/250" alt="Product Image">
+                        <img src="<?php echo htmlspecialchars($row['product_image']); ?>" alt="<?php echo htmlspecialchars($row['product_name']); ?>">
                     </div>
                     <div class="product-info">
-                        <h4 class="product-name">PRODUCT NAME</h4>
-                        <p class="product-category">PRODUCT CATEGORY</p>
+                        <h4 class="product-name"><?php echo htmlspecialchars($row['product_name']); ?></h4>
+                        <p class="product-category"><?php echo htmlspecialchars($row['category']); ?></p>
                         <div class="product-footer">
-                            <span class="price">PPP</span>
                             <button class="cart-btn">🛒</button>
                         </div>
                     </div>
                 </div>
-                <div class="swiper-slide product-card" data-animate="fade-in">
-                    <div class="product-image">
-                        <img src="https://via.placeholder.com/250" alt="Product Image">
-                    </div>
-                    <div class="product-info">
-                        <h4 class="product-name">PRODUCT NAME</h4>
-                        <p class="product-category">PRODUCT CATEGORY</p>
-                        <div class="product-footer">
-                            <span class="price">PPP</span>
-                            <button class="cart-btn">🛒</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-slide product-card" data-animate="fade-in">
-                    <div class="product-image">
-                        <img src="https://via.placeholder.com/250" alt="Product Image">
-                    </div>
-                    <div class="product-info">
-                        <h4 class="product-name">PRODUCT NAME</h4>
-                        <p class="product-category">PRODUCT CATEGORY</p>
-                        <div class="product-footer">
-                            <span class="price">PPP</span>
-                            <button class="cart-btn">🛒</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-slide product-card" data-animate="fade-in">
-                    <div class="product-image">
-                        <img src="https://via.placeholder.com/250" alt="Product Image">
-                    </div>
-                    <div class="product-info">
-                        <h4 class="product-name">PRODUCT NAME</h4>
-                        <p class="product-category">PRODUCT CATEGORY</p>
-                        <div class="product-footer">
-                            <span class="price">PPP</span>
-                            <button class="cart-btn">🛒</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-slide product-card" data-animate="fade-in">
-                    <div class="product-image">
-                        <img src="https://via.placeholder.com/250" alt="Product Image">
-                    </div>
-                    <div class="product-info">
-                        <h4 class="product-name">PRODUCT NAME</h4>
-                        <p class="product-category">PRODUCT CATEGORY</p>
-                        <div class="product-footer">
-                            <span class="price">PPP</span>
-                            <button class="cart-btn">🛒</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-slide product-card" data-animate="fade-in">
-                    <div class="product-image">
-                        <img src="https://via.placeholder.com/250" alt="Product Image">
-                    </div>
-                    <div class="product-info">
-                        <h4 class="product-name">PRODUCT NAME</h4>
-                        <p class="product-category">PRODUCT CATEGORY</p>
-                        <div class="product-footer">
-                            <span class="price">PPP</span>
-                            <button class="cart-btn">🛒</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-slide product-card" data-animate="fade-in">
-                    <div class="product-image">
-                        <img src="https://via.placeholder.com/250" alt="Product Image">
-                    </div>
-                    <div class="product-info">
-                        <h4 class="product-name">PRODUCT NAME</h4>
-                        <p class="product-category">PRODUCT CATEGORY</p>
-                        <div class="product-footer">
-                            <span class="price">PPP</span>
-                            <button class="cart-btn">🛒</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="swiper-pagination"></div>
+            <?php } ?>
         </div>
-    </section>
+        <div class="swiper-pagination"></div>
+    </div>
+</section>
 
     <section class="description-section" data-animate="fade-in">
         <div class="description-container">
