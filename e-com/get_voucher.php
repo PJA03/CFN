@@ -1,4 +1,5 @@
 <?php
+require_once 'auth_check.php';
 // No whitespace or characters before this line
 ob_start(); // Start output buffering
 header('Content-Type: application/json'); // Set JSON header immediately

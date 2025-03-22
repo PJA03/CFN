@@ -1,4 +1,7 @@
 <?php
+require_once 'auth_check.php';
+?>
+<?php
 header('Content-Type: application/json');
 require_once '../conn.php';
 

@@ -1,6 +1,7 @@
 <?php
 // deleteproduct.php
 include 'conn.php';
+require_once 'auth_check.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     // Get the product id from the query string

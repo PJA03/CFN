@@ -1,5 +1,6 @@
 <?php
 require_once '../conn.php';
+require_once 'auth_check.php';
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -93,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['qr_image'])) {
                         <i class="bi bi-person-circle fs-4 me-2"></i>
                         <span>Admin User</span>
                     </div>
-                    <a href="#" class="text-white text-decoration-none mt-3">Log Out</a>
+                    <a href="/CFN/logout.php" class="btn btn-danger">Logout</a>
                 </div>
             </div>
 

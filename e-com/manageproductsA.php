@@ -1,3 +1,6 @@
+<?php
+require_once 'auth_check.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,7 +77,7 @@
             <i class="bi bi-person-circle fs-4 me-2"></i>
             <span>Admin User</span>
           </div>
-          <a href="#" class="text-white text-decoration-none mt-3">Log Out</a>
+          <a href="/CFN/logout.php" class="btn btn-danger">Logout</a>
         </div>
       </div>
 

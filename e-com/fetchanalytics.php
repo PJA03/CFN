@@ -1,5 +1,6 @@
 <?php
 header('Content-Type: application/json');
+require_once 'auth_check.php';
 
 $servername = "localhost";
 $username = "root";
