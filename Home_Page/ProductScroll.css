@@ -5,11 +5,11 @@ body {
     background-color: #f1f2d8;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 100vh; /* Ensures body takes up full viewport height */
 }
 
 main {
-    flex-grow: 1;
+    flex: 1 0 auto; /* Allows main content to grow and push footer down */
     width: 100%;
 }
 
@@ -171,25 +171,26 @@ footer {
     background-color: #1F4529;
     color: white;
     padding: 40px 60px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     width: 100%;
+    flex-shrink: 0; /* Prevents footer from shrinking */
+    display: flex; /* Add flexbox to the footer */
+    flex-direction: column; /* Stack container and center text vertically */
+    align-items: center; /* Center horizontally */
 }
 
 .footer-container {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    justify-content: space-between; /* Distributes items horizontally */
+    align-items: center; /* Vertically centers the items */
     width: 100%;
-    max-width: 1200px;
-    flex-wrap: wrap;
+    max-width: 1200px; /* Limits the width */
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
     gap: 20px;
 }
 
 .footer-left {
     display: flex;
-    align-items: center;
+    align-items: center; /* Vertically centers the logo */
     gap: 20px;
 }
 
@@ -213,6 +214,7 @@ footer {
 .footer-nav {
     list-style: none;
     padding: 0;
+    margin: 0; /* Remove default margin */
 }
 
 .footer-nav li {
@@ -261,19 +263,26 @@ footer {
     width: 100%;
     font-size: 14px;
     opacity: 0.8;
+    margin-top: 20px; /* Space between container and copyright */
 }
 
+/* Responsive adjustments */
 @media (max-width: 768px) {
     .footer-container {
         flex-direction: column;
-        align-items: center;
+        align-items: center; /* Center items vertically in column layout */
         text-align: center;
     }
     
     .footer-left,
-    .footer-right {
+    .footer-right,
+    .social-icons {
         justify-content: center;
         align-items: center;
+    }
+
+    .social-icons {
+        align-items: center; /* Center social icons in mobile view */
     }
 }
 
@@ -315,6 +324,15 @@ footer {
     font-size: 1.2rem;
     color: #FF8666;
     font-family: "Bebas Neue", serif;
+}
+
+.container {
+    flex: 1 0 auto; /* Ensures container grows to fill space */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1200px; /* Optional: limits container width */
+    margin: 0 auto; /* Centers the container */
 }
 
 ::-webkit-scrollbar {

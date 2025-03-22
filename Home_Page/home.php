@@ -70,21 +70,17 @@ $conn->close();
             <img src="cfn_logo2.png" alt="Logo" class="logo-image" />
         </div>
         <div class="navbar">
-            <input type="text" class="search-bar" placeholder="Search Product" />
+            
             <div class="icons">
-            <a href="../Home_Page/home.php"><i class="fa-solid fa-house"></i></a>
                 <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
                 <form action="../Home_Page/ProductScroll.php" method="GET">
                     <input type="text" class="search-bar" id="searchBar" name="search" placeholder="Search Product">
                 </form>
                 <div class="icons">
-                <a href="../Home_Page/home.php">
-                    <i class="fa-solid fa-house home"></i>
-                </a>
+                <a href="../Home_Page/home.php"><i class="fa-solid fa-house"></i></a>
                 <a href="../drew/cart.php">
                     <i class="fa-solid fa-cart-shopping cart"></i>
                 </a>
-                <a href="../Home_Page/home.php"><i class="fa-solid fa-house"></i></a>
                 <a href="../User_Profile_Page/UserProfile.php">
                     <i class="far fa-user-circle fa-2x icon-profile"></i>
                 </a>
