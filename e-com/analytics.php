@@ -74,7 +74,7 @@ require_once 'auth_check.php';
                     <i class="bi bi-person-circle fs-4 me-2"></i>
                     <span>Admin User</span>
                 </div>
-                <a href="/CFN/e-com/logout.php" class="btn btn-danger">Logout</a>
+                <a href="logout.php" class="btn btn-danger">Logout</a>
             </div>
         </div>
 
@@ -116,7 +116,7 @@ require_once 'auth_check.php';
                     </tbody>
                 </table>
             </div>
-            <button class="btn btn-success mt-4" onclick="location.href='export_pdf.php'">Export as PDF</button>
+            <button class="btn btn-success mt-4" id="exportPDFBtn">Export as PDF <span id="pdfSpinner" class="loading-spinner" style="display: none;"></span></button>
         </div>
     </div>
 
@@ -223,6 +223,9 @@ require_once 'auth_check.php';
                         topProductsTable.insertAdjacentHTML('beforeend', row);
                     });
 
+                    // Store the data in a hidden input for PDF export
+                    document.getElementById('exportPDFBtn').dataset.analytics = JSON.stringify(data);
+
                     filterBtn.disabled = false;
                     filterSpinner.style.display = 'none';
                 })
@@ -237,6 +240,69 @@ require_once 'auth_check.php';
                     filterBtn.disabled = false;
                     filterSpinner.style.display = 'none';
                 });
+        }
+
+        // Function to export as PDF
+        function exportAsPDF() {
+            const exportBtn = document.getElementById('exportPDFBtn');
+            const pdfSpinner = document.getElementById('pdfSpinner');
+            const startDate = document.getElementById('start').value;
+            const endDate = document.getElementById('end').value;
+            const analyticsData = JSON.parse(exportBtn.dataset.analytics || '{}');
+
+            if (!startDate || !endDate || !analyticsData.totalSales) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No Data',
+                    text: 'Please fetch analytics data before exporting.',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            exportBtn.disabled = true;
+            pdfSpinner.style.display = 'inline-block';
+
+            fetch('export_pdf.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    startDate: startDate,
+                    endDate: endDate,
+                    totalSales: analyticsData.totalSales,
+                    newUsers: analyticsData.newUsers,
+                    repeatPurchase: analyticsData.repeatPurchase,
+                    topProducts: analyticsData.topProducts
+                })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to generate PDF');
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Analytics_Report_${startDate}_to_${endDate}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+
+                exportBtn.disabled = false;
+                pdfSpinner.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error exporting PDF:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to export PDF. Please try again.',
+                    confirmButtonText: 'OK'
+                });
+                exportBtn.disabled = false;
+                pdfSpinner.style.display = 'none';
+            });
         }
 
         // Initialize on page load with default dates
@@ -259,6 +325,8 @@ require_once 'auth_check.php';
                     });
                 }
             });
+
+            document.getElementById('exportPDFBtn').addEventListener('click', exportAsPDF);
         });
     </script>
 </body>

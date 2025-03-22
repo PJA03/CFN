@@ -254,3 +254,43 @@ body {
     color: white;
     cursor: pointer;
 }
+/* Modal Title */
+.modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: #1F4529; /* Match your green color */
+    margin-bottom: 20px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+/* Modal Fields */
+.modal-field {
+    margin-bottom: 20px;
+}
+
+.modal-field label {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 700;
+    color: #1F4529; /* Match your green color */
+    margin-bottom: 8px;
+    display: block;
+    font-size: 1rem;
+}
+
+.modal-field input,
+.modal-field select {
+    border-radius: 8px;
+    border: 1px solid #dcdcdc;
+    padding: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    width: 100%; /* Ensure full width */
+}
+
+.modal-field input:focus,
+.modal-field select:focus {
+    border-color: #1F4529; /* Match your green color */
+    outline: none;
+    box-shadow: 0 0 5px rgba(31, 69, 41, 0.3); /* Subtle green shadow */
+}

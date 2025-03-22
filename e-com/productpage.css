@@ -198,7 +198,7 @@ header {
 }
 
 .product-card {
-    background-color: #bbc978;
+    background-color: white;
     width: calc(25% - 20px);
     min-width: 200px;
     max-width: 250px;

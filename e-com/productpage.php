@@ -1,10 +1,8 @@
 <?php
-require_once 'auth_check.php';
 // Start the session (if needed)
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-
 
 // Database connection
 $servername = "localhost";
@@ -20,6 +18,9 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Get user ID (assuming user is logged in)
+$user_id = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 0;
+
 // Get product ID from URL parameter
 $productID = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
@@ -31,16 +32,17 @@ $category = "";
 $product_image = "product-image.jpg"; // Default image
 $price = 0;
 
-
-
+// Fetch product details if product ID is valid
 if ($productID > 0) {
-    // Query to get product details
     $sql = "SELECT p.*, v.price 
             FROM tb_products p 
             JOIN tb_productvariants v ON p.productID = v.productID 
-            WHERE p.productID = $productID AND v.is_default = 1";
+            WHERE p.productID = ? AND v.is_default = 1";
     
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $productID);
+    $stmt->execute();
+    $result = $stmt->get_result();
     
     if ($result && $result->num_rows > 0) {
         $row = $result->fetch_assoc();
@@ -50,8 +52,9 @@ if ($productID > 0) {
         $product_image = !empty($row['product_image']) ? $row['product_image'] : "../Resources/cfn_logo.png";        
         $price = $row['price'];
     }
-    
-    // Get similar products (same category)
+    $stmt->close();
+
+    // Fetch similar products from the same category
     $similarProductsQuery = $conn->prepare("SELECT p.productID, p.product_name, p.category, p.product_image, v.price 
         FROM tb_products p
         JOIN tb_productvariants v ON p.productID = v.productID
@@ -64,19 +67,43 @@ if ($productID > 0) {
     $similarProducts = $similarProductsQuery->get_result();
 
     $similarProductsArray = [];
-if ($similarProducts->num_rows > 0) {
-    while ($similarProduct = $similarProducts->fetch_assoc()) {
-        $similarProductsArray[] = [
-            'id' => $similarProduct['productID'],
-            'name' => $similarProduct['product_name'],
-            'category' => $similarProduct['category'],
-            'price' => "₱" . number_format($similarProduct['price'], 2),
-            'image' => !empty($similarProduct['product_image']) ? $similarProduct['product_image'] : "../Resources/cfn_logo.png"
-        ];
+    if ($similarProducts->num_rows > 0) {
+        while ($similarProduct = $similarProducts->fetch_assoc()) {
+            $similarProductsArray[] = [
+                'id' => $similarProduct['productID'],
+                'name' => $similarProduct['product_name'],
+                'category' => $similarProduct['category'],
+                'price' => "₱" . number_format($similarProduct['price'], 2),
+                'image' => !empty($similarProduct['product_image']) ? $similarProduct['product_image'] : "../Resources/cfn_logo.png"
+            ];
+        }
+    }
+    $similarProductsQuery->close();
+}
+
+// Handle Add to Cart functionality
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
+    $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 1;
+
+    if ($user_id > 0 && $productID > 0) {
+        $stmt = $conn->prepare("
+            INSERT INTO tb_cart (user_id, productID, quantity, price, price_total)
+            VALUES (?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE 
+                quantity = quantity + VALUES(quantity),
+                price_total = price * (quantity + VALUES(quantity))
+        ");
+        $price_total = $price * $quantity;
+        $stmt->bind_param("iiidd", $user_id, $productID, $quantity, $price, $price_total);
+        $stmt->execute();
+        $stmt->close();
     }
 }
-}
+
+// Close database connection
+$conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -204,141 +231,94 @@ if ($similarProducts->num_rows > 0) {
     </footer>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const similarProducts = <?php echo json_encode($similarProductsArray); ?>;
-    </script>
-    <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Quantity control
+<script>
+document.addEventListener('DOMContentLoaded', function () {
     const minusBtn = document.querySelector('.quantity-btn:first-child');
     const plusBtn = document.querySelector('.quantity-btn:last-child');
     const quantityEl = document.querySelector('.quantity-value');
-    
-    minusBtn.addEventListener('click', function() {
-        let qty = parseInt(quantityEl.textContent);
-        if (qty > 1) {
-            qty--;
-            quantityEl.textContent = qty;
-        }
-    });
-    
-    plusBtn.addEventListener('click', function() {
-        let qty = parseInt(quantityEl.textContent);
-        qty++;
-        quantityEl.textContent = qty;
-    });
-    
-    // Add to cart button
+    const quantityInput = document.getElementById('quantity-input');
     const addToCartBtn = document.querySelector('.add-to-cart-btn');
-    
-    addToCartBtn.addEventListener('click', function() {
-    const productName = "<?php echo addslashes($product_name); ?>";
-    const quantity = parseInt(document.querySelector('.quantity-value').textContent);
-    const price = <?php echo $price; ?>;
-    
-    // Create cart item object
-    const cartItem = {
-        id: <?php echo $productID; ?>,
-        name: productName,
-        quantity: quantity,
-        price: price,
-        image: "<?php echo addslashes($product_image); ?>"
-    };
-        
-        // Get existing cart from localStorage or initialize empty array
+
+    // Quantity control
+    function updateQuantity(delta) {
+        let qty = parseInt(quantityEl.textContent);
+        qty = Math.max(1, qty + delta); 
+        quantityEl.textContent = qty;
+        if (quantityInput) quantityInput.value = qty;
+    }
+
+    minusBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        updateQuantity(-1);
+    });
+
+    plusBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        updateQuantity(1);
+    });
+
+    // Add to cart button functionality
+    addToCartBtn.addEventListener('click', function () {
+        const productName = "<?php echo addslashes($product_name); ?>";
+        const quantity = parseInt(quantityEl.textContent);
+        const price = <?php echo $price; ?>;
+        const productID = <?php echo $productID; ?>;
+        const productImage = "<?php echo addslashes($product_image); ?>";
+
         let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-        
-        // Check if product already exists in cart
-        const existingItemIndex = cart.findIndex(item => item.name === cartItem.name);
-        
-        if (existingItemIndex > -1) {
-            // Update quantity if product already in cart
-            cart[existingItemIndex].quantity += cartItem.quantity;
+        const existingItem = cart.find(item => item.id === productID);
+
+        if (existingItem) {
+            existingItem.quantity += quantity;
         } else {
-            // Add new item to cart
-            cart.push(cartItem);
+            cart.push({ id: productID, name: productName, quantity, price, image: productImage });
         }
-        
-        // Save updated cart to localStorage
+
         localStorage.setItem('shoppingCart', JSON.stringify(cart));
-        
-        // Show confirmation to user
-        const confirmationMessage = `Added ${quantity} ${productName} to cart!`;
-        
-        // Create a toast notification
-        const toast = document.createElement('div');
-        toast.className = 'cart-toast';
-        toast.innerHTML = `
-            <div class="toast-content">
-                <i class="fas fa-check-circle"></i>
-                <span>${confirmationMessage}</span>
-            </div>
-        `;
-        document.body.appendChild(toast);
-        
-        // Show toast
-        setTimeout(() => {
-            toast.classList.add('show-toast');
-        }, 100);
-        
-        // Hide toast after 3 seconds
-        setTimeout(() => {
-            toast.classList.remove('show-toast');
-            setTimeout(() => {
-                document.body.removeChild(toast);
-            }, 300);
-        }, 3000);
-        
-        // Update cart icon if it exists
+
+        showToast(`Added ${quantity} ${productName} to cart!`);
         updateCartIndicator();
     });
-    
-    // Function to update cart indicator
+
+    // Update cart indicator
     function updateCartIndicator() {
-        // Check if cart indicator exists
+        let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+        let totalItems = cart.reduce((total, item) => total + item.quantity, 0);
         let cartIndicator = document.querySelector('.cart-indicator');
-        
-        // If it doesn't exist, create it
+
         if (!cartIndicator) {
             const userIcon = document.querySelector('.icon-profile');
             cartIndicator = document.createElement('span');
             cartIndicator.className = 'cart-indicator';
             userIcon.parentNode.insertBefore(cartIndicator, userIcon.nextSibling);
         }
-        
-        // Get cart items
-        const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-        
-        // Calculate total quantity
-        const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-        
-        // Update or hide indicator
-        if (totalItems > 0) {
-            cartIndicator.textContent = totalItems;
-            cartIndicator.style.display = 'flex';
-        } else {
-            cartIndicator.style.display = 'none';
-        }
+
+        cartIndicator.textContent = totalItems;
+        cartIndicator.style.display = totalItems > 0 ? 'flex' : 'none';
     }
-    
-    // Load similar products dynamically
+
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'cart-toast';
+        toast.innerHTML = `<div class="toast-content"><i class="fas fa-check-circle"></i> <span>${message}</span></div>`;
+        document.body.appendChild(toast);
+
+        setTimeout(() => toast.classList.add('show-toast'), 100);
+        setTimeout(() => {
+            toast.classList.remove('show-toast');
+            setTimeout(() => document.body.removeChild(toast), 300);
+        }, 3000);
+    }
+
     function loadSimilarProducts() {
-        // Simulated product data - in a real app, this would come from an API/database
-        // const similarProducts = [
-        //     {id: 1, name: "Natural Face Cream", category: "Skin Care", price: "₱499", image: "product1.jpg"},
-        //     {id: 2, name: "Organic Shampoo", category: "Hair Care", price: "₱349", image: "product2.jpg"},
-        //     {id: 3, name: "Vitamin C Serum", category: "Skin Care", price: "₱599", image: "product3.jpg"},
-        //     {id: 4, name: "Aloe Vera Gel", category: "Body Care", price: "₱275", image: "product4.jpg"}
-        // ];
-        
         const productGrid = document.querySelector('.product-grid');
-        productGrid.innerHTML = ''; // Clear existing products
-        
+        productGrid.innerHTML = ''; 
+
         similarProducts.forEach(product => {
             const productCard = document.createElement('div');
             productCard.className = 'product-card';
             productCard.dataset.productId = product.id;
-            
+
             productCard.innerHTML = `
                 <div class="card-image" style="background-image: url('${product.image}'); background-size: cover; background-position: center;"></div>
                 <div class="card-info">
@@ -347,23 +327,20 @@ if ($similarProducts->num_rows > 0) {
                     <p class="card-price">${product.price}</p>
                 </div>
             `;
-            
-            // Add click event to navigate to that product
-            productCard.addEventListener('click', function() {
+
+            productCard.addEventListener('click', () => {
                 window.location.href = `productpage.php?id=${product.id}`;
             });
-            
+
             productGrid.appendChild(productCard);
         });
     }
-    
-    // Call function to load similar products
+
+    // Load similar products and update cart on page load
     loadSimilarProducts();
-    
-    // Initialize cart indicator on page load
     updateCartIndicator();
-    
-    // Add CSS for toast notification
+
+    // Add toast notification styles
     const style = document.createElement('style');
     style.textContent = `
         .cart-toast {
@@ -380,18 +357,18 @@ if ($similarProducts->num_rows > 0) {
             transition: all 0.3s ease;
             z-index: 1000;
         }
-        
+
         .show-toast {
             transform: translateY(0);
             opacity: 1;
         }
-        
+
         .toast-content {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .cart-indicator {
             position: absolute;
             top: -5px;
@@ -407,38 +384,14 @@ if ($similarProducts->num_rows > 0) {
             font-size: 10px;
             font-weight: bold;
         }
-        
+
         .icons {
             position: relative;
         }
     `;
     document.head.appendChild(style);
 });
+</script>
 
-document.addEventListener('DOMContentLoaded', function () {
-    const decreaseBtn = document.getElementById('decrease-btn');
-    const increaseBtn = document.getElementById('increase-btn');
-    const quantityValue = document.getElementById('quantity-value');
-    const quantityInput = document.getElementById('quantity-input');
-
-    // Decrease quantity
-    decreaseBtn.addEventListener('click', function () {
-        let qty = parseInt(quantityValue.textContent);
-        if (qty > 1) {
-            qty--;
-            quantityValue.textContent = qty;
-            quantityInput.value = qty; // Sync with hidden input
-        }
-    });
-
-    // Increase quantity
-    increaseBtn.addEventListener('click', function () {
-        let qty = parseInt(quantityValue.textContent);
-        qty++;
-        quantityValue.textContent = qty;
-        quantityInput.value = qty; // Sync with hidden input
-    });
-});
-    </script>
 </body>
 </html>
