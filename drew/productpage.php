@@ -1,4 +1,9 @@
 <?php
+// Start the session (if needed)
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Database connection
 $servername = "localhost";
 $username = "root";  // Adjust if needed
@@ -29,30 +34,46 @@ if ($productID > 0) {
     $sql = "SELECT p.*, v.price 
             FROM tb_products p 
             JOIN tb_productvariants v ON p.productID = v.productID 
-            WHERE p.productID = $productID AND v.is_default = 1";
+            WHERE p.productID = ? AND v.is_default = 1";
     
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $productID);
+    $stmt->execute();
+    $result = $stmt->get_result();
     
     if ($result && $result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $product_name = $row['product_name'];
         $product_desc = $row['product_desc'] ?: "No description available";
-        $brand = $row['brand'];
         $category = $row['category'];
-        $product_image = $row['product_image'] ?: "product-image.jpg";
+        $product_image = !empty($row['product_image']) ? $row['product_image'] : "../Resources/cfn_logo.png";        
         $price = $row['price'];
     }
     
     // Get similar products (same category)
-    $similarProductsQuery = "SELECT p.productID, p.product_name, p.category, p.product_image, v.price 
-                            FROM tb_products p
-                            JOIN tb_productvariants v ON p.productID = v.productID
-                            WHERE p.category = '$category' 
-                            AND p.productID != $productID
-                            AND v.is_default = 1
-                            LIMIT 4";
-    
-    $similarProducts = $conn->query($similarProductsQuery);
+    $similarProductsQuery = $conn->prepare("SELECT p.productID, p.product_name, p.category, p.product_image, v.price 
+        FROM tb_products p
+        JOIN tb_productvariants v ON p.productID = v.productID
+        WHERE p.category = ? 
+        AND p.productID != ? 
+        AND v.is_default = 1
+        LIMIT 4");
+    $similarProductsQuery->bind_param("si", $category, $productID);
+    $similarProductsQuery->execute();
+    $similarProducts = $similarProductsQuery->get_result();
+
+    $similarProductsArray = [];
+    if ($similarProducts->num_rows > 0) {
+        while ($similarProduct = $similarProducts->fetch_assoc()) {
+            $similarProductsArray[] = [
+                'id' => $similarProduct['productID'],
+                'name' => $similarProduct['product_name'],
+                'category' => $similarProduct['category'],
+                'price' => "₱" . number_format($similarProduct['price'], 2),
+                'image' => !empty($similarProduct['product_image']) ? $similarProduct['product_image'] : "../Resources/cfn_logo.png"
+            ];
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -71,12 +92,14 @@ if ($productID > 0) {
 <body>
     <header>
         <div class="logo">
-            <img src="cfn_logo2.png" alt="Logo" class="logo-image" />
+            <img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image" />
         </div>
         <div class="navbar">
             <input type="text" class="search-bar" placeholder="Search Product" />
             <div class="icons">
-                <i class="far fa-user-circle icon-profile"></i>
+            <a href="../User_Profile_Page/UserProfile.php">
+                <i class="far fa-user-circle fa-2x icon-profile"></i>
+            </a>
                 <i class="fas fa-bars burger-menu"></i>
             </div>
         </div>
@@ -93,20 +116,25 @@ if ($productID > 0) {
     
     <div class="product-info">
         <h1 class="product-name"><?php echo htmlspecialchars($product_name); ?></h1>
-        
-        <div class="quantity-selector">
-            <button class="quantity-btn">-</button>
-            <span class="quantity-value">1</span>
-            <button class="quantity-btn">+</button>
-        </div>
-        
-        <div class="product-price">₱<?php echo number_format($price, 2); ?></div>
-        
-        <div class="product-description">
-            <?php echo htmlspecialchars($product_desc); ?>
-        </div>
-        
-        <button class="add-to-cart-btn">Add to Cart</button>
+
+        <form action="add_to_cart.php" method="POST">
+            <input type="hidden" name="productID" value="<?php echo $productID; ?>">
+            <input type="hidden" name="price" value="<?php echo $price; ?>">
+            <div class="quantity-selector">
+                <button class="quantity-btn">-</button>
+                <span class="quantity-value">1</span>
+                <button class="quantity-btn">+</button>
+            </div>
+            <input type="hidden" id="quantity-input" name="quantity" value="1">
+            <div class="product-price">₱<?php echo number_format($price, 2); ?></div>
+            <div class="product-description">
+                <?php echo htmlspecialchars($product_desc); ?>
+            </div>
+            
+            <button type="submit" class="add-to-cart-btn">Add to Cart</button>
+        </form>
+
+        <!-- <button class="add-to-cart-btn">Add to Cart</button> -->
     </div>
 </div>
     
@@ -116,14 +144,14 @@ if ($productID > 0) {
     <div class="product-grid">
         <?php
         if (isset($similarProducts) && $similarProducts->num_rows > 0) {
-            while($similarProduct = $similarProducts->fetch_assoc()) {
-                $similarImage = $similarProduct['product_image'] ?: "product-image.jpg";
+            while ($similarProduct = $similarProducts->fetch_assoc()) {
+                $similarImage = !empty($similarProduct['product_image']) ? $similarProduct['product_image'] : "../Resources/cfn_logo.png";
                 ?>
                 <div class="product-card" data-product-id="<?php echo $similarProduct['productID']; ?>">
-                    <div class="card-image" style="background-image: url('<?php echo htmlspecialchars($similarImage); ?>'); background-size: cover; background-position: center;"></div>
+                    <div class="card-image" style="background-image: url('<?php echo htmlspecialchars($similarImage, ENT_QUOTES, 'UTF-8'); ?>'); background-size: cover; background-position: center;"></div>
                     <div class="card-info">
-                        <h3 class="card-name"><?php echo htmlspecialchars($similarProduct['product_name']); ?></h3>
-                        <p class="card-category"><?php echo htmlspecialchars($similarProduct['category']); ?></p>
+                        <h3 class="card-name"><?php echo htmlspecialchars($similarProduct['product_name'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                        <p class="card-category"><?php echo htmlspecialchars($similarProduct['category'], ENT_QUOTES, 'UTF-8'); ?></p>
                         <p class="card-price">₱<?php echo number_format($similarProduct['price'], 2); ?></p>
                     </div>
                 </div>
@@ -146,10 +174,12 @@ if ($productID > 0) {
         }
         ?>
     </div>
+
+
 </div>
     <footer>
         <div class="footer-content">
-            <img src="cfn_logo.png" alt="Naturale Logo" class="footer-logo">
+            <img src="../Resources/cfn_logo.png" alt="Naturale Logo" class="footer-logo">
             
             <div class="footer-links">
                 <a href="#">ABOUT US</a>
@@ -173,138 +203,94 @@ if ($productID > 0) {
     </footer>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Quantity control
+<script>
+document.addEventListener('DOMContentLoaded', function () {
     const minusBtn = document.querySelector('.quantity-btn:first-child');
     const plusBtn = document.querySelector('.quantity-btn:last-child');
     const quantityEl = document.querySelector('.quantity-value');
-    
-    minusBtn.addEventListener('click', function() {
-        let qty = parseInt(quantityEl.textContent);
-        if (qty > 1) {
-            qty--;
-            quantityEl.textContent = qty;
-        }
-    });
-    
-    plusBtn.addEventListener('click', function() {
-        let qty = parseInt(quantityEl.textContent);
-        qty++;
-        quantityEl.textContent = qty;
-    });
-    
-    // Add to cart button
+    const quantityInput = document.getElementById('quantity-input');
     const addToCartBtn = document.querySelector('.add-to-cart-btn');
-    
-    addToCartBtn.addEventListener('click', function() {
-    const productName = "<?php echo addslashes($product_name); ?>";
-    const quantity = parseInt(document.querySelector('.quantity-value').textContent);
-    const price = <?php echo $price; ?>;
-    
-    // Create cart item object
-    const cartItem = {
-        id: <?php echo $productID; ?>,
-        name: productName,
-        quantity: quantity,
-        price: price,
-        image: "<?php echo addslashes($product_image); ?>"
-    };
-        
-        // Get existing cart from localStorage or initialize empty array
+
+    // Quantity control
+    function updateQuantity(delta) {
+        let qty = parseInt(quantityEl.textContent);
+        qty = Math.max(1, qty + delta); 
+        quantityEl.textContent = qty;
+        if (quantityInput) quantityInput.value = qty;
+    }
+
+    minusBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        updateQuantity(-1);
+    });
+
+    plusBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        updateQuantity(1);
+    });
+
+    // Add to cart button functionality
+    addToCartBtn.addEventListener('click', function () {
+        const productName = "<?php echo addslashes($product_name); ?>";
+        const quantity = parseInt(quantityEl.textContent);
+        const price = <?php echo $price; ?>;
+        const productID = <?php echo $productID; ?>;
+        const productImage = "<?php echo addslashes($product_image); ?>";
+
         let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-        
-        // Check if product already exists in cart
-        const existingItemIndex = cart.findIndex(item => item.name === cartItem.name);
-        
-        if (existingItemIndex > -1) {
-            // Update quantity if product already in cart
-            cart[existingItemIndex].quantity += cartItem.quantity;
+        const existingItem = cart.find(item => item.id === productID);
+
+        if (existingItem) {
+            existingItem.quantity += quantity;
         } else {
-            // Add new item to cart
-            cart.push(cartItem);
+            cart.push({ id: productID, name: productName, quantity, price, image: productImage });
         }
-        
-        // Save updated cart to localStorage
+
         localStorage.setItem('shoppingCart', JSON.stringify(cart));
-        
-        // Show confirmation to user
-        const confirmationMessage = `Added ${quantity} ${productName} to cart!`;
-        
-        // Create a toast notification
-        const toast = document.createElement('div');
-        toast.className = 'cart-toast';
-        toast.innerHTML = `
-            <div class="toast-content">
-                <i class="fas fa-check-circle"></i>
-                <span>${confirmationMessage}</span>
-            </div>
-        `;
-        document.body.appendChild(toast);
-        
-        // Show toast
-        setTimeout(() => {
-            toast.classList.add('show-toast');
-        }, 100);
-        
-        // Hide toast after 3 seconds
-        setTimeout(() => {
-            toast.classList.remove('show-toast');
-            setTimeout(() => {
-                document.body.removeChild(toast);
-            }, 300);
-        }, 3000);
-        
-        // Update cart icon if it exists
+
+        showToast(`Added ${quantity} ${productName} to cart!`);
         updateCartIndicator();
     });
-    
-    // Function to update cart indicator
+
+    // Update cart indicator
     function updateCartIndicator() {
-        // Check if cart indicator exists
+        let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+        let totalItems = cart.reduce((total, item) => total + item.quantity, 0);
         let cartIndicator = document.querySelector('.cart-indicator');
-        
-        // If it doesn't exist, create it
+
         if (!cartIndicator) {
             const userIcon = document.querySelector('.icon-profile');
             cartIndicator = document.createElement('span');
             cartIndicator.className = 'cart-indicator';
             userIcon.parentNode.insertBefore(cartIndicator, userIcon.nextSibling);
         }
-        
-        // Get cart items
-        const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-        
-        // Calculate total quantity
-        const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-        
-        // Update or hide indicator
-        if (totalItems > 0) {
-            cartIndicator.textContent = totalItems;
-            cartIndicator.style.display = 'flex';
-        } else {
-            cartIndicator.style.display = 'none';
-        }
+
+        cartIndicator.textContent = totalItems;
+        cartIndicator.style.display = totalItems > 0 ? 'flex' : 'none';
     }
-    
-    // Load similar products dynamically
+
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'cart-toast';
+        toast.innerHTML = `<div class="toast-content"><i class="fas fa-check-circle"></i> <span>${message}</span></div>`;
+        document.body.appendChild(toast);
+
+        setTimeout(() => toast.classList.add('show-toast'), 100);
+        setTimeout(() => {
+            toast.classList.remove('show-toast');
+            setTimeout(() => document.body.removeChild(toast), 300);
+        }, 3000);
+    }
+
     function loadSimilarProducts() {
-        // Simulated product data - in a real app, this would come from an API/database
-        const similarProducts = [
-            {id: 1, name: "Natural Face Cream", category: "Skin Care", price: "₱499", image: "product1.jpg"},
-            {id: 2, name: "Organic Shampoo", category: "Hair Care", price: "₱349", image: "product2.jpg"},
-            {id: 3, name: "Vitamin C Serum", category: "Skin Care", price: "₱599", image: "product3.jpg"},
-            {id: 4, name: "Aloe Vera Gel", category: "Body Care", price: "₱275", image: "product4.jpg"}
-        ];
-        
         const productGrid = document.querySelector('.product-grid');
-        productGrid.innerHTML = ''; // Clear existing products
-        
+        productGrid.innerHTML = ''; 
+
         similarProducts.forEach(product => {
             const productCard = document.createElement('div');
             productCard.className = 'product-card';
             productCard.dataset.productId = product.id;
-            
+
             productCard.innerHTML = `
                 <div class="card-image" style="background-image: url('${product.image}'); background-size: cover; background-position: center;"></div>
                 <div class="card-info">
@@ -313,23 +299,20 @@ if ($productID > 0) {
                     <p class="card-price">${product.price}</p>
                 </div>
             `;
-            
-            // Add click event to navigate to that product
-            productCard.addEventListener('click', function() {
+
+            productCard.addEventListener('click', () => {
                 window.location.href = `productpage.php?id=${product.id}`;
             });
-            
+
             productGrid.appendChild(productCard);
         });
     }
-    
-    // Call function to load similar products
+
+    // Load similar products and update cart on page load
     loadSimilarProducts();
-    
-    // Initialize cart indicator on page load
     updateCartIndicator();
-    
-    // Add CSS for toast notification
+
+    // Add toast notification styles
     const style = document.createElement('style');
     style.textContent = `
         .cart-toast {
@@ -346,18 +329,18 @@ if ($productID > 0) {
             transition: all 0.3s ease;
             z-index: 1000;
         }
-        
+
         .show-toast {
             transform: translateY(0);
             opacity: 1;
         }
-        
+
         .toast-content {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .cart-indicator {
             position: absolute;
             top: -5px;
@@ -373,13 +356,14 @@ if ($productID > 0) {
             font-size: 10px;
             font-weight: bold;
         }
-        
+
         .icons {
             position: relative;
         }
     `;
     document.head.appendChild(style);
 });
-    </script>
+</script>
+
 </body>
 </html>
