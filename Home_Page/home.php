@@ -51,7 +51,6 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="main.js">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -65,28 +64,25 @@ $conn->close();
 </head>
 
 <body>
-    <header>
+    <header class="header">
         <div class="logo">
             <img src="cfn_logo2.png" alt="Logo" class="logo-image" />
         </div>
         <div class="navbar">
-            
             <div class="icons">
                 <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
                 <form action="../Home_Page/ProductScroll.php" method="GET" class="search-form" onsubmit="return validateSearch()">
                     <input type="text" name="search" class="search-bar" id="searchBar" placeholder="Search Product or Category">
                 </form>
                 <div class="icons">
-                
-                <a href="../Home_Page/home.php"><i class="fa-solid fa-house"></i></a>
-                
-                <a href="../drew/cart.php">
-                    <i class="fas fa-shopping-cart"></i>
-                </a>
-                
-                <a href="../User_Profile_Page/UserProfile.php">
-                    <i class="far fa-user-circle fa-2x icon-profile"></i>
-                </a>
+                    <a href="../Home_Page/home.php"><i class="fa-solid fa-house"></i></a>
+                    <a href="../drew/cart.php">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                    </a>
+                    <a href="../User_Profile_Page/UserProfile.php">
+                        <i class="far fa-user-circle fa-2x icon-profile"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </header>
@@ -95,18 +91,18 @@ $conn->close();
     <div class="main-banner d-flex justify-content-center align-items-center" 
          style="height: 400px; width: 100%; background-image: url('banner.png'); 
          background-size: cover; background-position: center; text-align: center;">
-        <div>
-            <h1>Cosmeticas</h1>
-            <h3>Just Like Nature Intended</h3>
-            <a href="ProductScroll.php"><button>SHOP NOW</button></a>
+        <div class="banner-content">
+            <h1 class="banner-title">Cosmeticas</h1>
+            <h3 class="banner-subtitle">Just Like Nature Intended</h3>
+            <a href="ProductScroll.php"><button class="banner-btn">SHOP NOW</button></a>
         </div>
     </div>
 
-    <section>
+    <section data-animate="fade-in">
         <h2 class="section-title-best">Our Best Sellers</h2>
         <div class="swiper-container">
             <div class="swiper-wrapper">
-                <div class="swiper-slide product-card">
+                <div class="swiper-slide product-card" data-animate="fade-in">
                     <div class="product-image">
                         <img src="https://via.placeholder.com/250" alt="Product Image">
                     </div>
@@ -119,7 +115,7 @@ $conn->close();
                         </div>
                     </div>
                 </div>
-                <div class="swiper-slide product-card">
+                <div class="swiper-slide product-card" data-animate="fade-in">
                     <div class="product-image">
                         <img src="https://via.placeholder.com/250" alt="Product Image">
                     </div>
@@ -132,7 +128,7 @@ $conn->close();
                         </div>
                     </div>
                 </div>
-                <div class="swiper-slide product-card">
+                <div class="swiper-slide product-card" data-animate="fade-in">
                     <div class="product-image">
                         <img src="https://via.placeholder.com/250" alt="Product Image">
                     </div>
@@ -145,7 +141,7 @@ $conn->close();
                         </div>
                     </div>
                 </div>
-                <div class="swiper-slide product-card">
+                <div class="swiper-slide product-card" data-animate="fade-in">
                     <div class="product-image">
                         <img src="https://via.placeholder.com/250" alt="Product Image">
                     </div>
@@ -158,7 +154,7 @@ $conn->close();
                         </div>
                     </div>
                 </div>
-                <div class="swiper-slide product-card">
+                <div class="swiper-slide product-card" data-animate="fade-in">
                     <div class="product-image">
                         <img src="https://via.placeholder.com/250" alt="Product Image">
                     </div>
@@ -171,7 +167,7 @@ $conn->close();
                         </div>
                     </div>
                 </div>
-                <div class="swiper-slide product-card">
+                <div class="swiper-slide product-card" data-animate="fade-in">
                     <div class="product-image">
                         <img src="https://via.placeholder.com/250" alt="Product Image">
                     </div>
@@ -184,7 +180,7 @@ $conn->close();
                         </div>
                     </div>
                 </div>
-                <div class="swiper-slide product-card">
+                <div class="swiper-slide product-card" data-animate="fade-in">
                     <div class="product-image">
                         <img src="https://via.placeholder.com/250" alt="Product Image">
                     </div>
@@ -202,18 +198,18 @@ $conn->close();
         </div>
     </section>
 
-    <section class="description-section">
+    <section class="description-section" data-animate="fade-in">
         <div class="description-container">
             <div class="left-container">
                 <div class="description-text">
-                    <h3>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</h3>
+                    <h3>Explore our all-natural ingredients, eco-friendly packaging, and innovative formulas designed to enhance your beauty while nourishing your skin—just as nature intended.</h3>
                 </div>
                 <h2 class="section-title">SHOP BY CATEGORY</h2>
                 <div class="category-grid">
-                    <a href="ProductScroll.php?category=skin" class="category-card-skin">SKIN</a>
-                    <a href="ProductScroll.php?category=hair" class="category-card-hair">HAIR</a>
-                    <a href="ProductScroll.php?category=face" class="category-card-face">FACE</a>
-                    <a href="ProductScroll.php?category=perfume" class="category-card-perfume">PERFUME</a>
+                    <a href="ProductScroll.php?category=skin" class="category-card-skin" data-animate="fade-in-scale">SKIN</a>
+                    <a href="ProductScroll.php?category=hair" class="category-card-hair" data-animate="fade-in-scale">HAIR</a>
+                    <a href="ProductScroll.php?category=face" class="category-card-face" data-animate="fade-in-scale">FACE</a>
+                    <a href="ProductScroll.php?category=perfume" class="category-card-perfume" data-animate="fade-in-scale">PERFUME</a>
                 </div>
             </div>
             <div class="description-image">
@@ -222,7 +218,7 @@ $conn->close();
         </div>
     </section>
 
-    <footer>
+    <footer data-animate="fade-in">
         <div class="footer-container">
             <div class="footer-left">
                 <img src="cfn_logo.png" alt="Naturale Logo" class="footer-logo">
@@ -272,8 +268,8 @@ $conn->close();
 
         function validateSearch() {
             let searchInput = document.getElementById("searchBar").value.trim();
-                if (searchInput === "") {
-                    alert("Please enter a search term.");
+            if (searchInput === "") {
+                alert("Please enter a search term.");
                 return false;
             }
             return true;
