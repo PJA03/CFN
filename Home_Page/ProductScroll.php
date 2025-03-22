@@ -23,22 +23,29 @@ if (isset($_SESSION['email'])) {
 // Include database connection
 include '../conn.php';
 
-// Check if search term exists in the URL
+// Get search and category filters from the URL
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
+$category = isset($_GET['category']) ? $conn->real_escape_string($_GET['category']) : '';
 
-// Base SQL query to get all products
+// Base SQL query
 $sql = "SELECT p.productID, p.product_name, p.category, p.product_image, v.price, v.stock
         FROM tb_products p
         JOIN tb_productvariants v ON p.productID = v.productID
         WHERE v.is_default = 1";
 
-// If search term is provided, filter products by name
+// Apply search filter
 if (!empty($search)) {
-    $sql .= " AND p.product_name LIKE '%$search%'";
+    $sql .= " AND (p.product_name LIKE '%$search%' OR p.category LIKE '%$search%')";
+}
+
+// Apply category filter
+if (!empty($category)) {
+    $sql .= " AND p.category = '$category'";
 }
 
 // Execute query
 $result = $conn->query($sql);
+
 ?>
 
 <!DOCTYPE html>
@@ -284,34 +291,35 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
         });
 
         document.getElementById('categoryFilter').addEventListener('change', function() {
-            filterProducts();
-            const newCategory = this.value;
-            const url = new URL(window.location);
-            if (newCategory) {
-                url.searchParams.set('category', newCategory);
-            } else {
-                url.searchParams.delete('category');
-            }
-            window.history.pushState({}, '', url);
-        });
+    filterProducts();
+    const newCategory = this.value;
+    const url = new URL(window.location);
+    if (newCategory) {
+        url.searchParams.set('category', newCategory);
+    } else {
+        url.searchParams.delete('category');
+    }
+    window.history.pushState({}, '', url);
+});
 
-        document.getElementById('categoryFilter').addEventListener('change', function() {
-            const newCategory = this.value;
-            const url = new URL(window.location);
+document.getElementById('categoryFilter').addEventListener('change', function() {
+    const selectedCategory = this.value;
+    const url = new URL(window.location);
 
-            // Remove search query and clear the search bar
-            url.searchParams.delete('search');
-            document.getElementById('searchBar').value = ""; // Clear input field
+    // Set category in the URL
+    if (selectedCategory) {
+        url.searchParams.set('category', selectedCategory);
+    } else {
+        url.searchParams.delete('category');
+    }
 
-            if (newCategory) {
-                url.searchParams.set('category', newCategory);
-            } else {
-            url.searchParams.delete('category');
-            }
+    // Remove search query and clear the search bar
+    url.searchParams.delete('search');
+    document.getElementById('searchBar').value = "";
 
-        window.history.pushState({}, '', url);
-        filterProducts();
-        });
+    // Reload page with updated filters
+    window.location.href = url.toString();
+});
 
 
         document.getElementById('searchBar').addEventListener('input', filterProducts);

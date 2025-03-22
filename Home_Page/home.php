@@ -25,7 +25,7 @@ if (isset($_GET['search'])) {
     $search = "%" . $_GET['search'] . "%";
 
     // Prepare the SQL query
-    $stmt = $conn->prepare("SELECT * FROM tb_products WHERE product_name LIKE ? OR product_category LIKE ?");
+    $stmt = $conn->prepare("SELECT * FROM tb_products WHERE product_name LIKE ? OR category LIKE ?");
     $stmt->bind_param("ss", $search, $search);
     $stmt->execute();
     $result = $stmt->get_result();
