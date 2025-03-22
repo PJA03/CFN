@@ -1,14 +1,11 @@
 <?php
 session_start();
 
-// Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
-    //TODO: Make it an alert tapos stay on the product details page
-    die("You must be logged in to view your cart.");
+// Redirect if order is empty or not set
+if (!isset($_SESSION['order']) || empty($_SESSION['order'])) {
+    header('Location: cart.php');
+    exit;
 }
-
-$user_id = $_SESSION['user_id'];
-
 ?>
 <!DOCTYPE html>
 <html lang="en">

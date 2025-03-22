@@ -45,7 +45,6 @@ if ($productID > 0) {
         $row = $result->fetch_assoc();
         $product_name = $row['product_name'];
         $product_desc = $row['product_desc'] ?: "No description available";
-        $brand = $row['brand'];
         $category = $row['category'];
         $product_image = !empty($row['product_image']) ? $row['product_image'] : "../Resources/cfn_logo.png";        
         $price = $row['price'];

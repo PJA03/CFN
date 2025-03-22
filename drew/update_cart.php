@@ -1,37 +1,21 @@
 <?php
 session_start();
+include '../conn.php';
+
 header('Content-Type: application/json');
 
-// Check if the request includes the required data
-if (!isset($_POST['product_id']) || !isset($_POST['quantity'])) {
-    echo json_encode(['success' => false, 'message' => 'Missing required data']);
-    exit;
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['success' => false, 'message' => 'Not logged in']);
+    exit();
 }
 
-$product_id = $_POST['product_id'];
-$quantity = (int)$_POST['quantity'];
+$product_id = $_POST['product_id'] ?? '';
+$quantity = $_POST['quantity'] ?? 0;
 
-// Validate quantity
-if ($quantity < 1) {
-    echo json_encode(['success' => false, 'message' => 'Quantity must be at least 1']);
-    exit;
+if ($product_id && $quantity > 0) {
+    $_SESSION['cart'][$product_id]['quantity'] = (int)$quantity;
+    echo json_encode(['success' => true]);
+} else {
+    echo json_encode(['success' => false, 'message' => 'Invalid input']);
 }
-
-// Check if the product exists in the cart
-if (!isset($_SESSION['cart'][$product_id])) {
-    echo json_encode(['success' => false, 'message' => 'Product not found in cart']);
-    exit;
-}
-
-// Update the quantity
-$_SESSION['cart'][$product_id]['quantity'] = $quantity;
-
-// Return success
-echo json_encode([
-    'success' => true,
-    'message' => 'Cart updated',
-    'product_id' => $product_id,
-    'quantity' => $quantity
-]);
-exit;
 ?>

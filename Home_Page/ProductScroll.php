@@ -67,40 +67,36 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="ProductScroll.css">
     <style>
-        body {
+        /* Ensure the page takes up full height */
+        html, body {
+            height: 100%;
             margin: 0;
-            padding: 0;
-            font-family: 'Be Vietnam Pro', sans-serif;
-            background-color: #f1f2d8;
         }
-        .logo { display: flex; align-items: center; gap: 10px; }
-        .logo-image { height: 40px; width: auto; }
-        header { background-color: #1F4529; color: #EED3B1; padding: 20px; display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; position: relative; }
-        .navbar { display: flex; justify-content: flex-end; align-items: center; padding: 10px 20px; }
-        .search-bar { padding: 8px 12px; border-radius: 25px; border: none; outline: none; font-size: 1rem; width: 300px; background-color: #FFFFFF; margin-right: 20px; }
-        .icons { display: flex; align-items: center; gap: 15px; }
-        .icon-profile, .burger-menu, .fa-shopping-cart { font-size: 1.8rem; color: #EED3B1; cursor: pointer; }
-        .container-fluid { margin-top: 20px; }
-        .filter-container { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-        .filter-container i { font-size: 1.5rem; cursor: pointer; }
-        .category-dropdown { background-color: #1F4529; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 1rem; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-        .product-card { border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fff; padding: 15px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .product-card img { width: 100%; max-height: 150px; object-fit: cover; border-radius: 5px; }
-        .variant-options { margin-top: 10px; }
-        .variant-select { width: 100%; padding: 5px; margin-top: 5px; border-radius: 5px; border: 1px solid #e0e0e0; }
-        .add-to-cart { background-color: #1F4529; color: #fff; border: none; border-radius: 5px; padding: 8px 15px; cursor: pointer; margin-top: 10px; }
-        .add-to-cart:hover { background-color: #15432b; }
-        footer { background-color: #1F4529; color: white; padding: 20px 50px; display: flex; flex-direction: column; width: 100%; }
-        .footer-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; }
-        .footer-logo { height: 200px; margin-left: 100px; }
-        .footer-nav { list-style: none; padding: 0; margin-bottom: 40px; }
-        .footer-nav li { font-family: "Bebas Neue", serif; font-size: 20px; }
-        .footer-nav a { color: white; text-decoration: none; }
-        .social-icons { flex-direction: column; align-items: flex-start; margin-bottom: 100px; }
-        .social-icons a { color: white; font-size: 18px; text-decoration: none; gap: 10px; margin-left: 4px; }
-        .social-icons p { color: white; font-size: 20px; font-family: "Bebas Neue", serif; margin-bottom: 0; margin-top: 0; }
-        .footer-center { text-align: center; width: 100%; font-size: 14px; margin-top: 10px; }
+
+        /* Flexbox to push footer to bottom */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            flex: 1 0 auto; /* Grow to fill space, but don't shrink */
+        }
+
+        footer {
+            flex-shrink: 0; /* Prevent footer from shrinking */
+        }
+
+        /* No products message styling */
+        #no-products-message {
+            display: none; /* Hidden by default */
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #FF8666; /* Match your theme */
+            font-family: "Bebas Neue", serif;
+        }
     </style>
 </head>
 <body>
@@ -109,18 +105,15 @@ $result = $conn->query($sql);
             <img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/>
         </div>
         <div class="navbar">
-                <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
-                <input type="text" class="search-bar" id="searchBar" placeholder="Search Product" />            
-                <div class="icons">
-                <a href="../Home_Page/home.php">
-                    <i class="fa-solid fa-house home"></i>
-                </a>
-                <a href="../drew/cart.php">
-                    <i class="fa-solid fa-cart-shopping cart"></i>
-                </a>
+            <input type="text" class="search-bar" id="searchBar" placeholder="Search Product" />
+            <div class="icons">
+                <a href="../Home_Page/home.php"><i class="fa-solid fa-house"></i></a>
+                <i class="fas fa-shopping-cart"></i>
                 <a href="../User_Profile_Page/UserProfile.php">
                     <i class="far fa-user-circle fa-2x icon-profile"></i>
-                </a>    
+                </a>
+                <i class="fas fa-bars burger-menu"></i>
+                <i class="fas fa-shopping-cart"></i>
             </div>
         </div>
     </header>
@@ -143,8 +136,8 @@ $result = $conn->query($sql);
         <div class="filter-container">
             <i class="fas fa-filter"></i>
             <span>Search Filter</span>
-            <select class="category-dropdown" id="categoryFilter" onchange="filterCategory()">
-                <option value="">All Products</option>
+            <select class="category-dropdown" id="categoryFilter">
+                <option value="">Category</option>
                 <option value="skin">Skin</option>
                 <option value="hair">Hair</option>
                 <option value="face">Face</option>
@@ -152,108 +145,99 @@ $result = $conn->query($sql);
             </select>
         </div>
 
-    <div class="product-grid" id="product-grid">
-    
-    <?php
-    define('BASE_PATH', '/CFN/');
+        <div class="product-grid" id="product-grid">
+            <?php
+            // Define base path for images
+            define('BASE_PATH', '/CFN/'); // Adjust if your server root differs
 
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "db_cfn";
+            $servername = "localhost";
+            $username = "root";
+            $password = "";
+            $dbname = "db_cfn";
 
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-    // Get selected category from URL
-    $categoryFilter = isset($_GET['category']) ? $_GET['category'] : '';
-
-    // Modify SQL query based on category filter
-    $sql = "SELECT p.productID, p.product_name, p.category, p.product_image, v.price, v.stock,
-           (SELECT COUNT(*) FROM tb_productvariants WHERE productID = p.productID) as variant_count
-            FROM tb_products p
-            JOIN tb_productvariants v ON p.productID = v.productID
-            WHERE v.is_default = 1";
-
-    if (!empty($categoryFilter)) {
-        $sql .= " AND p.category = '$categoryFilter'";
-    }
-
-    $result = $conn->query($sql);
-
-
-
-            if (!$result) {
-                echo "<p>Error fetching products: " . $conn->error . "</p>";
-            } elseif ($result->num_rows > 0) {
-                while ($product = $result->fetch_assoc()) {
-                    $stockStatus = ($product['stock'] >= 50) ? "In Stock" : (($product['stock'] > 0) ? "Low Stock" : "Out of Stock");
-                    // Correctly construct image paths
-                    $productImage = !empty($product['product_image']) ? str_replace('uploads/', '', $product['product_image']) : '';
-                    $imgSrc = !empty($productImage) ? BASE_PATH . "e-com/uploads/" . $productImage : BASE_PATH . "e-com/images/cfn_logo.png";
-                    $fallbackImgSrc = BASE_PATH . "e-com/images/cfn_logo.png";
-                    ?>
-                    <div class="product-card"
-                         data-product-id="<?= $product['productID']; ?>"
-                         data-price="<?= $product['price']; ?>"
-                         data-stock="<?= $product['stock']; ?>"
-                         data-category="<?= strtolower($product['category']); ?>">
-                        <img src="<?= $imgSrc; ?>" alt="Product Image" 
-                             data-fallback="<?= $fallbackImgSrc; ?>" 
-                             onload="this.removeAttribute('data-fallback');" 
-                             onerror="if(this.src !== this.getAttribute('data-fallback')) { this.src = this.getAttribute('data-fallback'); } else { console.log('Fallback failed: <?= $fallbackImgSrc; ?>'); }">
-                        <h5><?= htmlspecialchars($product['product_name']); ?></h5>
-                        <p>₱<?= number_format($product['price'], 2); ?> - <?= $stockStatus; ?></p>
-                        <div class="variant-options">
-                            <?php
-                            $prodID = $product['productID'];
-                            $variant_sql = "SELECT variant_id, variant_name, price, stock FROM tb_productvariants WHERE productID = $prodID";
-                            $variant_result = $conn->query($variant_sql);
-                            if ($variant_result && $variant_result->num_rows > 1) {
-                                echo '<select class="variant-select" name="variant_' . $prodID . '">';
-                                while ($variant = $variant_result->fetch_assoc()) {
-                                    $variantStock = ($variant['stock'] > 0) ? "In Stock" : "Out of Stock";
-                                    $selected = ($variant['price'] == $product['price'] && $variant['stock'] == $product['stock']) ? 'selected' : '';
-                                    echo "<option value='{$variant['variant_id']}' data-price='{$variant['price']}' data-stock='{$variant['stock']}' $selected>";
-                                    echo htmlspecialchars($variant['variant_name']) . " - ₱" . number_format($variant['price'], 2) . " ($variantStock)";
-                                    echo "</option>";
-                                }
-                                echo '</select>';
-                            }
-                            ?>
-                        </div>
-                        <button class="add-to-cart" data-product-id="<?= $product['productID']; ?>" onclick="window.location.href='../e-com/productpage.php?id=<?= $product['productID']; ?>'">Add to Cart</button>
-                    </div>
-                    <?php
-                }
-            } else {
-                echo "<p>No products found.</p>";
+            $conn = new mysqli($servername, $username, $password, $dbname);
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
             }
-            $conn->close();
-            ?>
+
+            $sql = "SELECT p.productID, p.product_name, p.category, p.product_image, v.price, v.stock, 
+                           (SELECT COUNT(*) FROM tb_productvariants WHERE productID = p.productID) as variant_count
+                    FROM tb_products p
+                    JOIN tb_productvariants v ON p.productID = v.productID
+                    WHERE v.is_default = 1";
+            $result = $conn->query($sql);
+
+        if (!$result) {
+            echo "<p>Error fetching products: " . $conn->error . "</p>";
+        } elseif ($result->num_rows > 0) {
+            while ($product = $result->fetch_assoc()) {
+                $stockStatus = ($product['stock'] >= 50) ? "In Stock" : (($product['stock'] > 0) ? "Low Stock" : "Out of Stock");
+                $productImage = !empty($product['product_image']) ? str_replace('uploads/', '', $product['product_image']) : '';
+                $imgSrc = !empty($productImage) ? BASE_PATH . "e-com/uploads/" . $productImage : BASE_PATH . "e-com/images/cfn_logo.png";
+                $fallbackImgSrc = BASE_PATH . "e-com/images/cfn_logo.png";
+                ?>
+                <div class="product-card"
+                     data-product-id="<?= $product['productID']; ?>"
+                     data-price="<?= $product['price']; ?>"
+                     data-stock="<?= $product['stock']; ?>"
+                     data-category="<?= strtolower($product['category']); ?>">
+                    <img src="<?= $imgSrc; ?>" alt="Product Image" 
+                         data-fallback="<?= $fallbackImgSrc; ?>" 
+                         onload="this.removeAttribute('data-fallback');" 
+                         onerror="if(this.src !== this.getAttribute('data-fallback')) { this.src = this.getAttribute('data-fallback'); } else { console.log('Fallback failed: <?= $fallbackImgSrc; ?>'); }">
+                    <h5><?= htmlspecialchars($product['product_name']); ?></h5>
+                    <p>₱<?= number_format($product['price'], 2); ?> - <?= $stockStatus; ?></p>
+                    <div class="variant-options">
+                        <?php
+                        $prodID = $product['productID'];
+                        $variant_sql = "SELECT variant_id, variant_name, price, stock FROM tb_productvariants WHERE productID = ?";
+                        $variant_stmt = $conn->prepare($variant_sql);
+                        $variant_stmt->bind_param("i", $prodID);
+                        $variant_stmt->execute();
+                        $variant_result = $variant_stmt->get_result();
+                        if ($variant_result && $variant_result->num_rows > 1) {
+                            echo '<select class="variant-select" name="variant_' . $prodID . '">';
+                            while ($variant = $variant_result->fetch_assoc()) {
+                                $variantStock = ($variant['stock'] > 0) ? "In Stock" : "Out of Stock";
+                                $selected = ($variant['price'] == $product['price'] && $variant['stock'] == $product['stock']) ? 'selected' : '';
+                                echo "<option value='{$variant['variant_id']}' data-price='{$variant['price']}' data-stock='{$variant['stock']}' $selected>";
+                                echo htmlspecialchars($variant['variant_name']) . " - ₱" . number_format($variant['price'], 2) . " ($variantStock)";
+                                echo "</option>";
+                            }
+                            echo '</select>';
+                        }
+                        ?>
+                    </div>
+                    <button class="add-to-cart" data-product-id="<?= $product['productID']; ?>" onclick="window.location.href='../e-com/productpage.php?id=<?= $product['productID']; ?>'">View Product</button>
+                </div>
+                <?php
+            }
+        } else {
+            echo "<p>No products found in the database.</p>";
+        }
+        $conn->close();
+        ?>
         </div>
+        <div id="no-products-message">No Product is under this Category</div>
     </div>
 
     <footer>
         <div class="footer-container">
             <div class="footer-left">
-                <img src="/CFN/e-com/images/cfn_logo.png" alt="Naturale Logo" class="footer-logo">
+                <img src="cfn_logo.png" alt="Naturale Logo" class="footer-logo">
             </div>
             <div class="footer-right">
                 <ul class="footer-nav">
-                    <li><a href="#">ABOUT US</a></li>
-                    <li><a href="#">PRODUCTS</a></li>
-                    <li><a href="#">LOGIN</a></li>
-                    <li><a href="#">SIGN UP</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Terms and Conditions</a></li>
+                    <li><a href="#">Products</a></li>
                 </ul>
             </div>
             <div class="social-icons">
                 <p>SOCIALS</p>
                 <a href="#"><i class="fab fa-facebook"></i></a>
                 <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
+            </div>            
         </div>
         <div class="footer-center">
             © COSMETICAS 2024
@@ -285,30 +269,13 @@ $result = $conn->query($sql);
             });
         });
 
-        document.addEventListener("DOMContentLoaded", function () {
-    var categoryDropdown = document.getElementById('categoryFilter');
-
-    // Get category from URL and set the dropdown value
-    var urlParams = new URLSearchParams(window.location.search);
-    var currentCategory = urlParams.get('category');
-    if (currentCategory) {
-        categoryDropdown.value = currentCategory;
-    }
-
-    // Function to change category and reload the page
-    window.filterCategory = function () {
-        var selectedCategory = categoryDropdown.value;
-        window.location.href = "../Home_Page/ProductScroll.php?category=" + selectedCategory;
-
-    };
-});
-
-
         // Filter products by category and search
         function filterProducts() {
             const category = document.getElementById('categoryFilter').value.toLowerCase();
             const searchText = document.getElementById('searchBar').value.toLowerCase();
             const products = document.querySelectorAll('.product-card');
+            const noProductsMessage = document.getElementById('no-products-message');
+            let visibleProducts = 0;
 
             products.forEach(product => {
                 const productCategory = product.getAttribute('data-category');
@@ -316,8 +283,16 @@ $result = $conn->query($sql);
                 const matchesCategory = !category || productCategory === category;
                 const matchesSearch = productName.includes(searchText);
 
-                product.style.display = (matchesCategory && matchesSearch) ? '' : 'none';
+                if (matchesCategory && matchesSearch) {
+                    product.style.display = '';
+                    visibleProducts++;
+                } else {
+                    product.style.display = 'none';
+                }
             });
+
+            // Show/hide "No Product" message
+            noProductsMessage.style.display = (visibleProducts === 0 && category) ? 'block' : 'none';
         }
 
         function filterCategory() {
@@ -338,8 +313,23 @@ document.getElementById('searchBar').addEventListener('keypress', function(event
 
 
         // Add event listeners for filters
-        document.getElementById('categoryFilter').addEventListener('change', filterProducts);
+        document.getElementById('categoryFilter').addEventListener('change', function() {
+            filterProducts();
+            const newCategory = this.value;
+            const url = new URL(window.location);
+            if (newCategory) {
+                url.searchParams.set('category', newCategory);
+            } else {
+                url.searchParams.delete('category');
+            }
+            window.history.pushState({}, '', url);
+        });
         document.getElementById('searchBar').addEventListener('input', filterProducts);
+
+        // Apply filter on page load based on URL parameter
+        window.onload = function() {
+            filterProducts(); // Trigger filter to respect pre-selected category
+        };
     </script>
 </body>
 </html>

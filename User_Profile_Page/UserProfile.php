@@ -49,77 +49,72 @@ if (isset($_POST['logout'])) {
 <body>
     <header>
         <div class="logo">
-            <img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/>
+            <a href = "../Home_Page/Home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
         </div>
         <div class="navbar">
-                <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>            
-                <div class="icons">
-                <a href="../Home_Page/home.php">
-                    <i class="fa-solid fa-house home"></i>
-                </a>
-                <a href="../drew/cart.php">
-                    <i class="fa-solid fa-cart-shopping cart"></i>
-                </a>
-                <a href="../User_Profile_Page/UserProfile.php">
-                    <i class="far fa-user-circle fa-2x icon-profile"></i>
-                </a>    
+        <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>            
+        <div class="icons">
+                <a href = "../Home_Page/Home.php"><i class="fa-solid fa-house home"></i></a>
+                <a href ="../drew/cart.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
+                <a href="UserProfile.php"><i class ="far fa-user-circle fa-2x icon-profile"></i></a>
             </div>
         </div>
     </header>
 
     <div class="main mb-5">
         <div class="row">
-            <div class="col-md-4 left-panel">
+            <div class="col-md-4 left-panel container">
                 <!-- profile picture -->
-                <img src="<?php echo htmlspecialchars(isset($user['profile_image']) && !empty($user['profile_image']) ? $user['profile_image'] : '../Resources/profile.png', ENT_QUOTES, 'UTF-8'); ?>" alt="Profile Icon" name="icon" id="icon" class="profile-icon" width="150" style="margin: 10px;">
+                <img src="<?php echo htmlspecialchars(isset($user['profile_image']) && !empty($user['profile_image']) ? $user['profile_image'] : '../Resources/profile.png', ENT_QUOTES, 'UTF-8'); ?>" alt="Profile Icon" name="icon" id="icon" class="profile-icon" width="150" max-height="150" style="margin: 10px;">
                 <br>
                 <h2 style="color:whitesmoke">My Account</h2>
                 <a href="UserProfile.php" class="active">Profile</a>
+                <a href="../drew/orderlist.php" class="transparent-button">Orders</a>
                 <form method="post" action="">
                     <button class="transparent-button" name="logout">Logout</button>
                 </form>
             </div>
-            <div class="col-md-8 right-panel">
+            <div class="col-md-8 right-panel container">
                 <div class="row">
-                        <h2 class="lead">Profile Details</h2>
+                        <h2 class="lead">Profile Details </h2>
                         <div class="row">
                             <div class="col-md-5">
                                 <b>Username: </b>
                             </div>
-                            <div class="col-md-7">
-                                <span id="username" class="editable"><?php echo isset($user['username']) ? $user['username'] : ''; ?></span>
+                            <div class="col-md-7 text-wrap" style="text-align: justify">
+                                <span id="username" class="editable"><?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-5">
                                 <b>Email:</b>
                             </div>
-                            <div class="col-md-7">
-                                <span id="email" class="editable"><?php echo isset($user['email']) ? $user['email'] : ''; ?></span>
+                            <div class="col-md-7 text-wrap" style="text-align: justify">
+                                <span id="email" class="editable"><?php echo htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-5">
                                 <b>First Name:</b>
                             </div>
-                            <div class="col-md-7">
-                                <span id="first_name" class="editable"><?php echo isset($user['first_name']) ? $user['first_name'] : ''; ?></span>
+                            <div class="col-md-7 text-wrap" style="text-align: justify">
+                                <span id="first_name" class="editable"><?php echo htmlspecialchars($user['first_name'], ENT_QUOTES, 'UTF-8'); ?></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-5">
                                 <b>Last Name: </b>
                             </div>
-                            <div class="col-md-7">
-                                <span id="last_name" class="editable"><?php echo isset($user['last_name']) ? $user['last_name'] : ''; ?></span>
+                            <div class="col-md-7 text-wrap" style="text-align: justify">
+                                <span id="last_name" class="editable"><?php echo htmlspecialchars($user['last_name'], ENT_QUOTES, 'UTF-8'); ?></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-5">
                                 <b>Contact No.:</b>
                             </div>
-                            <div class="col-md-7">
-                                <span id="contact_no" class="editable"><?php echo isset($user['contact_no']) ? $user['contact_no'] : ''; ?></span>
+                            <div class="col-md-7 text-wrap" style="text-align: justify">
+                                <span id="contact_no" class="editable"><?php echo htmlspecialchars($user['contact_no'], ENT_QUOTES, 'UTF-8'); ?></span>
                             </div>
                         </div>
                         <div class="row">
@@ -127,19 +122,21 @@ if (isset($_POST['logout'])) {
                                 <b>Delivery Address: </b>
                             </div>
                             <div class="col-md-7 text-wrap">
-                                <span id="address" class="editable"><?php echo isset($user['address']) ? $user['address'] : ''; ?></span>
+                                <span id="address" class="editable"><?php echo htmlspecialchars($user['address'], ENT_QUOTES, 'UTF-8'); ?></span>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col text-end">
+
+                        <div class = "row">
+                        <div class = "col text-end">
                             <form action="editUserProfile.php">
-                                <button class="Edit" style="color: black;" id="edit-button" href="editUserProfile.php">
+                                <button class="Edit" style="color: whitesmoke;" id="edit-button" href="editUserProfile.php">
                                     Edit 
                                     <i class="bi bi-pen"></i>
                                 </button>
                             </form>
                             </div>
                         </div>
+                </div>
                 </div>
             </div>
         </div>
@@ -235,6 +232,7 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
             </div>
         </div>
     </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>

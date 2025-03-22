@@ -208,6 +208,51 @@ header {
     text-decoration: none;
 }
 
+/* Payment option styling as requested */
+.payment-option {
+    width: 150px;
+    height: 150px;
+    background-color: #f0f0f0;
+    border: 2px dashed #1F4529;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+/* Style the link to take up full container space */
+.payment-option a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Style the logo image */
+.payment-logo {
+    max-width: 60%;
+    max-height: 60%;
+    margin-bottom: 10px;
+}
+
+/* Style the text */
+.payment-option p {
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Optional: container for multiple payment options */
+.payment-options-container {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+
 .cart-actions .payment-btn {
     background-color: #1F4529;
     color: #FFFFFF;

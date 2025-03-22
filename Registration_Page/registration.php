@@ -315,6 +315,7 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                 if (password_verify($password, $user['pass'])) {
                     if ($user['validated'] == 1) { // Check if account is validated
                         // Store user data in session
+                        $_SESSION['user_id'] = $user['user_id'];
                         $_SESSION['username'] = $user['username'];
                         $_SESSION['first_name'] = $user['first_name'];
                         $_SESSION['last_name'] = $user['last_name'];

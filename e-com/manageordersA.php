@@ -119,32 +119,35 @@
       <!-- Main Content -->
       <div class="col-md-10 p-4 main-content">
         <h3 class="mt-4 text-center">Orders Table</h3>
-        <div class="d-flex justify-content-end align-items-center mb-3">
-          <select id="filterStatus" class="form-select me-2" style="width: auto;">
-            <option value="">All Statuses</option>
-            <option value="Waiting for Payment">Waiting for Payment</option>
-            <option value="Processing">Processing</option>
-            <option value="Shipped">Shipped</option>
-            <option value="Delivered">Delivered</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-          <input type="text" id="searchOrder" class="form-control w-25 me-2" placeholder="Search Order" />
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <a href="manage_qr_codes.php" class="btn btn-primary">Manage QR Codes</a>
+          <div class="d-flex align-items-center">
+            <select id="filterStatus" class="form-select me-2" style="width: auto;">
+              <option value="">All Statuses</option>
+              <option value="Waiting for Payment">Waiting for Payment</option>
+              <option value="Processing">Processing</option>
+              <option value="Shipped">Shipped</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+            <input type="text" id="searchOrder" class="form-control w-25 me-2" placeholder="Search Order" />
+          </div>
         </div>
 
         <div class="bg-white p-4 rounded shadow-sm">
-        <table class="table table-bordered text-center">
-        <thead>
-         <tr class="table-success">
-      <th>Order ID</th>
-      <th>Number of Items</th>
-      <th class="sortable" onclick="sortTable('total')">Total</th>
-      <th class="sortable" onclick="sortTable('status')">Status</th>
-      <th>Tracking Link</th>
-      <th>Address</th> <!-- New column header -->
-      <th>Action</th>
-           </tr>
+          <table class="table table-bordered text-center">
+            <thead>
+              <tr class="table-success">
+                <th>Order ID</th>
+                <th>Number of Items</th>
+                <th class="sortable" onclick="sortTable('total')">Total</th>
+                <th class="sortable" onclick="sortTable('status')">Status</th>
+                <th>Tracking Link</th>
+                <th>Address</th>
+                <th>Action</th>
+              </tr>
             </thead>
-         <tbody id="ordersTable"></tbody>
+            <tbody id="ordersTable"></tbody>
           </table>
         </div>
       </div>
@@ -240,11 +243,11 @@
     let currentOrderID = null;
     let sortField = '';
     let sortOrder = 'asc';
-    let originalStatus = ''; // To store the original status of the order
+    let originalStatus = '';
 
     // 1. Load orders from fetchorders.php
     function loadOrders(query = "", filterStatus = "", sort = '', order = 'asc') {
-      document.getElementById("ordersTable").innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
+      document.getElementById("ordersTable").innerHTML = "<tr><td colspan='7'>Loading...</td></tr>";
       const url = `fetchorders.php?search=${encodeURIComponent(query)}&filter=${encodeURIComponent(filterStatus)}&sort=${encodeURIComponent(sort)}&order=${encodeURIComponent(order)}`;
       fetch(url)
         .then(response => response.text())
@@ -258,7 +261,7 @@
         })
         .catch(error => {
           console.error("Error loading orders:", error);
-          document.getElementById("ordersTable").innerHTML = "<tr><td colspan='6' class='text-danger'>Failed to load data</td></tr>";
+          document.getElementById("ordersTable").innerHTML = "<tr><td colspan='7' class='text-danger'>Failed to load data</td></tr>";
         });
     }
 
@@ -299,13 +302,16 @@
           document.getElementById("emailDisplay").textContent = data.email || "";
           document.getElementById("quantityDisplay").textContent = data.quantity || "";
           document.getElementById("paymentOptionDisplay").textContent = data.payment_option || "";
-          document.getElementById("totalDisplay").textContent = "₱" + (data.price_total || "");
+          document.getElementById("totalDisplay").textContent = "₱" + (data.price_total || "0.00");
           
           document.getElementById("status").value = data.status || "Waiting for Payment";
-          originalStatus = data.status || "Waiting for Payment"; // Store original status
+          originalStatus = data.status || "Waiting for Payment";
           document.getElementById("confirmPayment").checked = (data.isApproved == 1);
           document.getElementById("trackingLink").value = data.trackingLink || "";
-          document.getElementById("receiptImage").src = data.payment_proof || "images/placeholder.jpg";
+          
+          // Fix the receipt image path
+          const receiptPath = data.payment_proof ? `../uploads/receipts/${data.payment_proof}` : "images/placeholder.jpg";
+          document.getElementById("receiptImage").src = receiptPath;
 
           isChanged = false;
           document.getElementById("orderPopup").style.display = "flex";
@@ -370,83 +376,79 @@
 
     // 7. Save changes to the order
     function saveChanges() {
-      let status = document.getElementById("status").value;
-      const isPaymentConfirmed = document.getElementById("confirmPayment").checked;
-      const trackingLink = document.getElementById("trackingLink").value.trim();
+  let status = document.getElementById("status").value;
+  const isPaymentConfirmed = document.getElementById("confirmPayment").checked ? 1 : 0;
+  const trackingLink = document.getElementById("trackingLink").value.trim();
 
-      // Auto-update status based on conditions
-      if (isPaymentConfirmed && status === "Waiting for Payment") {
-        status = "Processing";
-        document.getElementById("status").value = status;
-      }
-      if (trackingLink && (status === "Processing" || status === "Waiting for Payment")) {
-        status = "Shipped";
-        document.getElementById("status").value = status;
-      }
+  if (isPaymentConfirmed && status === "Waiting for Payment") {
+    status = "Processing";
+    document.getElementById("status").value = status;
+  }
+  if (trackingLink && (status === "Processing" || status === "Waiting for Payment")) {
+    status = "Shipped";
+    document.getElementById("status").value = status;
+  }
 
-      // Prevent setting to "Delivered" unless the order is "Shipped" and has a tracking link
-      if (status === "Delivered" && originalStatus !== "Shipped") {
-        Swal.fire({
-          title: "Invalid Status Change",
-          text: "Order must be in 'Shipped' status before marking as 'Delivered'.",
-          icon: "warning",
-          confirmButtonText: "OK",
-        });
-        return;
-      }
-      if (status === "Delivered" && !trackingLink) {
-        Swal.fire({
-          title: "Missing Tracking Link",
-          text: "A tracking link is required before marking an order as 'Delivered'.",
-          icon: "warning",
-          confirmButtonText: "OK",
-        });
-        return;
-      }
+  if (status === "Delivered" && originalStatus !== "Shipped") {
+    Swal.fire({
+      title: "Invalid Status Change",
+      text: "Order must be in 'Shipped' status before marking as 'Delivered'.",
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
+    return;
+  }
+  if (status === "Delivered" && !trackingLink) {
+    Swal.fire({
+      title: "Missing Tracking Link",
+      text: "A tracking link is required before marking an order as 'Delivered'.",
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
+    return;
+  }
 
-      fetch("updateorder.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          orderID: currentOrderID,
-          status: status,
-          isApproved: isPaymentConfirmed,
-          trackingLink: trackingLink,
-        }),
-      })
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            Swal.fire({
-              title: "Success!",
-              text: result.message,
-              icon: "success",
-              confirmButtonText: "OK",
-            }).then(() => {
-              loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
-              closePopup();
-            });
-          } else {
-            Swal.fire({
-              title: "Error",
-              text: result.message,
-              icon: "error",
-              confirmButtonText: "OK",
-            });
-          }
-        })
-        .catch(error => {
-          console.error("Error updating order:", error);
-          Swal.fire({
-            title: "Error",
-            text: "An error occurred while updating the order.",
-            icon: "error",
-            confirmButtonText: "OK",
-          });
-        });
-
-      isChanged = false;
+  fetch("updateorder.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      orderID: currentOrderID,
+      status: status,
+      isApproved: isPaymentConfirmed,
+      trackingLink: trackingLink,
+    }),
+  })
+  .then(response => {
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return response.json();
+  })
+  .then(result => {
+    if (result.success) {
+      Swal.fire({
+        title: "Success!",
+        text: result.message,
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
+        closePopup();
+      });
+    } else {
+      Swal.fire({
+        title: "Error",
+        text: result.message,
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
+  })
+  .catch(error => {
+    console.error("Error updating order:", error); // Log to console only
+    // No Swal.fire popup here
+  });
+
+  isChanged = false;
+}
   </script>
 </body>
 </html>

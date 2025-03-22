@@ -76,12 +76,11 @@ body {
     text-align: center;
 }
 
+/* Stat Container and Cards */
 .stat-container {
     margin-bottom: 30px; /* Add space below the stat cards */
 }
 
-
-/* Stat Card Styling */
 .stat-card {
     background-color: #e0e0e0;
     border-radius: 12px;
@@ -99,7 +98,6 @@ body {
 .stat-title {
     font-size: 1rem;
     margin-bottom: 0.5rem;
-    
     color: #000000;
 }
 
@@ -113,7 +111,6 @@ body {
 }
 
 /* Table Styling */
-/* General Table Styling */
 .table {
     border-collapse: collapse;
     width: 100%;
@@ -124,7 +121,6 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Table Header Styling */
 .table th {
     text-align: center;
     background-color: #1F4529;
@@ -133,7 +129,6 @@ body {
     font-weight: bold;
 }
 
-/* Table Row Styling */
 .table td {
     text-align: center;
     padding: 1rem;
@@ -142,144 +137,60 @@ body {
     border-bottom: 1px solid #e5e7eb;
 }
 
-/* Responsive Design for Table Rows */
 .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
 
-/* Narrow Column Width for No. of Sales */
 .table th:first-child, 
 .table td:first-child {
     text-align: center;
     width: 20%; /* Keep the No. of Sales column narrower */
 }
 
-/* Make Rows Stand Out with Hover Effect */
 .table tbody tr:hover {
     background-color: #f3f4f6;
 }
 
-
-/* Best Sellers Section */
-.best-sellers-title {
-    font-size: 1.8rem;
-
-    color: #D4802D; /* Orange title */
-    text-transform: uppercase;
-    text-align: center;
-    margin-bottom: 20px;
+/* Promo Section */
+.promo-section {
+    margin: 2rem 0;
+    border-radius: 8px;
 }
 
-/* Product Slider Container */
-.product-slider {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
+.promo-card {
+    background-color: #f7f7f7; /* From inline CSS */
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    padding: 10px; /* Added from product-card context */
 }
 
-/* Slider Arrows */
-.slider-arrow {
+.promo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.promo-card h2 {
     font-size: 2rem;
-    color: #555;
-    cursor: pointer;
-    transition: color 0.3s ease;
+    margin-bottom: 1rem;
 }
 
-.slider-arrow:hover {
-    color: #1F4529;
-}
-
-/* Product Card */
-.product-card {
-    width: 200px;
-    background: #D7E5A1; /* Light green */
-    border-radius: 8px;
-    border: 3px solid #7A9D54; /* Dark green border */
-    text-align: center;
-    padding: 10px;
-}
-
-/* Product Image Placeholder */
-.product-image {
-    width: 100%;
-    height: 150px;
-    background: white;
-    border: 2px solid #7A9D54;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
-
-/* Product Info */
-.product-info {
-    font-family: "Be Vietnam Pro", sans-serif;
-    padding: 5px;
-}
-
-.product-name {
-    font-size: 1rem;
-    font-weight: bold;
-}
-
-.product-category {
+.promo-card ul li {
     font-size: 0.9rem;
+    margin-bottom: 0.5rem;
     color: #555;
 }
 
-/* Product Icons */
-.product-icons {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-}
-
-.product-icons i {
-    font-size: 1.2rem;
-    color: #1F4529;
-    cursor: pointer;
-}
-
-.product-icons .ppp {
-    font-size: 0.9rem;
-    font-weight: bold;
-}
-
-/* Modal Overlay */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Best Sellers Section */
-.product-slider {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-}
-
-.product-card {
-    width: 200px;
-    background: #D7E5A1;
-    border-radius: 8px;
-    border: 3px solid #7A9D54;
-    text-align: center;
-    padding: 10px;
-}
-
+/* Promo Button Container */
 .promo-btn-container {
     display: flex;
-    justify-content: flex-end; /* Align button to the right */
+    justify-content: flex-end; /* From external CSS */
     margin-top: 20px;
+}
+
+.promo-btn-container button {
+    padding: 10px 20px; /* From inline CSS */
+    font-size: 1rem;
 }
 
 .promo-btn {
@@ -294,4 +205,224 @@ body {
 
 .promo-btn:hover {
     background-color: #4a8e2b;
+}
+
+/* Best Sellers Section */
+.best-sellers-title {
+    font-size: 1.8rem;
+    color: #D4802D; /* Orange title */
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.product-slider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px; /* From external CSS */
+    margin-top: 20px; /* From inline CSS */
+}
+
+.slider-arrow {
+    font-size: 2rem;
+    cursor: pointer;
+    color: #343a40; /* From inline CSS */
+    margin: 0 10px; /* From inline CSS */
+    transition: color 0.3s ease; /* From external CSS */
+}
+
+.slider-arrow:hover {
+    color: #1F4529; /* From external CSS */
+}
+
+#bestSellersContainer {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 10px;
+}
+
+/* Product Card (combined from both sources) */
+.product-card {
+    width: 200px; /* From external CSS */
+    background-color: #fff; /* From inline CSS, overrides #D7E5A1 */
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* From inline CSS */
+    min-width: 200px; /* From inline CSS */
+    border: 3px solid #7A9D54; /* From external CSS */
+}
+
+.product-card .product-image {
+    width: 100%; /* From inline CSS */
+    height: 150px; /* From external CSS */
+    background: white; /* From external CSS */
+    border: 2px solid #7A9D54; /* From external CSS */
+    border-radius: 5px; /* From external CSS */
+    margin-bottom: 10px; /* From external CSS */
+}
+
+.product-card .product-image img {
+    width: 100%;
+    border-radius: 4px;
+}
+
+.product-info {
+    font-family: "Be Vietnam Pro", sans-serif; /* From external CSS */
+    padding: 5px; /* From external CSS */
+    margin-top: 10px; /* From inline CSS */
+}
+
+.product-name {
+    font-size: 1.1rem; /* From inline CSS */
+    font-weight: 100; /* From inline CSS */
+    color: #343a40; /* From inline CSS */
+}
+
+.product-category {
+    font-size: 0.9rem;
+    color: #6c757d; /* From inline CSS */
+}
+
+.product-icons {
+    display: flex;
+    justify-content: space-between; /* From external CSS */
+    align-items: center; /* From external CSS */
+    margin-top: 10px;
+}
+
+.product-icons i {
+    font-size: 1.2rem;
+    margin: 0 5px; /* From inline CSS */
+    cursor: pointer;
+    color: #adb5bd; /* From inline CSS */
+    transition: color 0.2s; /* From inline CSS */
+}
+
+.product-icons i:hover {
+    color: #343a40; /* From inline CSS */
+}
+
+.product-icons .ppp {
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.modal-overlay.show {
+    opacity: 1;
+}
+
+/* Modal Content */
+.modal-content {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-50px);
+    transition: transform 0.3s ease-in-out;
+    font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.modal-overlay.show .modal-content {
+    transform: translateY(0);
+}
+
+/* Modal Title */
+.modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+/* Modal Fields */
+.modal-field {
+    margin-bottom: 20px;
+}
+
+.modal-field label {
+    font-weight: 700;
+    color: #34495e;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 1rem;
+}
+
+.modal-field input,
+.modal-field select {
+    border-radius: 8px;
+    border: 1px solid #dcdcdc;
+    padding: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.modal-field input:focus,
+.modal-field select:focus {
+    border-color: #28a745;
+    outline: none;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+}
+
+/* Modal Buttons */
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 8px;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.modal-btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-secondary.modal-btn {
+    background-color: #6c757d;
+    border: none;
+}
+
+.btn-success.modal-btn {
+    background-color: #28a745;
+    border: none;
+}
+
+/* Ensure Best Seller Modal Consistency */
+#addBestSellerModal .modal-content {
+    max-width: 400px;
+}
+
+#addBestSellerModal .form-select {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 8px;
 }

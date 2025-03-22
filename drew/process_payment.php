@@ -1,114 +1,100 @@
 <?php
 session_start();
-include 'conn.php';
+require_once '../conn.php';
 
-// Check if the user has an order to process
-if (!isset($_SESSION['order']) || empty($_SESSION['order'])) {
-    header('Location: cart.php');
-    exit;
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+if (!isset($_SESSION['user_id'])) {
+    echo "<script>alert('Please log in to complete your payment.'); window.location.href='../Registration_Page/registration.php';</script>";
+    exit();
 }
 
-// Check if the file was uploaded
-if (!isset($_FILES['payment_proof']) || $_FILES['payment_proof']['error'] != 0) {
-    $_SESSION['payment_error'] = "Error uploading file. Please try again.";
-    header('Location: paymentmethod.php');
-    exit;
-}
+$user_id = $_SESSION['user_id'];
 
-// Get file info
-$file = $_FILES['payment_proof'];
-$file_name = $file['name'];
-$file_tmp = $file['tmp_name'];
-$file_size = $file['size'];
-$file_error = $file['error'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_proof'])) {
+    $file = $_FILES['payment_proof'];
+    $allowed_types = ['image/png', 'image/jpeg', 'image/jpg'];
+    $max_size = 5 * 1024 * 1024; // 5MB
 
-// Get file extension
-$file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+    if (in_array($file['type'], $allowed_types) && $file['size'] <= $max_size && $file['error'] === UPLOAD_ERR_OK) {
+        $upload_dir = '../uploads/receipts/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0777, true) or die("Failed to create directory");
+        }
+        $file_name = uniqid() . '-' . basename($file['name']);
+        $file_path = $upload_dir . $file_name;
 
-// Check file extension
-$allowed = array('jpg', 'jpeg', 'png');
-if (!in_array($file_ext, $allowed)) {
-    $_SESSION['payment_error'] = "Invalid file type. Please upload a JPG, JPEG, or PNG file.";
-    header('Location: paymentmethod.php');
-    exit;
-}
+        if (move_uploaded_file($file['tmp_name'], $file_path)) {
+            // Fetch user details
+            $query = "SELECT email, first_name, last_name FROM tb_user WHERE user_id = ?";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("i", $user_id);
+            $stmt->execute();
+            $user_result = $stmt->get_result();
+            $user = $user_result->fetch_assoc();
 
-// Check file size (5MB max)
-if ($file_size > 5242880) {
-    $_SESSION['payment_error'] = "File is too large. Maximum size is 5MB.";
-    header('Location: paymentmethod.php');
-    exit;
-}
+            // Fetch cart items from session
+            $cart_items = $_SESSION['order'] ?? [];
+            $price_total = $_SESSION['total_price'] ?? 0;
 
-// Generate unique filename
-$new_file_name = uniqid('payment_') . '.' . $file_ext;
-$upload_path = 'uploads/' . $new_file_name;
+            if (!empty($cart_items)) {
+                $payment_option = $_SESSION['payment_option'] ?? 'unknown';
 
-// Create uploads directory if it doesn't exist
-if (!is_dir('uploads')) {
-    mkdir('uploads', 0777, true);
-}
+                // Insert order into tb_orders
+                $query = "INSERT INTO tb_orders (order_date, productID, product_name, user_id, email, first_name, last_name, quantity, status, payment_option, payment_proof, isApproved, price_total, trackingLink) 
+                          VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, 'Waiting for Payment', ?, ?, 0, ?, NULL)";
+                $stmt = $conn->prepare($query);
 
-// Move uploaded file to destination
-if (!move_uploaded_file($file_tmp, $upload_path)) {
-    $_SESSION['payment_error'] = "Failed to upload file. Please try again.";
-    header('Location: paymentmethod.php');
-    exit;
-}
+                foreach ($cart_items as $item) {
+                    $stmt->bind_param("isissisisd", 
+                        $item['productID'], 
+                        $item['product_name'], 
+                        $user_id, 
+                        $user['email'], 
+                        $user['first_name'], 
+                        $user['last_name'], 
+                        $item['quantity'], 
+                        $payment_option, 
+                        $file_name, 
+                        $price_total
+                    );
+                    $stmt->execute();
+                }
 
-// Get user ID - assuming user is logged in
-$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1; // Default to 1 if not set
+                // Clear cart
+                $query = "DELETE FROM tb_cart WHERE user_id = ?";
+                $stmt = $conn->prepare($query);
+                $stmt->bind_param("i", $user_id);
+                $stmt->execute();
 
-// Calculate total amount
-$total_amount = 0;
-foreach ($_SESSION['order'] as $item) {
-    $total_amount += $item['price'] * $item['quantity'];
-}
+                // Clear session data
+                unset($_SESSION['order']);
+                unset($_SESSION['total_price']);
+                unset($_SESSION['payment_option']);
 
-// Add VAT and delivery fee
-$vat = $total_amount * 0.12;
-$delivery_fee = 40.00;
-$total_amount = $total_amount + $vat + $delivery_fee;
-
-// Current date and time
-$order_date = date('Y-m-d H:i:s');
-
-// Insert order into database
-$stmt = $conn->prepare("INSERT INTO tb_orders (user_id, order_date, total_amount, status, payment_proof) VALUES (?, ?, ?, ?, ?)");
-$status = "Pending"; // Initial status
-$stmt->bind_param("isdss", $user_id, $order_date, $total_amount, $status, $upload_path);
-
-if (!$stmt->execute()) {
-    $_SESSION['payment_error'] = "Failed to process order. Please try again. Error: " . $stmt->error;
-    header('Location: paymentmethod.php');
-    exit;
-}
-
-// Get the order ID
-$order_id = $stmt->insert_id;
-
-// Insert order items
-foreach ($_SESSION['order'] as $product_id => $item) {
-    $price = $item['price'];
-    $quantity = $item['quantity'];
-    $subtotal = $price * $quantity;
-    
-    $stmt = $conn->prepare("INSERT INTO tb_order_items (order_id, product_id, quantity, price, subtotal) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("iiidi", $order_id, $product_id, $quantity, $price, $subtotal);
-    
-    if (!$stmt->execute()) {
-        // Log error but continue processing
-        error_log("Failed to insert order item: " . $stmt->error);
+                echo "<script>alert('Payment submitted successfully! Your order has been placed.'); window.location.href='../Home_Page/home.php';</script>";
+                exit();
+            } else {
+                echo "<script>alert('Your order is empty.'); window.location.href='cart.php';</script>";
+                exit();
+            }
+        } else {
+            echo "<script>alert('Failed to upload receipt. Please check file permissions.'); window.location.href='upload_payment.php?type=" . htmlspecialchars($payment_option) . "';</script>";
+            exit();
+        }
+    } else {
+        $error_msg = "Invalid file: ";
+        if (!in_array($file['type'], $allowed_types)) $error_msg .= "Type not allowed. ";
+        if ($file['size'] > $max_size) $error_msg .= "File too large. ";
+        if ($file['error'] !== UPLOAD_ERR_OK) $error_msg .= "Upload error code: " . $file['error'];
+        echo "<script>alert('$error_msg'); window.location.href='upload_payment.php?type=" . htmlspecialchars($payment_option) . "';</script>";
+        exit();
     }
+} else {
+    $payment_option = $_SESSION['payment_option'] ?? 'unknown';
+    echo "<script>alert('No payment proof uploaded.'); window.location.href='upload_payment.php?type=" . htmlspecialchars($payment_option) . "';</script>";
+    exit();
 }
-
-// Clear the cart and order
-$_SESSION['cart'] = array();
-$_SESSION['order'] = array();
-
-// Redirect to success page
-$_SESSION['order_success'] = true;
-$_SESSION['order_id'] = $order_id;
-header('Location: checkout_success.php');
-exit;
 ?>
