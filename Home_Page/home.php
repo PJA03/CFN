@@ -77,10 +77,13 @@ $conn->close();
                     <input type="text" name="search" class="search-bar" id="searchBar" placeholder="Search Product or Category">
                 </form>
                 <div class="icons">
+                
                 <a href="../Home_Page/home.php"><i class="fa-solid fa-house"></i></a>
+                
                 <a href="../drew/cart.php">
-                    <i class="fa-solid fa-cart-shopping cart"></i>
+                    <i class="fa-solid fa-cart-shopping"></i>
                 </a>
+                
                 <a href="../User_Profile_Page/UserProfile.php">
                     <i class="far fa-user-circle fa-2x icon-profile"></i>
                 </a>
