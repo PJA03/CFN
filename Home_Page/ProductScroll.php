@@ -66,43 +66,15 @@ $result = $conn->query($sql);
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="ProductScroll.css">
-    <style>
-        /* Ensure the page takes up full height */
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
-
-        /* Flexbox to push footer to bottom */
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .container {
-            flex: 1 0 auto; /* Grow to fill space, but don't shrink */
-        }
-
-        footer {
-            flex-shrink: 0; /* Prevent footer from shrinking */
-        }
-
-        /* No products message styling */
-        #no-products-message {
-            display: none; /* Hidden by default */
-            text-align: center;
-            margin-top: 20px;
-            font-size: 1.2rem;
-            color: #FF8666; /* Match your theme */
-            font-family: "Bebas Neue", serif;
-        }
-    </style>
+    <link rel="stylesheet" href="product-scroll-styles.css"> <!-- Link to the new CSS file -->
 </head>
 <body>
     <header>
         <div class="logo">
             <img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/>
+            <a href="../Home_Page/home.php">
+                <img src="cfn_logo2.png" alt="Logo" class="logo-image" />
+            </a>
         </div>
         <div class="navbar">
             <input type="text" class="search-bar" id="searchBar" placeholder="Search Product" />
@@ -210,16 +182,96 @@ $result = $conn->query($sql);
                     </div>
                     <button class="add-to-cart" data-product-id="<?= $product['productID']; ?>" onclick="window.location.href='../e-com/productpage.php?id=<?= $product['productID']; ?>'">View Product</button>
                 </div>
+    <main>
+        <div class="container mt-4">
+            <div class="filter-container">
+                <i class="fas fa-filter"></i>
+                <span>Search Filter</span>
+                <select class="category-dropdown" id="categoryFilter">
+                    <option value="">All Categories</option>
+                    <option value="skin" <?php echo (isset($_GET['category']) && $_GET['category'] === 'skin') ? 'selected' : ''; ?>>Skin</option>
+                    <option value="hair" <?php echo (isset($_GET['category']) && $_GET['category'] === 'hair') ? 'selected' : ''; ?>>Hair</option>
+                    <option value="face" <?php echo (isset($_GET['category']) && $_GET['category'] === 'face') ? 'selected' : ''; ?>>Face</option>
+                    <option value="perfume" <?php echo (isset($_GET['category']) && $_GET['category'] === 'perfume') ? 'selected' : ''; ?>>Perfume</option>
+                </select>
+            </div>
+
+            <div class="product-grid" id="product-grid">
                 <?php
-            }
-        } else {
-            echo "<p>No products found in the database.</p>";
-        }
-        $conn->close();
-        ?>
+                define('BASE_PATH', '/CFN/');
+
+                $servername = "localhost";
+                $username = "root";
+                $password = "";
+                $dbname = "db_cfn";
+
+                $conn = new mysqli($servername, $username, $password, $dbname);
+                if ($conn->connect_error) {
+                    die("Connection failed: " . $conn->connect_error);
+                }
+
+                $sql = "SELECT p.productID, p.product_name, p.category, p.product_image, v.price, v.stock, 
+                               (SELECT COUNT(*) FROM tb_productvariants WHERE productID = p.productID) as variant_count
+                        FROM tb_products p
+                        JOIN tb_productvariants v ON p.productID = v.productID
+                        WHERE v.is_default = 1";
+                
+                $result = $conn->query($sql);
+
+                if (!$result) {
+                    echo "<p>Error fetching products: " . $conn->error . "</p>";
+                } elseif ($result->num_rows > 0) {
+                    while ($product = $result->fetch_assoc()) {
+                        $stockStatus = ($product['stock'] >= 50) ? "In Stock" : (($product['stock'] > 0) ? "Low Stock" : "Out of Stock");
+                        $productImage = !empty($product['product_image']) ? str_replace('uploads/', '', $product['product_image']) : '';
+                        $imgSrc = !empty($productImage) ? BASE_PATH . "e-com/uploads/" . $productImage : BASE_PATH . "e-com/images/cfn_logo.png";
+                        $fallbackImgSrc = BASE_PATH . "e-com/images/cfn_logo.png";
+                        ?>
+                        <div class="product-card"
+                             data-product-id="<?= $product['productID']; ?>"
+                             data-price="<?= $product['price']; ?>"
+                             data-stock="<?= $product['stock']; ?>"
+                             data-category="<?= strtolower($product['category']); ?>">
+                            <img src="<?= $imgSrc; ?>" alt="Product Image" 
+                                 data-fallback="<?= $fallbackImgSrc; ?>" 
+                                 onload="this.removeAttribute('data-fallback');" 
+                                 onerror="if(this.src !== this.getAttribute('data-fallback')) { this.src = this.getAttribute('data-fallback'); } else { console.log('Fallback failed: <?= $fallbackImgSrc; ?>'); }">
+                            <h5><?= htmlspecialchars($product['product_name']); ?></h5>
+                            <p>₱<?= number_format($product['price'], 2); ?> - <?= $stockStatus; ?></p>
+                            <div class="variant-options">
+                                <?php
+                                $prodID = $product['productID'];
+                                $variant_sql = "SELECT variant_id, variant_name, price, stock FROM tb_productvariants WHERE productID = ?";
+                                $variant_stmt = $conn->prepare($variant_sql);
+                                $variant_stmt->bind_param("i", $prodID);
+                                $variant_stmt->execute();
+                                $variant_result = $variant_stmt->get_result();
+                                if ($variant_result && $variant_result->num_rows > 1) {
+                                    echo '<select class="variant-select" name="variant_' . $prodID . '">';
+                                    while ($variant = $variant_result->fetch_assoc()) {
+                                        $variantStock = ($variant['stock'] > 0) ? "In Stock" : "Out of Stock";
+                                        $selected = ($variant['price'] == $product['price'] && $variant['stock'] == $product['stock']) ? 'selected' : '';
+                                        echo "<option value='{$variant['variant_id']}' data-price='{$variant['price']}' data-stock='{$variant['stock']}' $selected>";
+                                        echo htmlspecialchars($variant['variant_name']) . " - ₱" . number_format($variant['price'], 2) . " ($variantStock)";
+                                        echo "</option>";
+                                    }
+                                    echo '</select>';
+                                }
+                                ?>
+                            </div>
+                            <button class="add-to-cart" data-product-id="<?= $product['productID']; ?>" onclick="window.location.href='../e-com/productpage.php?id=<?= $product['productID']; ?>'">View Product</button>
+                        </div>
+                        <?php
+                    }
+                } else {
+                    echo "<p>No products found in the database.</p>";
+                }
+                $conn->close();
+                ?>
+            </div>
+            <div id="no-products-message">No Product is under this Category</div>
         </div>
-        <div id="no-products-message">No Product is under this Category</div>
-    </div>
+    </main>
 
     <footer>
         <div class="footer-container">
@@ -328,7 +380,7 @@ document.getElementById('searchBar').addEventListener('keypress', function(event
 
         // Apply filter on page load based on URL parameter
         window.onload = function() {
-            filterProducts(); // Trigger filter to respect pre-selected category
+            filterProducts();
         };
     </script>
 </body>

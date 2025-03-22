@@ -3,6 +3,14 @@ body {
     padding: 0;
     font-family: 'Be Vietnam Pro', sans-serif;
     background-color: #f1f2d8;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex-grow: 1;
+    width: 100%;
 }
 
 /* NAVBAR */
@@ -93,7 +101,7 @@ header {
 .product-card {
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Ensures content is spaced out, pushing button to bottom */
+    justify-content: space-between;
     border: 1px solid #e0e0e0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
@@ -101,63 +109,62 @@ header {
     margin-bottom: 20px;
     padding: 10px;
     text-align: center;
-    min-height: 300px; /* Minimum height instead of fixed */
-    overflow: visible; /* Remove overflow: hidden to see content */
+    min-height: 300px;
+    overflow: visible;
 }
 
 .product-card img {
     max-width: 100%;
     height: auto;
-    max-height: 150px; /* Limit image height */
+    max-height: 150px;
     object-fit: cover;
-    margin-bottom: 10px; /* Space below image */
+    margin-bottom: 10px;
 }
 
 .product-card h5 {
     font-size: 1.1em;
     margin: 10px 0;
-    flex-grow: 0; /* Prevent h5 from taking extra space */
-    overflow: hidden; /* Prevent title overflow */
-    text-overflow: ellipsis; /* Add ellipsis for long titles */
-    white-space: nowrap; /* Keep title on one line */
+    flex-grow: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .product-card p {
     font-size: 0.9em;
     margin: 5px 0;
-    flex-grow: 0; /* Prevent p from taking extra space */
+    flex-grow: 0;
 }
 
 .product-card .variant-options {
     margin: 10px 0;
-    flex-grow: 0; /* Prevent variant options from taking extra space */
+    flex-grow: 0;
 }
 
 .product-card .variant-select {
     width: 100%;
     padding: 5px;
     font-size: 0.9em;
-    max-height: 40px; /* Limit dropdown height */
+    max-height: 40px;
 }
 
 .product-card .add-to-cart {
-    margin-top: auto; /* Pushes button to the bottom */
+    margin-top: auto;
     padding: 8px 15px;
-    background-color: #1F4529; /* Matches your brand color */
-    color: #EED3B1; /* Matches header text color */
+    background-color: #1F4529;
+    color: #EED3B1;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 1rem;
-    width: 100%; /* Full width for consistency */
-    transition: background-color 0.3s ease; /* Smooth hover effect */
+    width: 100%;
+    transition: background-color 0.3s ease;
 }
 
 .product-card .add-to-cart:hover {
-    background-color: #16331f; /* Darker shade on hover */
+    background-color: #16331f;
 }
-
 
 /* Footer */
 footer {
@@ -180,7 +187,6 @@ footer {
     gap: 20px;
 }
 
-/* Footer Left */
 .footer-left {
     display: flex;
     align-items: center;
@@ -197,7 +203,6 @@ footer {
     object-fit: contain;
 }
 
-/* Footer Right */
 .footer-right {
     display: flex;
     flex-direction: column;
@@ -205,7 +210,6 @@ footer {
     gap: 20px;
 }
 
-/* Navigation */
 .footer-nav {
     list-style: none;
     padding: 0;
@@ -227,7 +231,6 @@ footer {
     color: #EED3B1;
 }
 
-/* Social Icons */
 .social-icons {
     display: flex;
     flex-direction: column;
@@ -253,16 +256,13 @@ footer {
     color: #EED3B1;
 }
 
-/* Footer Center (Copyright) */
 .footer-center {
     text-align: center;
     width: 100%;
     font-size: 14px;
-    margin-top: 20px;
     opacity: 0.8;
 }
 
-/* Responsive Adjustments */
 @media (max-width: 768px) {
     .footer-container {
         flex-direction: column;
@@ -305,4 +305,34 @@ footer {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 15px;
+}
+
+/* No products message styling */
+#no-products-message {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #FF8666;
+    font-family: "Bebas Neue", serif;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #E8ECD7;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #FF8666;
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1F4529;
 }

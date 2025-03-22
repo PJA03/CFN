@@ -187,6 +187,7 @@ if (isset($_POST['cancel_cart'])) {
                             <th class="price-header">Price</th>
                         </tr>
                     </thead>
+                    
                     <tbody>
                         <?php if (!empty($cart_items)): ?>
                             <?php foreach ($cart_items as $item): ?>
@@ -239,27 +240,27 @@ if (isset($_POST['cancel_cart'])) {
     </main>
 
     <footer>
-        <div class="footer-container">
-            <div class="footer-left">
-                <img src="../Resources/cfn_logo.png" alt="Naturale Logo" class="footer-logo">
-            </div>
-            <div class="footer-right">
-                <ul class="footer-nav">
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#ModalTerms">Terms and Conditions</a></li>
-                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#ModalPrivacy">Privacy Policy</a></li>
-                </ul>
-            </div>
-            <div class="social-icons">
-                <p>SOCIALS</p>
-                <a href="https://www.facebook.com/share/1CRTizfAxP/?mibextid=wwXIfr" target="_blank"><i class="fab fa-facebook"></i></a>
-                <a href="https://www.instagram.com/cosmeticasfraiche?igsh=ang2MHg1MW5qZHQw" target="_blank"><i class="fab fa-instagram"></i></a>
-            </div>
+    <div class="footer-container">
+        <div class="footer-left">
+            <img src="../Resources/cfn_logo.png" alt="Naturale Logo" class="footer-logo">
         </div>
-        <div class="footer-center">
-            &copy; COSMETICAS 2024
+        <div class="footer-right">
+            <ul class="footer-nav">
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Terms and Conditions</a></li>
+                <li><a href="#">Products</a></li>
+            </ul>
         </div>
-    </footer>
+        <div class="social-icons">
+            <p>SOCIALS</p>
+            <a href="https://www.facebook.com/share/1CRTizfAxP/?mibextid=wwXIfr" target="_blank"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.instagram.com/cosmeticasfraiche?igsh=ang2MHg1MW5qZHQw" target="_blank"><i class="fab fa-instagram"></i></a>
+        </div>
+    </div>
+    <div class="footer-center">
+        © COSMETICAS 2024
+    </div>
+</footer>
 
     <!-- Checkout Confirmation Modal -->
     <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
