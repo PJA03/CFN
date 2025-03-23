@@ -15,10 +15,10 @@ if (isset($_SESSION['email'])) {
         'profile_image' => $_SESSION['profile_image'],
     ];
 } else {
-    //TODO:add you are not yet registered alert
-    header('Location: ../Registration_Page/registration.php');
-    exit();
+    // Allow guests to view pages freely
+    $user = ['username' => 'Guest'];
 }
+
 
 // Logout
 if (isset($_POST['logout'])) {

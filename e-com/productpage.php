@@ -1,29 +1,19 @@
 <?php
-// Start the session (if needed)
-if (session_status() == PHP_SESSION_NONE) {
+// Start the session if not already started
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    header('Location: ../Registration_Page/registration.php');
-    exit();
-}
-
 // Check if the user is logged in
-if (isset($_SESSION['email'])) {
-    $user = [
-        'username' => $_SESSION['username'],
-        'email' => $_SESSION['email'],
-        'first_name' => $_SESSION['first_name'],
-        'last_name' => $_SESSION['last_name'],
-        'contact_no' => $_SESSION['contact_no'],
-        'address' => $_SESSION['address'],
-        'profile_image' => $_SESSION['profile_image'],
-    ];
-} else {
-    $user = ['username' => 'Guest']; // Default for non-logged-in users
-}
+$user = isset($_SESSION['email']) ? [
+    'username' => $_SESSION['username'] ?? 'Guest',
+    'email' => $_SESSION['email'],
+    'first_name' => $_SESSION['first_name'] ?? '',
+    'last_name' => $_SESSION['last_name'] ?? '',
+    'contact_no' => $_SESSION['contact_no'] ?? '',
+    'address' => $_SESSION['address'] ?? '',
+    'profile_image' => $_SESSION['profile_image'] ?? '../Resources/default_profile.png',
+] : ['username' => 'Guest']; // Allow guests to browse without redirection
 
 // Database connection
 $servername = "localhost";
@@ -31,7 +21,7 @@ $username = "root";  // Adjust if needed
 $password = "";      // Adjust if needed
 $dbname = "db_cfn";
 
-// Create connection
+// Create connection using MySQLi
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
@@ -42,46 +32,47 @@ if ($conn->connect_error) {
 // Get product ID from URL parameter
 $productID = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// Initialize variables with default values
+// Initialize product variables with default values
 $product_name = "Product Not Found";
 $product_desc = "No description available";
-$brand = "";
 $category = "";
-$product_image = "product-image.jpg"; // Default image
+$product_image = "../Resources/default_product.jpg"; // Default image
 $price = 0;
 
 if ($productID > 0) {
-    // Query to get product details
-    $sql = "SELECT p.*, v.price 
-            FROM tb_products p 
-            JOIN tb_productvariants v ON p.productID = v.productID 
-            WHERE p.productID = $productID AND v.is_default = 1";
+    // Use prepared statement to prevent SQL injection
+    $stmt = $conn->prepare("SELECT p.*, v.price 
+                            FROM tb_products p 
+                            JOIN tb_productvariants v ON p.productID = v.productID 
+                            WHERE p.productID = ? AND v.is_default = 1");
+    $stmt->bind_param("i", $productID);
+    $stmt->execute();
+    $result = $stmt->get_result();
     
-    $result = $conn->query($sql);
-    
-    if ($result && $result->num_rows > 0) {
+    if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        $product_name = $row['product_name'];
-        $product_desc = $row['product_desc'] ?: "No description available";
-        $category = $row['category'];
-        $product_image = !empty($row['product_image']) ? $row['product_image'] : "../Resources/cfn_logo.png";        
-        $price = $row['price'];
+        $product_name = $row['product_name'] ?? "Product Not Found";
+        $product_desc = !empty($row['product_desc']) ? $row['product_desc'] : "No description available";
+        $category = $row['category'] ?? "";
+        $product_image = !empty($row['product_image']) ? $row['product_image'] : "../Resources/cfn_logo.png";
+        $price = $row['price'] ?? 0;
     }
-    
-    // Get similar products (same category)
-    $similarProductsQuery = $conn->prepare("SELECT p.productID, p.product_name, p.category, p.product_image, v.price 
-        FROM tb_products p
-        JOIN tb_productvariants v ON p.productID = v.productID
-        WHERE p.category = ? 
-        AND p.productID != ? 
-        AND v.is_default = 1
-        LIMIT 4");
-    $similarProductsQuery->bind_param("si", $category, $productID);
-    $similarProductsQuery->execute();
-    $similarProducts = $similarProductsQuery->get_result();
+    $stmt->close();
 
+    // Fetch similar products (same category)
     $similarProductsArray = [];
-    if ($similarProducts->num_rows > 0) {
+    if (!empty($category)) {
+        $similarProductsQuery = $conn->prepare("SELECT p.productID, p.product_name, p.category, p.product_image, v.price 
+            FROM tb_products p
+            JOIN tb_productvariants v ON p.productID = v.productID
+            WHERE p.category = ? 
+            AND p.productID != ? 
+            AND v.is_default = 1
+            LIMIT 4");
+        $similarProductsQuery->bind_param("si", $category, $productID);
+        $similarProductsQuery->execute();
+        $similarProducts = $similarProductsQuery->get_result();
+
         while ($similarProduct = $similarProducts->fetch_assoc()) {
             $similarProductsArray[] = [
                 'id' => $similarProduct['productID'],
@@ -91,9 +82,14 @@ if ($productID > 0) {
                 'image' => !empty($similarProduct['product_image']) ? $similarProduct['product_image'] : "../Resources/cfn_logo.png"
             ];
         }
+        $similarProductsQuery->close();
     }
 }
+
+// Close database connection
+$conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -390,8 +386,8 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                         }, 300);
                     }, 3000);
 
-                            // Show alert as an additional confirmation
-        alert(`${productName} has been added to your cart successfully!`);
+                    // Show alert as an additional confirmation
+                    alert(`${productName} has been added to your cart successfully!`);
                     
                     // Update cart indicator
                     updateCartIndicator();
