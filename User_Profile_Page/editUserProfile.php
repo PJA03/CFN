@@ -100,7 +100,10 @@ if (isset($_POST['logout'])) {
                                     <b>First Name:</b>
                                 </div>
                                 <div class="col-md-7">
-                                    <input type="text" name="first_name" class="editable form-control profile-input" value="<?php echo htmlspecialchars($user['first_name'], ENT_QUOTES, 'UTF-8'); ?>" required>
+                                    <input type="text" name="first_name" class="editable form-control profile-input" 
+                                        value="<?php echo htmlspecialchars($user['first_name'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                        required pattern="^[A-Za-z\s]+$" 
+                                        title="First name should only contain letters.">
                                 </div>
                             </div>
                             <div class="row">
@@ -108,7 +111,10 @@ if (isset($_POST['logout'])) {
                                     <b>Last Name: </b>
                                 </div>
                                 <div class="col-md-7">
-                                    <input type="text" name="last_name" class="editable form-control profile-input" value="<?php echo htmlspecialchars($user['last_name'], ENT_QUOTES, 'UTF-8'); ?>" required>
+                                    <input type="text" name="last_name" class="editable form-control profile-input" 
+                                        value="<?php echo htmlspecialchars($user['last_name'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                        required pattern="^[A-Za-z\s]+$" 
+                                        title="Last name should only contain letters.">
                                 </div>
                             </div>
                             <div class="row">
@@ -291,6 +297,29 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                         icon: 'error',
                         title: 'Username Taken',
                         text: 'Please choose a different username.'
+                    });
+                </script>";
+                exit();
+            }
+
+            // Validate first name and last name
+            if (!preg_match('/^[A-Za-z\s]+$/', $first_name)) {
+                echo "<script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid First Name',
+                        text: 'First name should only contain letters.'
+                    });
+                </script>";
+                exit();
+            }
+
+            if (!preg_match('/^[A-Za-z\s]+$/', $last_name)) {
+                echo "<script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Last Name',
+                        text: 'Last name should only contain letters.'
                     });
                 </script>";
                 exit();
@@ -530,6 +559,30 @@ document.addEventListener("DOMContentLoaded", function() {
             <?php endif; ?>
         });
 
+
+        document.addEventListener('DOMContentLoaded', function () {
+        const firstNameInput = document.querySelector('input[name="first_name"]');
+        const lastNameInput = document.querySelector('input[name="last_name"]');
+
+        // Function to validate input
+        function validateNameInput(input) {
+            const namePattern = /^[A-Za-z\s]+$/;
+            if (!namePattern.test(input.value)) {
+                input.setCustomValidity('This field should only contain letters.');
+            } else {
+                input.setCustomValidity('');
+            }
+        }
+
+        // Add event listeners for real-time validation
+        firstNameInput.addEventListener('input', function () {
+            validateNameInput(this);
+        });
+
+        lastNameInput.addEventListener('input', function () {
+            validateNameInput(this);
+        });
+    });
 </script>
 </body>
 
