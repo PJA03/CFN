@@ -252,7 +252,7 @@ header {
     width: 250px;
     height: 350px;
     background-color: #C0D171;
-    padding: 10px;
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     text-align: center;
@@ -274,7 +274,8 @@ header {
 }
 
 .product-info {
-    width: 100%;
+    min-height: 100px;
+    min-width: 100px;
     text-align: left;
     font-family: "Bebas Neue", serif !important;
     margin-top: 0;
