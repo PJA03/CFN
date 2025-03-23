@@ -69,7 +69,9 @@ $result = $conn->query($sql);
         </div>
         <div class="navbar">
         <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
-        <input type="text" name="search" class="search-bar" id="searchBar" placeholder="Search Product">
+        <form action="../Home_Page/ProductScroll.php" method="GET" class="search-form" onsubmit="return validateSearch()">
+            <input type="text" name="search" class="search-bar" id="searchBar" placeholder="Search Product">
+        </form>            
         <div class="icons">
                 <a href = "../Home_Page/Home.php"><i class="fa-solid fa-house home"></i></a>
                 <a href ="../drew/cart.php"><i class="fa-solid fa-cart-shopping cart"></i></a>

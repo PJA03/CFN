@@ -26,21 +26,16 @@ header {
     padding: 20px;
 }
 
-.logo {
+/*nav bar*/
+.usernamedisplay{
     display: flex;
-    align-items: center;
-}
-
-.logo-image {
-    height: 60px;
-    width: auto;
-    padding-left: 30px;
-}
-
-.navbar {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+    justify-content: center;
+    text-align: center;
+    color: #EED3B1;  
+    font-size: 20px;
+    flex-wrap: wrap;
+    padding-top: 15px;
+    margin-right: 10px
 }
 
 .search-bar {
@@ -51,25 +46,67 @@ header {
     font-size: 1rem;
     width: 300px;
     background-color: #FFFFFF;
-    color: #1F4529;
 }
 
+header {
+    background-color: #1F4529;
+    color: #EED3B1;
+    padding: 20px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Ensure the header uses the full width */
+    flex-wrap: wrap;
+}
+
+/* Logo Styling */
+.logo img {
+    height: 40px; /* Adjust logo size */
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+    margin-left: 30px;;
+    gap: 10px; /* Adjust spacing between the image and text */
+}
+
+.logo-image {
+    height: 40px; /* Adjust size as needed */
+    width: auto; /* Keep aspect ratio */
+}
+
+/* Navigation Bar Styling */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+/* Icons in Navigation */
 .icons {
     display: flex;
     align-items: center;
+    justify-items: center;
     gap: 15px;
+    transition: transform 0.3s ease, color 0.3s ease;
+    margin-right: 40px;
 }
 
-.icon-profile {
-    font-size: 1.5rem;
+/* Font Awesome Icon Styles */
+.icon-profile, .home, .cart {
+    font-size: 1.6rem;
     color: #EED3B1;
     cursor: pointer;
+    margin-left: 10px;
+    position: relative;
 }
 
-.burger-menu {
-    font-size: 1.8rem;
-    color: #EED3B1;
-    cursor: pointer;
+.icon-profile:hover, .home:hover, .cart:hover {
+    transform: scale(1.1);
+    color: whitesmoke;
 }
 
 /* Product Category */
@@ -238,54 +275,91 @@ header {
 footer {
     background-color: #1F4529;
     color: white;
-    padding: 30px;
-}
-
-.footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.footer-logo {
-    height: 80px;
-}
-
-.footer-links {
-    display: flex;
-    gap: 30px;
-}
-
-.footer-links a {
-    color: white;
-    text-decoration: none;
-    font-family: "Bebas Neue", serif !important;
-    font-size: 18px;
-}
-
-.social-links {
+    padding: 40px 60px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
 }
 
-.social-links p {
-    font-family: "Bebas Neue", serif !important;
-    margin-bottom: 10px;
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.footer-logo {
+    height: 150px;
+}
+
+.footer-right {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 20px;
+}
+
+.footer-nav {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-nav li {
+    font-family: "Bebas Neue", serif;
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.footer-nav a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-nav a:hover {
+    color: #EED3B1;
 }
 
 .social-icons {
     display: flex;
-    gap: 15px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
 }
 
-.copyright {
+.social-icons p {
+    font-size: 20px;
+    font-family: "Bebas Neue", serif;
+    margin: 0;
+}
+
+.social-icons a {
+    color: white;
+    font-size: 18px;
+    text-decoration: none;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icons a:hover {
+    transform: scale(1.1);
+    color: #EED3B1;
+}
+
+.footer-center {
     text-align: center;
-    margin-top: 20px;
+    width: 100%;
     font-size: 14px;
+    opacity: 0.8;
 }
 
 @media (max-width: 768px) {
