@@ -104,16 +104,14 @@ if ($productID > 0) {
                     <i class="far fa-user-circle fa-2x icon-profile"></i>
                 </a>
                 <a href="../drew/cart.php" class="cart-icon">
-                    <i class="fas fa-shopping-cart fa-2x"></i>
+                    <i class="fas fa-shopping-cart fa-2x" style="color: #EED3B1;"></i>
                 </a>
                 <i class="fas fa-bars burger-menu"></i>
             </div>
         </div>
     </header>
     
-    <div class="product-category">
-        <i class="fas fa-angle-right"></i> PRODUCT CATEGORY
-    </div>
+ 
     
     <div class="product-detail">
         <div class="product-image-container">
