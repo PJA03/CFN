@@ -48,10 +48,76 @@ while ($row = $result->fetch_assoc()) {
     $cart_items[] = $row;
 }
 
+$voucherApplied = false;
+$voucherCode = '';
+$voucherDiscount = 0;
+$voucherMessage = '';
+
+// Handle voucher application
+if (isset($_POST['apply_voucher'])) {
+    $voucherCode = filter_input(INPUT_POST, 'voucher_code', FILTER_SANITIZE_STRING);
+    
+    // Check if voucher exists and is valid
+    $query = "SELECT * FROM tb_vouchers WHERE code = ? AND valid_until >= CURDATE()";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("s", $voucherCode);
+    
+    if (!$stmt->execute()) {
+        $voucherMessage = "Error checking voucher: " . $stmt->error;
+    } else {
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            $voucher = $result->fetch_assoc();
+            $voucherApplied = true;
+            $voucherDiscount = floatval($voucher['discount']);
+            $voucherMessage = "Voucher applied successfully! " . $voucher['details'];
+            
+            // Store voucher in session
+            $_SESSION['voucher'] = [
+                'code' => $voucherCode,
+                'discount' => $voucherDiscount,
+                'details' => $voucher['details']
+            ];
+        } else {
+            $voucherMessage = "Invalid or expired voucher code.";
+            // Clear any previously applied voucher
+            unset($_SESSION['voucher']);
+        }
+    }
+    
+    // Redirect to prevent form resubmission
+    header('Location: cart.php');
+    exit();
+}
+
+// Check if there's a voucher in session
+if (isset($_SESSION['voucher'])) {
+    $voucherApplied = true;
+    $voucherCode = $_SESSION['voucher']['code'];
+    $voucherDiscount = $_SESSION['voucher']['discount'];
+    $voucherMessage = "Voucher applied: " . $_SESSION['voucher']['details'];
+}
+
+// Remove voucher if requested
+if (isset($_POST['remove_voucher'])) {
+    unset($_SESSION['voucher']);
+    $voucherApplied = false;
+    $voucherDiscount = 0;
+    $voucherMessage = "Voucher removed.";
+    
+    // Redirect to prevent form resubmission
+    header('Location: cart.php');
+    exit();
+}
+
+// Calculate prices
 // Calculate prices
 $netPrice = 0;
 $totalVAT = 0;
 $totalPrice = 0;
+$discountAmount = 0;
+
 if (!empty($cart_items)) {
     foreach ($cart_items as $item) {
         $itemTotalPrice = floatval($item['price']) * intval($item['quantity']);
@@ -60,6 +126,12 @@ if (!empty($cart_items)) {
         $netPrice += $itemNetPrice;
         $totalVAT += $itemVAT;
         $totalPrice += $itemTotalPrice;
+    }
+    
+    // Apply voucher discount if valid
+    if ($voucherApplied && $voucherDiscount > 0) {
+        $discountAmount = ($totalPrice * $voucherDiscount) / 100;
+        $totalPrice -= $discountAmount;
     }
 }
 $_SESSION['total_price'] = $totalPrice;
@@ -160,20 +232,22 @@ if (isset($_POST['cancel_cart'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
 </head>
+
+
 <body>
 <header>
-        <div class="logo">
-            <a href = "../Home_Page/Home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
-        </div>
-        <div class="navbar">
+    <div class="logo">
+        <a href = "../Home_Page/Home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
+    </div>
+    <div class="navbar">
         <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>            
         <div class="icons">
-                <a href = "../Home_Page/Home.php"><i class="fa-solid fa-house home"></i></a>
-                <a href ="../drew/cart.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
-                <a href="UserProfile.php"><i class ="far fa-user-circle fa-2x icon-profile"></i></a>
-            </div>
+            <a href = "../Home_Page/Home.php"><i class="fa-solid fa-house home"></i></a>
+            <a href ="../drew/cart.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
+            <a href="../User_Profile_Page/UserProfile.php"><i class="far fa-user-circle fa-2x icon-profile"></i></a>
         </div>
-    </header>
+    </div>
+</header>
 
     <main>
         <h1 class="cart-title">Cart</h1>
@@ -222,21 +296,56 @@ if (isset($_POST['cancel_cart'])) {
                     </tbody>
                 </table>
 
-                <div class="cart-summary">
-                    <div class="price-breakdown">
-                        <p>Net Price: <span id="net-price">₱<?php echo number_format($netPrice, 2); ?></span></p>
-                        <p>VAT (12%): <span id="vat">₱<?php echo number_format($totalVAT, 2); ?></span></p>
-                        <p>Total Price: <strong id="total-price">₱<?php echo number_format($totalPrice, 2); ?></strong></p>
-                    </div>
-                    <div class="delivery-note">*Delivery fee is calculated by our third-party carrier.</div>
-                </div>
-            </div>
+                <div class="voucher-section">
+    <h3>Apply Voucher</h3>
+    <?php if (!empty($voucherMessage)): ?>
+        <div class="alert <?php echo $voucherApplied ? 'alert-success' : 'alert-danger'; ?>">
+            <?php echo htmlspecialchars($voucherMessage); ?>
+        </div>
+    <?php endif; ?>
+    
+    <?php if (!$voucherApplied): ?>
+        <form method="POST" class="voucher-form">
+    <div class="input-group mb-3" style="max-width: 300px;"> <!-- Adjust this value as needed -->
+        <input type="text" name="voucher_code" class="form-control" placeholder="Enter voucher code" required>
+        <button type="submit" name="apply_voucher" class="btn btn-outline-secondary">Apply</button>
+    </div>
+</form>
+    <?php else: ?>
+        <div class="applied-voucher">
+            <span class="badge bg-success">
+                <?php echo htmlspecialchars($voucherCode); ?> (<?php echo $voucherDiscount; ?>% off)
+            </span>
+            <form method="POST" class="d-inline">
+                <button type="submit" name="remove_voucher" class="btn btn-sm btn-outline-danger">Remove</button>
+            </form>
+        </div>
+    <?php endif; ?>
+</div>
 
-            <div class="cart-actions">
-                <a href="#" class="btn checkout-btn" data-bs-toggle="modal" data-bs-target="#checkoutModal">Proceed to Payment</a>
-                <button class="btn cancel-btn" id="cancel-cart-btn" data-bs-toggle="modal" data-bs-target="#cancelModal">Clear Cart</button>
-            </div>
-        </section>
+<div class="cart-summary">
+    <div class="price-breakdown">
+        <p>Net Price: <span id="net-price">₱<?php echo number_format($netPrice, 2); ?></span></p>
+        <p>VAT (12%): <span id="vat">₱<?php echo number_format($totalVAT, 2); ?></span></p>
+        
+        <?php if ($voucherApplied && $discountAmount > 0): ?>
+            <p class="discount-row">
+                Discount (<?php echo $voucherDiscount; ?>%): 
+                <span id="discount" class="text-success">-₱<?php echo number_format($discountAmount, 2); ?></span>
+            </p>
+        <?php endif; ?>
+        
+        <p>Total Price: <strong id="total-price">₱<?php echo number_format($totalPrice, 2); ?></strong></p>
+    </div>
+    <div class="delivery-note">*Delivery fee is calculated by our third-party carrier.</div>
+</div>  
+
+<div class="cart-actions">
+            <a href="#" class="btn checkout-btn" data-bs-toggle="modal" data-bs-target="#checkoutModal">Proceed to Payment</a>
+            <button class="btn cancel-btn" id="cancel-cart-btn" data-bs-toggle="modal" data-bs-target="#cancelModal">Clear Cart</button>
+        </div>
+    </div>
+</section>
     </main>
 
     <footer>
