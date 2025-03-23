@@ -111,28 +111,43 @@ $conn->close();
         </div>
     </div>
 
-<section data-animate="fade-in">
+    <section data-animate="fade-in">
     <h2 class="section-title-best">Our Best Sellers</h2>
     <div class="swiper-container">
         <div class="swiper-wrapper">
-            <?php while ($row = $result->fetch_assoc()) { ?>
-                <a href="../e-com/productpage.php?id=<?= $row['productID']; ?>" class="swiper-slide product-card" data-animate="fade-in" style="text-decoration: none; color: inherit;">
+            <?php 
+            $displayedProducts = []; // Track displayed product IDs
+            
+            while ($row = $result->fetch_assoc()) { 
+                if (in_array($row['productID'], $displayedProducts)) {
+                    continue; // Skip duplicates
+                }
+                $displayedProducts[] = $row['productID']; // Store displayed productID
+            ?>
+                <a href="../e-com/productpage.php?id=<?= $row['productID']; ?>" 
+                   class="swiper-slide product-card" data-animate="fade-in" 
+                   style="text-decoration: none; color: inherit;">
+                   
                     <div class="product-image">
-                    <?php
-    if (!defined('BASE_PATH')) {
-        define('BASE_PATH', '/CFN/'); // Prevent redeclaration error
-    }
+                        <?php
+                        if (!defined('BASE_PATH')) {
+                            define('BASE_PATH', '/CFN/'); // Prevent redeclaration error
+                        }
 
-    $productImage = !empty($row['product_image']) ? str_replace('uploads/', '', $row['product_image']) : '';
-    $imgSrc = !empty($productImage) ? BASE_PATH . "e-com/uploads/" . $productImage : BASE_PATH . "e-com/images/cfn_logo.png";
-    $fallbackImgSrc = BASE_PATH . "e-com/images/cfn_logo.png";
-?>
-<img src="<?= $imgSrc; ?>" alt="<?= htmlspecialchars($row['product_name']); ?>" 
-     data-fallback="<?= $fallbackImgSrc; ?>" 
-     onload="this.removeAttribute('data-fallback');" 
-     onerror="if(this.src !== this.getAttribute('data-fallback')) { this.src = this.getAttribute('data-fallback'); } else { console.log('Fallback failed: <?= $fallbackImgSrc; ?>'); }">
-
+                        $productImage = !empty($row['product_image']) ? str_replace('uploads/', '', $row['product_image']) : '';
+                        $imgSrc = !empty($productImage) ? BASE_PATH . "e-com/uploads/" . $productImage : BASE_PATH . "e-com/images/cfn_logo.png";
+                        $fallbackImgSrc = BASE_PATH . "e-com/images/cfn_logo.png";
+                        ?>
+                        <img src="<?= $imgSrc; ?>" alt="<?= htmlspecialchars($row['product_name']); ?>" 
+                             data-fallback="<?= $fallbackImgSrc; ?>" 
+                             onload="this.removeAttribute('data-fallback');" 
+                             onerror="if(this.src !== this.getAttribute('data-fallback')) { 
+                                         this.src = this.getAttribute('data-fallback'); 
+                                     } else { 
+                                         console.log('Fallback failed: <?= $fallbackImgSrc; ?>'); 
+                                     }">
                     </div>
+                    
                     <div class="product-info">
                         <h4 class="product-name"><?= htmlspecialchars($row['product_name']); ?></h4>
                         <p class="product-category"><?= htmlspecialchars($row['category']); ?></p>
@@ -143,6 +158,7 @@ $conn->close();
         <div class="swiper-pagination"></div>
     </div>
 </section>
+
 
 
     <section class="description-section" data-animate="fade-in">
