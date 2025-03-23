@@ -1,52 +1,86 @@
 <?php
-session_start();
-require_once 'auth_check.php';
-
-// Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
-    die("You must be logged in to add items to the cart.");
+// Start the session
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
 }
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    // Instead of redirecting, return a JSON error for AJAX
+    header('Content-Type: application/json');
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'User not logged in']);
+    exit;
+}
+$user_id = $_SESSION['user_id'];
 
 // Database connection
 $servername = "localhost";
-$username = "root";  // Adjust if needed
-$password = "";      // Adjust if needed
+$username = "root";
+$password = "";
 $dbname = "db_cfn";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Connection failed: ' . $conn->connect_error]);
+    exit;
 }
 
-// Get the user ID from the session
-$user_id = $_SESSION['user_id'];
+// Check if the request is a POST request
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Content-Type: application/json');
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+    exit;
+}
 
-// Get the product details from the form
+// Get form data
 $productID = isset($_POST['productID']) ? intval($_POST['productID']) : 0;
 $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 1;
-$price = isset($_POST['price']) ? floatval($_POST['price']) : 0.0;
+$price = isset($_POST['price']) ? floatval($_POST['price']) : 0;
 
-// Validate the input
+// Validate inputs
 if ($productID <= 0 || $quantity <= 0 || $price <= 0) {
-    die("Invalid product or quantity.");
+    header('Content-Type: application/json');
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Invalid product data']);
+    exit;
 }
 
-// Insert the cart data into the database
-$stmt = $conn->prepare("INSERT INTO tb_cart (user_id, productID, quantity, price) 
-                        VALUES (?, ?, ?, ?)
-                        ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)");
-$stmt->bind_param("iiid", $user_id, $productID, $quantity, $price);
+// Fetch product details from the database (for validation or additional info)
+$sql = "SELECT product_name, product_image FROM tb_products WHERE productID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $productID);
+$stmt->execute();
+$result = $stmt->get_result();
 
-if ($stmt->execute()) {
-    echo "Product added to cart successfully!";
-    header("Location: productpage.php?id=$productID"); // Redirect back to the product page
-    exit();
-} else {
-    echo "Failed to add product to cart.";
+if ($result->num_rows === 0) {
+    header('Content-Type: application/json');
+    http_response_code(404);
+    echo json_encode(['success' => false, 'message' => 'Product not found']);
+    exit;
 }
 
-$stmt->close();
-$conn->close();
+$product = $result->fetch_assoc();
+$productName = $product['product_name'];
+
+// Add to cart in the database (tb_cart table)
+$query = "INSERT INTO tb_cart (user_id, productID, quantity, price) 
+          VALUES (?, ?, ?, ?) 
+          ON DUPLICATE KEY UPDATE quantity = quantity + ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("iiidi", $user_id, $productID, $quantity, $price, $quantity);
+if (!$stmt->execute()) {
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Failed to add to cart: ' . $stmt->error]);
+    exit;
+}
+
+// Return success response
+header('Content-Type: application/json');
+echo json_encode(['success' => true, 'message' => "Added $quantity $productName to cart!"]);
+exit;
 ?>
