@@ -16,6 +16,9 @@ require_once 'auth_check.php';
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
 
+  <!-- SweetAlert2 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+
   <!-- Optional Custom CSS -->
   <link rel="stylesheet" href="style2.css" />
 
@@ -94,6 +97,23 @@ require_once 'auth_check.php';
     th.sorted-desc:after {
       content: " ↓";
     }
+    /* Style for the Search Order textbox */
+    #searchOrder {
+      width: 200px; /* Fixed width for better layout */
+      max-width: 100%; /* Responsive on smaller screens */
+    }
+    @media (max-width: 576px) {
+      #searchOrder {
+        width: 100%; /* Full width on small screens */
+      }
+      .d-flex.align-items-center {
+        flex-direction: column; /* Stack elements vertically on small screens */
+        gap: 10px; /* Add spacing between elements */
+      }
+      #filterStatus {
+        width: 100%; /* Full width for the filter dropdown on small screens */
+      }
+    }
   </style>
 </head>
 
@@ -133,7 +153,7 @@ require_once 'auth_check.php';
               <option value="Delivered">Delivered</option>
               <option value="Cancelled">Cancelled</option>
             </select>
-            <input type="text" id="searchOrder" class="form-control w-25 me-2" placeholder="Search Order" />
+            <input type="text" id="searchOrder" class="form-control" placeholder="Search Order" />
           </div>
         </div>
 
@@ -265,6 +285,12 @@ require_once 'auth_check.php';
         .catch(error => {
           console.error("Error loading orders:", error);
           document.getElementById("ordersTable").innerHTML = "<tr><td colspan='7' class='text-danger'>Failed to load data</td></tr>";
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to load orders: ' + error.message,
+            confirmButtonText: 'OK'
+          });
         });
     }
 
@@ -322,10 +348,10 @@ require_once 'auth_check.php';
         .catch(error => {
           console.error("Error fetching order details:", error);
           Swal.fire({
-            title: "Error",
-            text: "Failed to load order details.",
-            icon: "error",
-            confirmButtonText: "OK",
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to load order details: ' + error.message,
+            confirmButtonText: 'OK'
           });
         });
     }
@@ -333,20 +359,46 @@ require_once 'auth_check.php';
     // 4. Close the details popup
     function closePopup() {
       if (isChanged) {
-        const confirmClose = confirm("You have unsaved changes. Do you want to discard them?");
-        if (!confirmClose) return;
+        Swal.fire({
+          title: 'Unsaved Changes',
+          text: 'You have unsaved changes. Do you want to discard them?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, discard',
+          cancelButtonText: 'No, keep editing'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            document.getElementById("orderPopup").style.display = "none";
+            currentOrderID = null;
+            originalStatus = '';
+            isChanged = false;
+          }
+        });
+      } else {
+        document.getElementById("orderPopup").style.display = "none";
+        currentOrderID = null;
+        originalStatus = '';
       }
-      document.getElementById("orderPopup").style.display = "none";
-      currentOrderID = null;
-      originalStatus = '';
     }
 
     function discardChanges() {
-      const confirmDiscard = confirm("Are you sure you want to discard all changes?");
-      if (confirmDiscard) {
-        isChanged = false;
-        closePopup();
-      }
+      Swal.fire({
+        title: 'Discard Changes',
+        text: 'Are you sure you want to discard all changes?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, discard',
+        cancelButtonText: 'No, keep editing'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          isChanged = false;
+          closePopup();
+        }
+      });
     }
 
     // Mark changes to detect unsaved modifications
@@ -379,79 +431,113 @@ require_once 'auth_check.php';
 
     // 7. Save changes to the order
     function saveChanges() {
-  let status = document.getElementById("status").value;
-  const isPaymentConfirmed = document.getElementById("confirmPayment").checked ? 1 : 0;
-  const trackingLink = document.getElementById("trackingLink").value.trim();
+      let status = document.getElementById("status").value;
+      const isPaymentConfirmed = document.getElementById("confirmPayment").checked ? 1 : 0;
+      const trackingLink = document.getElementById("trackingLink").value.trim();
 
-  if (isPaymentConfirmed && status === "Waiting for Payment") {
-    status = "Processing";
-    document.getElementById("status").value = status;
-  }
-  if (trackingLink && (status === "Processing" || status === "Waiting for Payment")) {
-    status = "Shipped";
-    document.getElementById("status").value = status;
-  }
+      if (isPaymentConfirmed && status === "Waiting for Payment") {
+        status = "Processing";
+        document.getElementById("status").value = status;
+      }
+      if (trackingLink && (status === "Processing" || status === "Waiting for Payment")) {
+        status = "Shipped";
+        document.getElementById("status").value = status;
+      }
 
-  if (status === "Delivered" && originalStatus !== "Shipped") {
-    Swal.fire({
-      title: "Invalid Status Change",
-      text: "Order must be in 'Shipped' status before marking as 'Delivered'.",
-      icon: "warning",
-      confirmButtonText: "OK",
-    });
-    return;
-  }
-  if (status === "Delivered" && !trackingLink) {
-    Swal.fire({
-      title: "Missing Tracking Link",
-      text: "A tracking link is required before marking an order as 'Delivered'.",
-      icon: "warning",
-      confirmButtonText: "OK",
-    });
-    return;
-  }
+      if (status === "Delivered" && originalStatus !== "Shipped") {
+        Swal.fire({
+          title: "Invalid Status Change",
+          text: "Order must be in 'Shipped' status before marking as 'Delivered'.",
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+        return;
+      }
+      if (status === "Delivered" && !trackingLink) {
+        Swal.fire({
+          title: "Missing Tracking Link",
+          text: "A tracking link is required before marking an order as 'Delivered'.",
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+        return;
+      }
 
-  fetch("updateorder.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      orderID: currentOrderID,
-      status: status,
-      isApproved: isPaymentConfirmed,
-      trackingLink: trackingLink,
-    }),
-  })
-  .then(response => {
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return response.json();
-  })
-  .then(result => {
-    if (result.success) {
-      Swal.fire({
-        title: "Success!",
-        text: result.message,
-        icon: "success",
-        confirmButtonText: "OK",
-      }).then(() => {
-        loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
-        closePopup();
+      fetch("updateorder.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderID: currentOrderID,
+          status: status,
+          isApproved: isPaymentConfirmed,
+          trackingLink: trackingLink,
+        }),
+      })
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return response.json();
+      })
+      .then(result => {
+        if (result.success) {
+          Swal.fire({
+            title: "Success!",
+            text: result.message,
+            icon: "success",
+            confirmButtonText: "OK",
+          }).then(() => {
+            loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
+            closePopup();
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: result.message,
+            confirmButtonText: 'OK'
+          });
+        }
+      })
+      .catch(error => {
+        console.error("Error updating order:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to update order: ' + error.message,
+          confirmButtonText: 'OK'
+        });
       });
-    } else {
-      Swal.fire({
-        title: "Error",
-        text: result.message,
-        icon: "error",
-        confirmButtonText: "OK",
-      });
+
+      isChanged = false;
     }
-  })
-  .catch(error => {
-    console.error("Error updating order:", error); // Log to console only
-    // No Swal.fire popup here
-  });
 
-  isChanged = false;
-}
+    // 8. Copy to Clipboard function for the address
+    function copyToClipboard(address) {
+      // Create a temporary textarea element to copy the text
+      const textarea = document.createElement('textarea');
+      textarea.value = address;
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        Swal.fire({
+          icon: 'success',
+          title: 'Copied!',
+          text: 'Address copied to clipboard.',
+          timer: 1500,
+          showConfirmButton: false
+        });
+      } catch (err) {
+        console.error('Failed to copy:', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to copy address to clipboard.',
+          confirmButtonText: 'OK'
+        });
+      } finally {
+        document.body.removeChild(textarea);
+      }
+    }
   </script>
 </body>
 </html>

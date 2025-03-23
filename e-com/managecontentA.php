@@ -9,6 +9,7 @@ require_once 'auth_check.php';
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <link rel="stylesheet" href="content.css" />
   <title>Admin Content Management</title>
 </head>
@@ -173,7 +174,7 @@ require_once 'auth_check.php';
         <div class="product-slider">
           <div id="bestSellersContainer" class="d-flex gap-3">
             <?php
-            $sql = "SELECT bs.bestseller_id, p.productID, p.product_name, p.category, p.product_image 
+            $sql = "SELECT bs.bestseller_id, p.productID, p.product_name, p.product_image 
                     FROM tb_bestsellers bs
                     JOIN tb_products p ON bs.productID = p.productID
                     ORDER BY bs.display_order ASC";
@@ -240,6 +241,8 @@ require_once 'auth_check.php';
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- SweetAlert2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <!-- JavaScript for Promo Codes and Best Sellers -->
   <script>
@@ -301,26 +304,61 @@ require_once 'auth_check.php';
         })
         .catch(error => {
           console.error('Error fetching voucher:', error.message);
-          alert('Failed to load voucher data: ' + error.message);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to load voucher data: ' + error.message,
+            confirmButtonText: 'OK'
+          });
         });
     }
 
     function deleteVoucher(voucherID) {
-      if (confirm('Are you sure you want to delete this voucher?')) {
-        fetch(`delete_voucher.php?id=${voucherID}`, { method: 'DELETE' })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              document.querySelector(`.promo-card[data-voucher-id="${voucherID}"]`).parentElement.remove();
-              if (document.querySelectorAll('.promo-card').length === 0) {
-                document.getElementById('voucherContainer').innerHTML = '<p class="text-center">No vouchers available.</p>';
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to delete this voucher?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it',
+        cancelButtonText: 'No, cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`delete_voucher.php?id=${voucherID}`, { method: 'DELETE' })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                document.querySelector(`.promo-card[data-voucher-id="${voucherID}"]`).parentElement.remove();
+                if (document.querySelectorAll('.promo-card').length === 0) {
+                  document.getElementById('voucherContainer').innerHTML = '<p class="text-center">No vouchers available.</p>';
+                }
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Deleted',
+                  text: 'Voucher deleted successfully!',
+                  confirmButtonText: 'OK'
+                });
+              } else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Error deleting voucher: ' + (data.error || 'Unknown error'),
+                  confirmButtonText: 'OK'
+                });
               }
-            } else {
-              alert('Error deleting voucher: ' + (data.error || 'Unknown error'));
-            }
-          })
-          .catch(error => console.error('Error deleting voucher:', error));
-      }
+            })
+            .catch(error => {
+              console.error('Error deleting voucher:', error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to delete voucher: ' + error.message,
+                confirmButtonText: 'OK'
+              });
+            });
+        }
+      });
     }
 
     document.getElementById('voucherForm').addEventListener('submit', function(e) {
@@ -351,16 +389,41 @@ require_once 'auth_check.php';
           const data = JSON.parse(text);
           console.log("Parsed data:", data);
           if (data.success) {
-            location.reload();
+            Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: 'Voucher saved successfully!',
+              confirmButtonText: 'OK'
+            }).then(() => {
+              location.reload();
+            });
           } else {
-            alert('Error saving voucher: ' + (data.error || 'Unknown error'));
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error saving voucher: ' + (data.error || 'Unknown error'),
+              confirmButtonText: 'OK'
+            });
           }
         } catch (e) {
           console.error("Parse error:", e);
-          alert('Invalid response from server: ' + text);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Invalid response from server: ' + text,
+            confirmButtonText: 'OK'
+          });
         }
       })
-      .catch(error => console.error('Error saving voucher:', error));
+      .catch(error => {
+        console.error('Error saving voucher:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to save voucher: ' + error.message,
+          confirmButtonText: 'OK'
+        });
+      });
     });
 
     // Best Seller Functions
@@ -382,7 +445,12 @@ require_once 'auth_check.php';
       let productDropdown = document.getElementById("productDropdown");
       let selectedValue = productDropdown.value;
       if (!selectedValue) {
-        alert("Please select a product.");
+        Swal.fire({
+          icon: 'warning',
+          title: 'Warning',
+          text: 'Please select a product.',
+          confirmButtonText: 'OK'
+        });
         return;
       }
       let selectedText = productDropdown.options[productDropdown.selectedIndex].text;
@@ -409,7 +477,12 @@ require_once 'auth_check.php';
 
           if (data.in_best_sellers) {
             // Product is already in best sellers, show error message and stop
-            alert(`${selectedText} is already in the Best Sellers list. Please select a different product.`);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: `${selectedText} is already in the Best Sellers list. Please select a different product.`,
+              confirmButtonText: 'OK'
+            });
             return; // Do not proceed with adding
           }
 
@@ -459,68 +532,121 @@ require_once 'auth_check.php';
               document.getElementById("bestSellersContainer").appendChild(card);
               productDropdown.selectedIndex = 0;
               closeModal();
+              Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Best seller added successfully!',
+                confirmButtonText: 'OK'
+              });
               console.log("Best seller added successfully to UI");
             } else {
-              alert("Error adding best seller: " + (data.error || "Unknown server error"));
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error adding best seller: ' + (data.error || 'Unknown server error'),
+                confirmButtonText: 'OK'
+              });
             }
           })
           .catch(error => {
             console.error("Fetch error in confirmBestSeller:", error.message);
-            alert("Failed to add best seller: " + error.message);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to add best seller: ' + error.message,
+              confirmButtonText: 'OK'
+            });
           });
         })
         .catch(error => {
           console.error("Error checking best seller:", error.message);
-          alert("Failed to check best seller status: " + error.message);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to check best seller status: ' + error.message,
+            confirmButtonText: 'OK'
+          });
         });
     }
 
     function deleteBestSeller(bestsellerId) {
-      if (confirm("Are you sure you want to delete this best seller?")) {
-        console.log("Deleting best seller with ID:", bestsellerId);
-        fetch(`delete_bestseller.php?id=${bestsellerId}`, {
-          method: "DELETE"
-        })
-        .then(response => {
-          console.log("Response status:", response.status);
-          if (!response.ok) {
-            return response.text().then(text => {
-              throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
-            });
-          }
-          return response.text();
-        })
-        .then(text => {
-          console.log("Raw response:", text);
-          let data;
-          try {
-            data = JSON.parse(text);
-          } catch (e) {
-            if (text.includes('"success":true')) {
-              data = { success: true };
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to delete this best seller?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it',
+        cancelButtonText: 'No, cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          console.log("Deleting best seller with ID:", bestsellerId);
+          fetch(`delete_bestseller.php?id=${bestsellerId}`, {
+            method: "DELETE"
+          })
+          .then(response => {
+            console.log("Response status:", response.status);
+            if (!response.ok) {
+              return response.text().then(text => {
+                throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
+              });
+            }
+            return response.text();
+          })
+          .then(text => {
+            console.log("Raw response:", text);
+            let data;
+            try {
+              data = JSON.parse(text);
+            } catch (e) {
+              if (text.includes('"success":true')) {
+                data = { success: true };
+              } else {
+                throw new Error(`JSON parse error: ${e.message}`);
+              }
+            }
+            if (data.success) {
+              document.querySelector(`.product-card[data-bestseller-id="${bestsellerId}"]`).remove();
+              if (!document.querySelectorAll('.product-card').length) {
+                document.getElementById('bestSellersContainer').innerHTML = '<p class="text-center">No best sellers found.</p>';
+              }
+              Swal.fire({
+                icon: 'success',
+                title: 'Deleted',
+                text: 'Best seller deleted successfully!',
+                confirmButtonText: 'OK'
+              });
             } else {
-              throw new Error(`JSON parse error: ${e.message}`);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error deleting best seller: ' + (data.error || 'Unknown error'),
+                confirmButtonText: 'OK'
+              });
             }
-          }
-          if (data.success) {
-            document.querySelector(`.product-card[data-bestseller-id="${bestsellerId}"]`).remove();
-            if (!document.querySelectorAll('.product-card').length) {
-              document.getElementById('bestSellersContainer').innerHTML = '<p class="text-center">No best sellers found.</p>';
+          })
+          .catch(error => {
+            console.error("Error deleting best seller:", error);
+            if (!document.querySelector(`.product-card[data-bestseller-id="${bestsellerId}"]`)) {
+              console.log("Deletion succeeded despite JSON error");
+              Swal.fire({
+                icon: 'success',
+                title: 'Deleted',
+                text: 'Best seller deleted successfully!',
+                confirmButtonText: 'OK'
+              });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to delete best seller: ' + error.message,
+                confirmButtonText: 'OK'
+              });
             }
-            alert("Best seller deleted successfully.");
-          } else {
-            alert("Error deleting best seller: " + (data.error || "Unknown error"));
-          }
-        })
-        .catch(error => {
-          console.error("Error deleting best seller:", error);
-          if (!document.querySelector(`.product-card[data-bestseller-id="${bestsellerId}"]`)) {
-            console.log("Deletion succeeded despite JSON error");
-          } else {
-            alert("Failed to delete best seller: " + error.message);
-          }
-        });
-      }
+          });
+        }
+      });
     }
   </script>
 </body>

@@ -36,12 +36,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['qr_image']) && !isse
             $stmt = $conn->prepare($query);
             $stmt->bind_param("sss", $payment_type, $file_name, $file_name);
             $stmt->execute();
-            echo "<script>alert('QR code uploaded successfully!'); window.location.href='manage_qr_codes.php';</script>";
+            echo "<script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'QR code uploaded successfully!',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href='manage_qr_codes.php';
+                        });
+                    });
+                  </script>";
         } else {
-            echo "<script>alert('Failed to upload QR code.');</script>";
+            echo "<script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to upload QR code.',
+                            confirmButtonText: 'OK'
+                        });
+                    });
+                  </script>";
         }
     } else {
-        echo "<script>alert('Invalid file type or size. Only PNG, JPEG, JPG files up to 5MB are allowed.');</script>";
+        echo "<script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Invalid file type or size. Only PNG, JPEG, JPG files up to 5MB are allowed.',
+                        confirmButtonText: 'OK'
+                    });
+                });
+              </script>";
     }
 }
 
@@ -77,12 +106,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_id'])) {
                 $stmt = $conn->prepare($query);
                 $stmt->bind_param("ssi", $payment_type, $file_name, $edit_id);
                 $stmt->execute();
-                echo "<script>alert('QR code updated successfully!'); window.location.href='manage_qr_codes.php';</script>";
+                echo "<script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'QR code updated successfully!',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href='manage_qr_codes.php';
+                            });
+                        });
+                      </script>";
             } else {
-                echo "<script>alert('Failed to upload new QR code.');</script>";
+                echo "<script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Failed to upload new QR code.',
+                                confirmButtonText: 'OK'
+                            });
+                        });
+                      </script>";
             }
         } else {
-            echo "<script>alert('Invalid file type or size for new QR code. Only PNG, JPEG, JPG files up to 5MB are allowed.');</script>";
+            echo "<script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Invalid file type or size for new QR code. Only PNG, JPEG, JPG files up to 5MB are allowed.',
+                            confirmButtonText: 'OK'
+                        });
+                    });
+                  </script>";
         }
     } else {
         // Update only the payment type if no new file is uploaded
@@ -90,7 +148,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_id'])) {
         $stmt = $conn->prepare($query);
         $stmt->bind_param("si", $payment_type, $edit_id);
         $stmt->execute();
-        echo "<script>alert('Payment type updated successfully!'); window.location.href='manage_qr_codes.php';</script>";
+        echo "<script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Payment type updated successfully!',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href='manage_qr_codes.php';
+                    });
+                });
+              </script>";
     }
 }
 ?>
@@ -109,6 +178,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_id'])) {
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
     <!-- Optional Custom CSS -->
     <link rel="stylesheet" href="style2.css">
 
@@ -122,6 +194,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_id'])) {
             overflow-x: auto;
             margin-top: 1rem;
         }
+        /* Popup Styling */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+        }
+        .popup-content {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+        .modal-title {
+            margin-bottom: 1rem;
+        }
+        .modal-field {
+            margin-bottom: 1rem;
+        }
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .btn-discard {
+            background-color: #6c757d;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-save {
+            background-color: #28a745;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -134,7 +254,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_id'])) {
                     <a class="nav-link" href="manageproductsA.php">Products</a>
                     <a class="nav-link" href="managecontentA.php">Content</a>
                     <a class="nav-link" href="manageordersA.php">Orders</a>
-                    <a class="nav-link active" href="manage_qr_codes.php">Manage QR Codes</a>
                     <a class="nav-link" href="analytics.php">Analytics</a>
                 </nav>
                 <div class="mt-auto">
@@ -237,6 +356,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_id'])) {
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- JavaScript for Popup and Delete -->
     <script>
@@ -253,26 +374,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_id'])) {
         }
 
         function deleteQRCode(id) {
-            if (confirm('Are you sure you want to delete this QR code?')) {
-                fetch('delete_qr_code.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: id })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('QR code deleted successfully!');
-                        window.location.reload();
-                    } else {
-                        alert('Error deleting QR code: ' + (data.error || 'Unknown error'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error deleting QR code:', error);
-                    alert('Failed to delete QR code.');
-                });
-            }
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you want to delete this QR code?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it',
+                cancelButtonText: 'No, cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('delete_qr_code.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: id })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted',
+                                text: 'QR code deleted successfully!',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error deleting QR code: ' + (data.error || 'Unknown error'),
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting QR code:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to delete QR code: ' + error.message,
+                            confirmButtonText: 'OK'
+                        });
+                    });
+                }
+            });
         }
     </script>
 </body>

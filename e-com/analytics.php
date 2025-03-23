@@ -9,9 +9,10 @@ require_once 'auth_check.php';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="style1.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Admin Analytics</title>
     <style>
         .chart-container {
@@ -121,6 +122,7 @@ require_once 'auth_check.php';
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         let salesChart = null;
 
@@ -207,6 +209,12 @@ require_once 'auth_check.php';
                     const daysDiff = getDaysDifference(startDate, endDate);
                     if (daysDiff < 5) {
                         chartContainer.style.display = 'none';
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Date Range Too Short',
+                            text: 'The date range is less than 5 days. The chart will not be displayed.',
+                            confirmButtonText: 'OK'
+                        });
                     } else {
                         chartContainer.style.display = 'block';
                         updateChart(data.chartLabels, data.chartData);
@@ -215,26 +223,39 @@ require_once 'auth_check.php';
                     // Update top selling products table
                     const topProductsTable = document.getElementById('topProductsTable');
                     topProductsTable.innerHTML = '';
-                    data.topProducts.forEach(product => {
-                        const row = `<tr>
-                            <td>${product.quantity}</td>
-                            <td>${product.product_name}</td>
-                        </tr>`;
-                        topProductsTable.insertAdjacentHTML('beforeend', row);
-                    });
+                    if (data.topProducts.length === 0) {
+                        topProductsTable.innerHTML = '<tr><td colspan="2">No sales data available for this period.</td></tr>';
+                    } else {
+                        data.topProducts.forEach(product => {
+                            const row = `<tr>
+                                <td>${product.quantity}</td>
+                                <td>${product.product_name}</td>
+                            </tr>`;
+                            topProductsTable.insertAdjacentHTML('beforeend', row);
+                        });
+                    }
 
                     // Store the data in a hidden input for PDF export
                     document.getElementById('exportPDFBtn').dataset.analytics = JSON.stringify(data);
 
                     filterBtn.disabled = false;
                     filterSpinner.style.display = 'none';
+
+                    // Show success message after data is loaded
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Data Loaded',
+                        text: 'Analytics data has been successfully loaded.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
                 })
                 .catch(error => {
                     console.error('Error fetching analytics:', error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Failed to load analytics data. Please try again.',
+                        text: 'Failed to load analytics data: ' + error.message,
                         confirmButtonText: 'OK'
                     });
                     filterBtn.disabled = false;
@@ -255,7 +276,8 @@ require_once 'auth_check.php';
                     icon: 'warning',
                     title: 'No Data',
                     text: 'Please fetch analytics data before exporting.',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6'
                 });
                 return;
             }
@@ -291,14 +313,24 @@ require_once 'auth_check.php';
 
                 exportBtn.disabled = false;
                 pdfSpinner.style.display = 'none';
+
+                // Show success message after PDF export
+                Swal.fire({
+                    icon: 'success',
+                    title: 'PDF Exported',
+                    text: 'The analytics report has been successfully exported as a PDF.',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
             })
             .catch(error => {
                 console.error('Error exporting PDF:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Failed to export PDF. Please try again.',
-                    confirmButtonText: 'OK'
+                    text: 'Failed to export PDF: ' + error.message,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6'
                 });
                 exportBtn.disabled = false;
                 pdfSpinner.style.display = 'none';
@@ -321,7 +353,8 @@ require_once 'auth_check.php';
                         icon: 'warning',
                         title: 'Invalid Date Range',
                         text: 'Please ensure Start Date is not after End Date.',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#3085d6'
                     });
                 }
             });

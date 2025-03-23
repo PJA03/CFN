@@ -11,6 +11,7 @@ require_once 'auth_check.php';
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <link rel="stylesheet" href="editproduct.css">
   <style>
     .variant-row { margin-bottom: 10px; }
@@ -41,7 +42,7 @@ require_once 'auth_check.php';
       <div class="col-md-10 p-4 main-content">
         <h3 class="mt-4 text-center">Add Product</h3>
         <div class="bg-white p-4 rounded shadow-sm">
-          <form id="productForm" action="processproduct.php" method="POST" enctype="multipart/form-data">
+          <form id="productForm" enctype="multipart/form-data">
             <div class="image-container text-center mb-3">
               <input type="file" id="imageUpload" name="productImage" accept="image/*" class="d-none">
               <button type="button" class="btn btn-primary" onclick="document.getElementById('imageUpload').click();">
@@ -59,7 +60,13 @@ require_once 'auth_check.php';
 
             <div class="mb-3">
               <label class="form-label">Category</label>
-              <input type="text" class="form-control" name="category" required>
+              <select class="form-select" name="category" required>
+                <option value="" disabled selected>Select a category</option>
+                <option value="Hair">Hair</option>
+                <option value="Skin">Skin</option>
+                <option value="Face">Face</option>
+                <option value="Perfume">Perfume</option>
+              </select>
             </div>
 
             <div class="row">
@@ -100,6 +107,7 @@ require_once 'auth_check.php';
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     document.getElementById("imageUpload").addEventListener("change", function(event) {
       const file = event.target.files[0];
@@ -119,6 +127,9 @@ require_once 'auth_check.php';
       const hasVariants = document.getElementById("hasVariants").checked;
       variantsContainer.style.display = hasVariants ? 'block' : 'none';
       addVariantButton.style.display = hasVariants ? 'block' : 'none';
+      if (hasVariants && variantsContainer.children.length === 1) {
+        addVariantRow(); // Add the first variant row automatically
+      }
     }
 
     function addVariantRow() {
@@ -143,10 +154,67 @@ require_once 'auth_check.php';
     }
 
     function handleCancel() {
-      if (confirm("Are you sure you want to cancel?")) {
-        window.location.href = "manageproductsA.php";
-      }
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to cancel adding this product?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, cancel',
+        cancelButtonText: 'No, continue'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "manageproductsA.php";
+        }
+      });
     }
+
+    document.getElementById("productForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      const formData = new FormData(this);
+
+      fetch("processproduct.php", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(text => {
+            throw new Error(`HTTP error! Status: ${response.status}, Response: ${text || 'No response body'}`);
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Product added successfully!',
+            confirmButtonText: 'OK'
+          }).then(() => {
+            window.location.href = "manageproductsA.php?add=success";
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error adding product: ' + (data.error || 'Unknown error'),
+            confirmButtonText: 'OK'
+          });
+        }
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error adding product: ' + error.message,
+          confirmButtonText: 'OK'
+        });
+      });
+    });
   </script>
 </body>
 </html>

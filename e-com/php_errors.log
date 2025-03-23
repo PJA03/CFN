@@ -1,0 +1,71 @@
+[23-Mar-2025 15:32:07 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'price' in 'field list' in C:\xampp\htdocs\CFN\e-com\processproduct.php:62
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\processproduct.php(62): mysqli->prepare('INSERT INTO tb_...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\processproduct.php on line 62
+[23-Mar-2025 15:37:19 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'price' in 'field list' in C:\xampp\htdocs\CFN\e-com\processproduct.php:77
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\processproduct.php(77): mysqli->prepare('INSERT INTO tb_...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\processproduct.php on line 77
+[23-Mar-2025 15:40:27 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'price' in 'field list' in C:\xampp\htdocs\CFN\e-com\processproduct.php:77
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\processproduct.php(77): mysqli->prepare('INSERT INTO tb_...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\processproduct.php on line 77
+[23-Mar-2025 15:40:30 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'price' in 'field list' in C:\xampp\htdocs\CFN\e-com\processproduct.php:77
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\processproduct.php(77): mysqli->prepare('INSERT INTO tb_...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\processproduct.php on line 77
+[23-Mar-2025 15:53:06 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'price' in 'field list' in C:\xampp\htdocs\CFN\e-com\processproduct.php:78
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\processproduct.php(78): mysqli->prepare('INSERT INTO tb_...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\processproduct.php on line 78
+[23-Mar-2025 15:55:45 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'price' in 'field list' in C:\xampp\htdocs\CFN\e-com\processproduct.php:78
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\processproduct.php(78): mysqli->prepare('INSERT INTO tb_...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\processproduct.php on line 78
+[23-Mar-2025 15:57:12 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'price' in 'field list' in C:\xampp\htdocs\CFN\e-com\processproduct.php:78
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\processproduct.php(78): mysqli->prepare('INSERT INTO tb_...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\processproduct.php on line 78
+[23-Mar-2025 15:59:14 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'price' in 'field list' in C:\xampp\htdocs\CFN\e-com\processproduct.php:77
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\processproduct.php(77): mysqli->prepare('INSERT INTO tb_...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\processproduct.php on line 77
+[23-Mar-2025 16:06:01 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'price' in 'field list' in C:\xampp\htdocs\CFN\e-com\processproduct.php:77
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\processproduct.php(77): mysqli->prepare('INSERT INTO tb_...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\processproduct.php on line 77
+[23-Mar-2025 16:14:49 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '0' for key 'PRIMARY' in C:\xampp\htdocs\CFN\e-com\processproduct.php:87
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\processproduct.php(87): mysqli_stmt->execute()
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\processproduct.php on line 87
+[23-Mar-2025 16:14:57 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '0' for key 'PRIMARY' in C:\xampp\htdocs\CFN\e-com\processproduct.php:87
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\processproduct.php(87): mysqli_stmt->execute()
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\processproduct.php on line 87
+[23-Mar-2025 16:15:04 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '0' for key 'PRIMARY' in C:\xampp\htdocs\CFN\e-com\processproduct.php:87
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\processproduct.php(87): mysqli_stmt->execute()
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\processproduct.php on line 87
+[23-Mar-2025 16:15:25 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '0' for key 'PRIMARY' in C:\xampp\htdocs\CFN\e-com\processproduct.php:87
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\processproduct.php(87): mysqli_stmt->execute()
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\processproduct.php on line 87
+[23-Mar-2025 17:06:40 Europe/Berlin] Inserted product with ID: 40
+[23-Mar-2025 17:06:40 Europe/Berlin] Inserted default variant with ID: 115 for product ID: 40
+[23-Mar-2025 17:20:34 Europe/Berlin] Inserted product with ID: 41
+[23-Mar-2025 17:20:34 Europe/Berlin] Inserted default variant with ID: 116 for product ID: 41
+[23-Mar-2025 17:25:25 Europe/Berlin] Inserted product with ID: 42
+[23-Mar-2025 17:25:25 Europe/Berlin] Inserted default variant with ID: 117 for product ID: 42
