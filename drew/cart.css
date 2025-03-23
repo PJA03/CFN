@@ -72,8 +72,8 @@ header {
     color: whitesmoke;
 }
 
-.icon-profile::after, /* Show underline when active */
-.icon-profile:hover::after { /* Show underline on hover */
+.cart::after, /* Show underline when active */
+.cart:hover::after { /* Show underline on hover */
     content: "";
     display: block;
     width: 100%;

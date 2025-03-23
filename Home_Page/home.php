@@ -63,7 +63,7 @@ $conn->close();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="home.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
     <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
 
@@ -111,28 +111,39 @@ $conn->close();
         </div>
     </div>
 
-    <section data-animate="fade-in">
+<section data-animate="fade-in">
     <h2 class="section-title-best">Our Best Sellers</h2>
     <div class="swiper-container">
         <div class="swiper-wrapper">
             <?php while ($row = $result->fetch_assoc()) { ?>
-                <div class="swiper-slide product-card" data-animate="fade-in">
+                <a href="../e-com/productpage.php?id=<?= $row['productID']; ?>" class="swiper-slide product-card" data-animate="fade-in" style="text-decoration: none; color: inherit;">
                     <div class="product-image">
-                        <img src="<?php echo htmlspecialchars($row['product_image']); ?>" alt="<?php echo htmlspecialchars($row['product_name']); ?>">
+                    <?php
+    if (!defined('BASE_PATH')) {
+        define('BASE_PATH', '/CFN/'); // Prevent redeclaration error
+    }
+
+    $productImage = !empty($row['product_image']) ? str_replace('uploads/', '', $row['product_image']) : '';
+    $imgSrc = !empty($productImage) ? BASE_PATH . "e-com/uploads/" . $productImage : BASE_PATH . "e-com/images/cfn_logo.png";
+    $fallbackImgSrc = BASE_PATH . "e-com/images/cfn_logo.png";
+?>
+<img src="<?= $imgSrc; ?>" alt="<?= htmlspecialchars($row['product_name']); ?>" 
+     data-fallback="<?= $fallbackImgSrc; ?>" 
+     onload="this.removeAttribute('data-fallback');" 
+     onerror="if(this.src !== this.getAttribute('data-fallback')) { this.src = this.getAttribute('data-fallback'); } else { console.log('Fallback failed: <?= $fallbackImgSrc; ?>'); }">
+
                     </div>
                     <div class="product-info">
-                        <h4 class="product-name"><?php echo htmlspecialchars($row['product_name']); ?></h4>
-                        <p class="product-category"><?php echo htmlspecialchars($row['category']); ?></p>
-                        <div class="product-footer">
-                            <button class="cart-btn">🛒</button>
-                        </div>
+                        <h4 class="product-name"><?= htmlspecialchars($row['product_name']); ?></h4>
+                        <p class="product-category"><?= htmlspecialchars($row['category']); ?></p>
                     </div>
-                </div>
+                </a>
             <?php } ?>
         </div>
         <div class="swiper-pagination"></div>
     </div>
 </section>
+
 
     <section class="description-section" data-animate="fade-in">
         <div class="description-container">
