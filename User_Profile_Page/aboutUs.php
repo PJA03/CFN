@@ -34,7 +34,6 @@ if (isset($_POST['logout'])) {
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -43,104 +42,64 @@ if (isset($_POST['logout'])) {
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="aboutus-style.css?v=<?php echo time(); ?>">
 </head>
 
 <body>
     <header>
         <div class="logo">
-            <a href = "../Home_Page/Home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
+            <a href = "../Home_Page/home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
         </div>
         <div class="navbar">
         <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>            
         <div class="icons">
-                <a href = "../Home_Page/Home.php"><i class="fa-solid fa-house home"></i></a>
+                <a href = "../Home_Page/home.php"><i class="fa-solid fa-house home"></i></a>
                 <a href ="../drew/cart.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
-                <a href="UserProfile.php"><i class ="far fa-user-circle fa-2x icon-profile"></i></a>
+                <a href="../User_Profile_Page/UserProfile.php"><i class ="far fa-user-circle fa-2x icon-profile"></i></a>
             </div>
         </div>
     </header>
 
     <div class="main mb-5">
-        <div class="row">
-            <div class="col-md-4 left-panel container">
-                <!-- profile picture -->
-                <img src="<?php echo htmlspecialchars(isset($user['profile_image']) && !empty($user['profile_image']) ? $user['profile_image'] : '../Resources/profile.png', ENT_QUOTES, 'UTF-8'); ?>" alt="Profile Icon" name="icon" id="icon" class="profile-icon" width="150" max-height="150" style="margin: 10px;">
-                <br>
-                <h2 style="color:whitesmoke">My Account</h2>
-                <a href="UserProfile.php" class="active">Profile</a>
-                <a href="../drew/orderlist.php" class="transparent-button">Orders</a>
-                <form method="post" action="">
-                    <button class="transparent-button" name="logout">Logout</button>
-                </form>
-            </div>
-            <div class="col-md-8 right-panel container">
-                <div class="row">
-                        <h2 class="lead">Profile Details </h2>
-                        <div class="row">
-                            <div class="col-md-5">
-                                <b>Username: </b>
-                            </div>
-                            <div class="col-md-7 text-wrap" style="text-align: justify">
-                                <span id="username" class="editable"><?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?></span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-5">
-                                <b>Email:</b>
-                            </div>
-                            <div class="col-md-7 text-wrap" style="text-align: justify">
-                                <span id="email" class="editable"><?php echo htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?></span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-5">
-                                <b>First Name:</b>
-                            </div>
-                            <div class="col-md-7 text-wrap" style="text-align: justify">
-                                <span id="first_name" class="editable"><?php echo htmlspecialchars($user['first_name'], ENT_QUOTES, 'UTF-8'); ?></span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-5">
-                                <b>Last Name: </b>
-                            </div>
-                            <div class="col-md-7 text-wrap" style="text-align: justify">
-                                <span id="last_name" class="editable"><?php echo htmlspecialchars($user['last_name'], ENT_QUOTES, 'UTF-8'); ?></span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-5">
-                                <b>Contact No.:</b>
-                            </div>
-                            <div class="col-md-7 text-wrap" style="text-align: justify">
-                                <span id="contact_no" class="editable"><?php echo htmlspecialchars($user['contact_no'], ENT_QUOTES, 'UTF-8'); ?></span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-5">
-                                <b>Delivery Address: </b>
-                            </div>
-                            <div class="col-md-7 text-wrap">
-                                <span id="address" class="editable"><?php echo htmlspecialchars($user['address'], ENT_QUOTES, 'UTF-8'); ?></span>
-                            </div>
-                        </div>
+    <div class="container text-center">
+        <!-- Profile Picture and Navigation -->
+        <div class="top-panel">
+        <img src="../Home_Page/cfn_logo.png" alt="Logo" class="logo-image2"/>
 
-                        <div class = "row">
-                        <div class = "col text-end">
-                            <form action="editUserProfile.php">
-                                <button class="Edit" style="color: whitesmoke;" id="edit-button" href="editUserProfile.php">
-                                    Edit 
-                                    <i class="bi bi-pen"></i>
-                                </button>
-                            </form>
-                            </div>
-                        </div>
-                </div>
-                </div>
+        </div>
+
+        <!-- Content Section -->
+        <div class="bottom-panel container">
+            <h2 class="lead">About Us</h2>
+            <div class="row">
+                <p><b>Vision</b></p>
+                <p>Being one with nature, we will be able to explore
+                     its beauty and usability more healthily and safely
+                      to contribute to the growth and demand for personal 
+                      and household care products and Cosmeticas Fraiche 
+                      Naturale will be made available for everyone. </p>
+            </div>
+            <div class="row">
+                <p><b>Mission</b></p>
+                <p>Our mission is to make safe, environment-friendly, 
+                    high-quality, and affordable personal care and 
+                    household products. We aim to meet the future 
+                    needs of the people, as well as the planet 
+                    today by using plant-based derived ingredients
+                     through time-tested manufacturing processes.
+                </p>
+            </div>
+            <div class="row">
+                <p><b>Contact Information</b></p>
+                <ul style="list-style-type: none; padding-left: 0;">
+                    <li>Email: <a href="mailto:cosmeticasfraichenaturale@gmail.com" style="color: green; text-decoration: none;">cosmeticasfraichenaturale@gmail.com</a></li>
+                    <li>Contact Number: 0962 079 8190</li>
+                </ul>
+            </div>
             </div>
         </div>
     </div>
+</div>
 
     <footer>
         <div class="footer-container">
@@ -255,8 +214,9 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
             }
         })
         });
-
     </script>
+
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
 </body>

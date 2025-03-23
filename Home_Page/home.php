@@ -188,7 +188,7 @@ $conn->close();
             </div>
             <div class="footer-right">
                 <ul class="footer-nav">
-                    <li><a href="#">About Us</a></li>
+                    <li><a href="../User_Profile_Page/aboutUs.php">About Us</a></li>
                     <li><a href="#" data-bs-toggle="modal" data-bs-target="#ModalTerms">Terms and Conditions</a></li>
                     <li><a href="#" data-bs-toggle="modal" data-bs-target="#ModalPrivacy">Privacy Policy</a></li>
                 </ul>
@@ -266,7 +266,7 @@ We may update this policy. Continued use of our services after updates means you
 For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

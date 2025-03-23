@@ -380,6 +380,21 @@ footer {
     opacity: 0.8;
 }
 
+/* Media Queries */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .footer-left,
+    .footer-right {
+        justify-content: center;
+        align-items: center;
+    }
+}
+
 /* Payment Method Section */
 .payment-method {
     text-align: center;
@@ -464,83 +479,5 @@ footer {
 }
 
 .cart-actions .cancel-btn:hover {
-    background-color: #7e7b7b;
-}
-
-/* Privacy Notice Modal */
-.modal-overlay {
-    display: none; /* Hidden by default */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background overlay */
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Ensure it's on top */
-}
-
-.modal-content {
-    background: #FFFFFF !important; /* Force solid white background */
-    padding: 30px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    width: 400px; /* Adjust width as needed */
-    max-width: 90%; /* Ensure it fits on smaller screens */
-    border: 1px solid #ddd; /* Optional: Add a border for better visibility */
-    opacity: 1 !important; /* Ensure the modal is not transparent */
-}
-
-.modal-content h2 {
-    font-family: "Bebas Neue", serif !important;
-    font-size: 24px;
-    color: #1F4529;
-    margin-bottom: 15px;
-}
-
-.modal-content p {
-    font-size: 14px;
-    color: #333;
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
-
-.modal-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
-
-.modal-buttons .btn {
-    padding: 10px 20px;
-    font-size: 16px;
-    font-family: "Bebas Neue", serif !important;
-    border-radius: 25px;
-    cursor: pointer;
-    border: none;
-    transition: all 0.3s ease;
-    text-align: center;
-    display: inline-block;
-    min-width: 100px;
-}
-
-.modal-buttons .accept-btn {
-    background-color: #1F4529;
-    color: #FFFFFF;
-}
-
-.modal-buttons .accept-btn:hover {
-    background-color: #EED3B1;
-    color: #1F4529;
-}
-
-.modal-buttons .decline-btn {
-    background-color: #B22222;
-    color: #FFFFFF;
-}
-
-.modal-buttons .decline-btn:hover {
     background-color: #7e7b7b;
 }

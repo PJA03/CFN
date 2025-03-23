@@ -1,0 +1,388 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Be Vietnam Pro", serif !important;
+    font-weight: 400;
+    font-style: normal;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #E8ECD7 !important;
+    line-height: 1.6;
+    overflow: auto;
+}
+
+/* Headings styling */
+h1 {
+    font-family: "Bebas Neue", serif !important;
+    font-size: 100px !important;  /* Ensure font size applies */
+    /* color: #FF8666 !important;    Use !important for overriding */
+    font-style: normal;
+}
+
+h2 {
+    font-family: "Bebas Neue", serif !important;
+    font-size: 50px !important;  /* Apply font size */
+    font-style: normal;
+    color: black;
+    /* color: #FF8666 !important;    Override any conflicts */
+}
+
+h3 {
+    font-family: "Bebas Neue", serif !important;
+    font-size: 30px !important;  /* Apply font size */
+    font-style: normal;
+    /* color: #FF8666 !important;    Override any conflicts */
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+    margin-left: 30px;;
+    gap: 10px; /* Adjust spacing between the image and text */
+}
+
+.logo-image {
+    height: 40px; /* Adjust size as needed */
+    width: auto; /* Keep aspect ratio */
+}
+
+.logo-image2 {
+    height: 150px; /* Adjust size as needed */
+    width: auto; /* Keep aspect ratio */
+}
+
+.logo img {
+    height: 40px; /* Adjust logo size */
+}
+
+
+/* Header Styling */
+header {
+    background-color: #1F4529;
+    color: #EED3B1;
+    padding: 20px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Ensure the header uses the full width */
+    flex-wrap: wrap;
+}
+
+/* Navigation Bar Styling */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+/* Icons in Navigation */
+.icons {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    gap: 15px;
+    transition: transform 0.3s ease, color 0.3s ease;
+    margin-left: 50px;
+    margin-right: 40px;
+}
+
+.icon-profile, .home, .cart {
+    font-size: 1.6rem;
+    color: #EED3B1;
+    cursor: pointer;
+    margin-left: 10px;
+    position: relative;
+}
+
+.icon-profile:hover, .home:hover, .cart:hover {
+    transform: scale(1.1);
+    color: whitesmoke;
+}
+
+.usernamedisplay {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    color: #EED3B1;  
+    font-size: 20px;
+    flex-wrap: wrap;
+    padding-top: 15px;
+}
+
+
+/* Ensure the body doesn't have padding that messes with the layout */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.active{
+    text-decoration: underline;
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+.transparent-button{
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    text-decoration: none;
+    border: none;
+    margin-left: 10px;
+    color: white;
+}
+
+.transparent-button:hover, .active:hover{
+    transform: scale(1.1);
+    color: #EED3B1;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80vw;
+    max-width: 900px;
+    margin: 50px auto;
+    gap: 20px;
+}
+
+@media (max-width:1800px) {
+    .main {
+        width: 80vw; /* Expands when screen width is <= 768px */
+    }
+}
+
+.top-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: #1F4529;
+    color: white;
+    padding: 30px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.bottom-panel {
+    background: whitesmoke;
+    padding: 30px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    text-align: center;
+}
+
+.profile-details {
+    display: flex;
+    align-items: center;
+}
+
+.profile-details h2 {
+    margin-right: 10px;
+}
+
+.profile-details button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.save-button, .image{
+    background-color: #C0D171 !important; 
+    color: white;
+    padding: 5px;
+    border-radius: 10px;
+    margin-top: 20px;
+    cursor: pointer;
+    border: none;
+    width: 100px;
+    margin-right: 5px;
+    text-align: center;
+}
+
+.save-button:hover, .image:hover{
+    background-color: #a5b461 !important; 
+}
+
+.cancel-button{
+    background-color: #C0C0C0 !important; 
+    color: white;
+    padding: 5px;
+    border-radius: 10px;
+    margin-top: 20px;
+    cursor: pointer;
+    border: none;
+    width: 100px;
+    text-align: center;
+}
+
+.cancel-button:hover{
+    background-color: #A9A9A9 !important; 
+}
+
+.right-panel .form-control {
+    width: 100%; /* Adjust the width as needed */
+  ;
+}
+
+.row{
+    margin: 5px;
+}
+
+.right-align{
+    display: block;
+    align-items:end;
+}
+
+.Edit {
+    background-color: gray;
+    color: white;
+    padding: 5px;
+    border-radius: 10px;
+    margin-top: 20px;
+    cursor: pointer;
+    border: none;
+    width: 100px;
+    text-align: center;
+}
+
+.Edit:hover{
+    background-color: #a5b461 !important; 
+}
+
+
+/* Footer */
+footer {
+    background-color: #1F4529;
+    color: white;
+    padding: 40px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.footer-logo {
+    height: 150px;
+}
+
+.footer-right {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 20px;
+}
+
+.footer-nav {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-nav li {
+    font-family: "Bebas Neue", serif;
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.footer-nav a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-nav a:hover {
+    color: #EED3B1;
+}
+
+.social-icons {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.social-icons p {
+    font-size: 20px;
+    font-family: "Bebas Neue", serif;
+    margin: 0;
+}
+
+.social-icons a {
+    color: white;
+    font-size: 18px;
+    text-decoration: none;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icons a:hover {
+    transform: scale(1.1);
+    color: #EED3B1;
+}
+
+.footer-center {
+    text-align: center;
+    width: 100%;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px; /* Thin scrollbar */
+    height: 6px; /* Thin scrollbar for horizontal scrolling */
+}
+
+::-webkit-scrollbar-track {
+    background: #E8ECD7; /* Light background */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #FF8666; /* Soft green thumb */
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1F4529; /* Darker green when hovered */
+}
+
+
+/*email link style*/
+a[href^="mailto:"] {
+    color: green !important;
+    text-decoration: none !important;
+}
+
+a[href^="mailto:"]:hover {
+    color: darkgreen !important;
+    text-decoration: underline !important;
+}
+
+
