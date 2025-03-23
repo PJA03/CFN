@@ -389,6 +389,9 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                             document.body.removeChild(toast);
                         }, 300);
                     }, 3000);
+
+                            // Show alert as an additional confirmation
+        alert(`${productName} has been added to your cart successfully!`);
                     
                     // Update cart indicator
                     updateCartIndicator();
@@ -402,10 +405,6 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                     }
                 }
             })
-            .catch(error => {
-                console.error('Error adding to cart:', error);
-                alert('Failed to add to cart. Please try again.');
-            });
         }
         
         // Function to update cart indicator
