@@ -249,104 +249,117 @@ if (isset($_POST['cancel_cart'])) {
     </div>
 </header>
 
-    <main>
-        <h1 class="cart-title">Cart</h1>
-        <section class="cart-container">
-            <div class="cart-content">
-                <table class="cart-table">
-                    <thead>
-                        <tr>
-                            <th class="product-header">Product</th>
-                            <th class="qty-header">Qty</th>
-                            <th class="price-header">Price</th>
-                        </tr>
-                    </thead>
-                    
-                    <tbody>
-                        <?php if (!empty($cart_items)): ?>
-                            <?php foreach ($cart_items as $item): ?>
-                                <tr data-product-id="<?php echo htmlspecialchars($item['productID']); ?>">
-                                    <td class="product-info">
-                                        <img src="<?php echo htmlspecialchars('../e-com/' . $item['product_image'], ENT_QUOTES, 'UTF-8'); ?>" 
-                                             alt="<?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?>" 
-                                             class="product-image">
-                                        <span><?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?></span>
-                                    </td>
-                                    <td class="product-quantity">
-                                        <form method="POST" style="display: inline;">
-                                            <input type="hidden" name="product_id" value="<?php echo $item['productID']; ?>">
-                                            <button type="submit" name="decrease_qty" class="quantity-btn minus-btn">-</button>
-                                        </form>
-                                        <span class="quantity-value"><?php echo $item['quantity']; ?></span>
-                                        <form method="POST" style="display: inline;">
-                                            <input type="hidden" name="product_id" value="<?php echo $item['productID']; ?>">
-                                            <button type="submit" name="increase_qty" class="quantity-btn plus-btn">+</button>
-                                        </form>
-                                        <form method="POST" style="display: inline;">
-                                            <input type="hidden" name="product_id" value="<?php echo $item['productID']; ?>">
-                                            <button type="submit" name="remove_item" class="delete-btn"><i class="fas fa-trash" style="color: red;"></i></button>
-                                        </form>
-                                    </td>
-                                    <td class="product-price">₱<span class="price-value"><?php echo number_format($item['price'] * $item['quantity'], 2); ?></span></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr><td colspan="3">Your cart is empty</td></tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
 
+<main>
+    <h1 class="cart-title">Cart</h1>
+    <section class="cart-container">
+        <div class="cart-content">
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th class="product-header">Product</th>
+                        <th class="qty-header">Qty</th>
+                        <th class="qty-header"></th>
+                        <th class="price-header">Price</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    <?php if (!empty($cart_items)): ?>
+                        <?php foreach ($cart_items as $item): ?>
+                            <tr data-product-id="<?php echo htmlspecialchars($item['productID']); ?>">
+                                <td class="product-info">
+                                    <img src="<?php echo htmlspecialchars('../e-com/' . $item['product_image'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                         alt="<?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                         class="product-image">
+                                    <span><?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                </td>
+                                <td class="product-quantity">
+                                    <form method="POST" style="display: inline;">
+                                        <input type="hidden" name="product_id" value="<?php echo $item['productID']; ?>">
+                                        <button type="submit" name="decrease_qty" class="quantity-btn minus-btn">-</button>
+                                    </form>
+                                    <span class="quantity-value"><?php echo $item['quantity']; ?></span>
+                                    <form method="POST" style="display: inline;">
+                                        <input type="hidden" name="product_id" value="<?php echo $item['productID']; ?>">
+                                        <button type="submit" name="increase_qty" class="quantity-btn plus-btn">+</button>
+                                    </form>
+                                    <form method="POST" style="display: inline;">
+                                        <input type="hidden" name="product_id" value="<?php echo $item['productID']; ?>">
+                                        <td class="delete-column"> <button type="submit" name="remove_item" class="delete-btn"><i class="fas fa-trash" style="color: red;"></i></button></td>
+                                    </form>
+                                </td>
+
+                                
+                                <td class="product-price">₱<span class="price-value"><?php echo number_format($item['price'] * $item['quantity'], 2); ?></span></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr><td colspan="3">Your cart is empty</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+
+            <!-- Flex container for Voucher & Summary -->
+            <div class="voucher-summary-container">
                 <div class="voucher-section">
-    <h3>Apply Voucher</h3>
-    <?php if (!empty($voucherMessage)): ?>
-        <div class="alert <?php echo $voucherApplied ? 'alert-success' : 'alert-danger'; ?>">
-            <?php echo htmlspecialchars($voucherMessage); ?>
-        </div>
-    <?php endif; ?>
-    
-    <?php if (!$voucherApplied): ?>
-        <form method="POST" class="voucher-form">
-    <div class="input-group mb-3" style="max-width: 300px;"> <!-- Adjust this value as needed -->
-        <input type="text" name="voucher_code" class="form-control" placeholder="Enter voucher code" required>
-        <button type="submit" name="apply_voucher" class="btn btn-outline-secondary">Apply</button>
-    </div>
-</form>
-    <?php else: ?>
-        <div class="applied-voucher">
-            <span class="badge bg-success">
-                <?php echo htmlspecialchars($voucherCode); ?> (<?php echo $voucherDiscount; ?>% off)
-            </span>
-            <form method="POST" class="d-inline">
-                <button type="submit" name="remove_voucher" class="btn btn-sm btn-outline-danger">Remove</button>
-            </form>
-        </div>
-    <?php endif; ?>
-</div>
+                    <h3>Apply Voucher</h3>
+                    <?php if (!empty($voucherMessage)): ?>
+                        <div class="alert <?php echo $voucherApplied ? 'alert-success' : 'alert-danger'; ?>">
+                            <?php echo htmlspecialchars($voucherMessage); ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <?php if (!$voucherApplied): ?>
+                        <form method="POST" class="voucher-form">
+                            <div class="input-group mb-3" style="max-width: 300px;"> 
+                                <input type="text" name="voucher_code" class="form-control" placeholder="Enter voucher code" required>
+                                <button type="submit" name="apply_voucher" class="btn btn-outline-secondary">Apply</button>
+                            </div>
+                        </form>
+                    <?php else: ?>
+                        <div class="applied-voucher">
+                            <span class="badge bg-success">
+                                <?php echo htmlspecialchars($voucherCode); ?> (<?php echo $voucherDiscount; ?>% off)
+                            </span>
+                            <form method="POST" class="d-inline">
+                                <button type="submit" name="remove_voucher" class="btn btn-sm btn-outline-danger">Remove</button>
+                            </form>
+                        </div>
+                    <?php endif; ?>
+                </div>
 
-<div class="cart-summary">
-    <div class="price-breakdown">
-        <p>Net Price: <span id="net-price">₱<?php echo number_format($netPrice, 2); ?></span></p>
-        <p>VAT (12%): <span id="vat">₱<?php echo number_format($totalVAT, 2); ?></span></p>
-        
-        <?php if ($voucherApplied && $discountAmount > 0): ?>
-            <p class="discount-row">
-                Discount (<?php echo $voucherDiscount; ?>%): 
-                <span id="discount" class="text-success">-₱<?php echo number_format($discountAmount, 2); ?></span>
-            </p>
-        <?php endif; ?>
-        
-        <p>Total Price: <strong id="total-price">₱<?php echo number_format($totalPrice, 2); ?></strong></p>
-    </div>
-    <div class="delivery-note">*Delivery fee is calculated by our third-party carrier.</div>
-</div>  
+                <div class="cart-summary">
+                    <div class="price-breakdown">
+                        <p>Net Price: <span id="net-price">₱<?php echo number_format($netPrice, 2); ?></span></p>
+                        <p>VAT (12%): <span id="vat">₱<?php echo number_format($totalVAT, 2); ?></span></p>
+                        
+                        <?php if ($voucherApplied && $discountAmount > 0): ?>
+                            <p class="discount-row">
+                                Discount (<?php echo $voucherDiscount; ?>%): 
+                                <span id="discount" class="text-success">-₱<?php echo number_format($discountAmount, 2); ?></span>
+                            </p>
+                        <?php endif; ?>
+                        
+                        <p>Total Price: <strong id="total-price">₱<?php echo number_format($totalPrice, 2); ?></strong></p>
+                    </div>
+                    <div class="delivery-note">*Delivery fee is calculated by our third-party carrier.</div>
+                </div>  
+            </div>
 
-<div class="cart-actions">
-            <a href="#" class="btn checkout-btn" data-bs-toggle="modal" data-bs-target="#checkoutModal">Proceed to Payment</a>
-            <button class="btn cancel-btn" id="cancel-cart-btn" data-bs-toggle="modal" data-bs-target="#cancelModal">Clear Cart</button>
+            <div class="cart-actions">
+                <a href="#" class="btn checkout-btn" data-bs-toggle="modal" data-bs-target="#checkoutModal">Proceed to Payment</a>
+                <button class="btn cancel-btn" id="cancel-cart-btn" data-bs-toggle="modal" data-bs-target="#cancelModal">Clear Cart</button>
+            </div>
         </div>
-    </div>
-</section>
-    </main>
+    </section>
+</main>
+
+
+
+
+
+
 
     <footer>
         <div class="footer-container">
