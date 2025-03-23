@@ -1,41 +1,58 @@
 <?php
-// Suppress display of errors to browser (log them instead)
-ini_set('display_errors', 0); // Change to 1 for debugging, then check logs
-ini_set('display_startup_errors', 0);
-error_reporting(E_ALL);
+// Database connection
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "db_cfn";
 
-require_once 'auth_check.php';
-header('Content-Type: application/json');
-require_once '../conn.php';
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Connection failed: ' . $conn->connect_error]);
+    exit;
+}
 
+// Get the JSON data
 $data = json_decode(file_get_contents('php://input'), true);
-$productID = $data['productID'] ?? '';
+$productID = isset($data['productID']) ? intval($data['productID']) : 0;
 
-if (!$productID) {
-    echo json_encode(['success' => false, 'error' => 'Product ID required']);
+if ($productID <= 0) {
+    header('Content-Type: application/json');
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Invalid product ID']);
     exit;
 }
 
-// Get the next display_order value
-$orderQuery = "SELECT IFNULL(MAX(display_order), 0) + 1 AS next_order FROM tb_bestsellers";
+// Get the current highest display_order
+$orderQuery = "SELECT MAX(display_order) as max_order FROM tb_bestsellers";
 $orderResult = $conn->query($orderQuery);
-if ($orderResult === false) {
-    echo json_encode(['success' => false, 'error' => 'Failed to determine display order: ' . $conn->error]);
-    exit;
-}
-$nextOrder = $orderResult->fetch_assoc()['next_order'];
+$maxOrder = $orderResult->fetch_assoc()['max_order'] ?? 0;
+$newOrder = $maxOrder + 1;
 
 // Insert the new best seller
-$stmt = $conn->prepare("INSERT INTO tb_bestsellers (productID, display_order, created_at, updated_at) VALUES (?, ?, NOW(), NOW())");
-$stmt->bind_param("ii", $productID, $nextOrder);
+$query = "INSERT INTO tb_bestsellers (productID, display_order) VALUES (?, ?)";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("ii", $productID, $newOrder);
 
 if ($stmt->execute()) {
-    $bestsellerId = $conn->insert_id;
-    echo json_encode(['success' => true, 'bestseller_id' => $bestsellerId]);
+    $bestseller_id = $conn->insert_id;
+    header('Content-Type: application/json');
+    echo json_encode(['success' => true, 'bestseller_id' => $bestseller_id]);
 } else {
-    echo json_encode(['success' => false, 'error' => $conn->error]);
+    // Check if the error is due to a duplicate entry
+    if ($conn->errno === 1062) { // 1062 is the MySQL error code for duplicate entry
+        header('Content-Type: application/json');
+        http_response_code(409);
+        echo json_encode(['success' => false, 'error' => 'This product is already in the Best Sellers list']);
+    } else {
+        header('Content-Type: application/json');
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Failed to add best seller: ' . $stmt->error]);
+    }
 }
 
 $stmt->close();
 $conn->close();
 exit;
+?>

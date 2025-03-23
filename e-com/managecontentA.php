@@ -390,61 +390,89 @@ require_once 'auth_check.php';
       let selectedCategory = productDropdown.options[productDropdown.selectedIndex].getAttribute("data-category");
       let imgSrc = selectedImage ? `../e-com/${selectedImage}` : "../e-com/uploads/default.png";
 
-      console.log("Adding best seller with productID:", selectedValue);
+      console.log("Checking if product with productID:", selectedValue, "is already in best sellers");
 
-      fetch("addbestseller.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productID: selectedValue })
-      })
-      .then(response => {
-        console.log("Response status:", response.status);
-        if (!response.ok) {
-          return response.text().then(text => {
-            throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
+      // Check if the product is already in the best sellers
+      fetch(`check_bestseller.php?productID=${selectedValue}`)
+        .then(response => {
+          if (!response.ok) {
+            return response.text().then(text => {
+              throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
+            });
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (!data.success) {
+            throw new Error(data.message || 'Failed to check best seller status');
+          }
+
+          if (data.in_best_sellers) {
+            // Product is already in best sellers, show error message and stop
+            alert(`${selectedText} is already in the Best Sellers list. Please select a different product.`);
+            return; // Do not proceed with adding
+          }
+
+          // Proceed with adding the best seller
+          console.log("Adding best seller with productID:", selectedValue);
+          fetch("addbestseller.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ productID: selectedValue })
+          })
+          .then(response => {
+            console.log("Response status:", response.status);
+            if (!response.ok) {
+              return response.text().then(text => {
+                throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
+              });
+            }
+            return response.text();
+          })
+          .then(text => {
+            console.log("Raw response from addbestseller.php:", text);
+            let data;
+            try {
+              data = JSON.parse(text);
+              console.log("Parsed JSON:", data);
+            } catch (e) {
+              console.error("Failed to parse JSON:", e.message);
+              throw new Error(`JSON parse error: ${e.message}, Raw response: ${text}`);
+            }
+            if (data.success) {
+              let card = document.createElement("div");
+              card.className = "product-card";
+              card.setAttribute("data-bestseller-id", data.bestseller_id || Date.now());
+              card.setAttribute("data-product-id", selectedValue);
+              card.innerHTML = `
+                <div class="product-image">
+                  <img src="${imgSrc}" alt="${selectedText}" class="img-fluid" onerror="this.src='../e-com/uploads/default.png';">
+                </div>
+                <div class="product-info">
+                  <h5 class="product-name">${selectedText}</h5>
+                  <p class="product-category">${selectedCategory || 'Default Category'}</p>
+                  <div class="product-icons">
+                    <i class="bi bi-trash delete-icon" onclick="deleteBestSeller(${data.bestseller_id || Date.now()})"></i>
+                  </div>
+                </div>
+              `;
+              document.getElementById("bestSellersContainer").appendChild(card);
+              productDropdown.selectedIndex = 0;
+              closeModal();
+              console.log("Best seller added successfully to UI");
+            } else {
+              alert("Error adding best seller: " + (data.error || "Unknown server error"));
+            }
+          })
+          .catch(error => {
+            console.error("Fetch error in confirmBestSeller:", error.message);
+            alert("Failed to add best seller: " + error.message);
           });
-        }
-        return response.text();
-      })
-      .then(text => {
-        console.log("Raw response from addbestseller.php:", text);
-        let data;
-        try {
-          data = JSON.parse(text);
-          console.log("Parsed JSON:", data);
-        } catch (e) {
-          console.error("Failed to parse JSON:", e.message);
-          throw new Error(`JSON parse error: ${e.message}, Raw response: ${text}`);
-        }
-        if (data.success) {
-          let card = document.createElement("div");
-          card.className = "product-card";
-          card.setAttribute("data-bestseller-id", data.bestseller_id || Date.now());
-          card.setAttribute("data-product-id", selectedValue);
-          card.innerHTML = `
-            <div class="product-image">
-              <img src="${imgSrc}" alt="${selectedText}" class="img-fluid" onerror="this.src='../e-com/uploads/default.png';">
-            </div>
-            <div class="product-info">
-              <h5 class="product-name">${selectedText}</h5>
-              <p class="product-category">${selectedCategory || 'Default Category'}</p>
-              <div class="product-icons">
-                <i class="bi bi-trash delete-icon" onclick="deleteBestSeller(${data.bestseller_id || Date.now()})"></i>
-              </div>
-            </div>
-          `;
-          document.getElementById("bestSellersContainer").appendChild(card);
-          productDropdown.selectedIndex = 0;
-          closeModal();
-          console.log("Best seller added successfully to UI");
-        } else {
-          alert("Error adding best seller: " + (data.error || "Unknown server error"));
-        }
-      })
-      .catch(error => {
-        console.error("Fetch error in confirmBestSeller:", error.message);
-        alert("Failed to add best seller: " + error.message);
-      });
+        })
+        .catch(error => {
+          console.error("Error checking best seller:", error.message);
+          alert("Failed to check best seller status: " + error.message);
+        });
     }
 
     function deleteBestSeller(bestsellerId) {
