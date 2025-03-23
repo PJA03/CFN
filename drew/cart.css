@@ -212,11 +212,8 @@ header {
 
 /* Cart Summary */
 .cart-summary {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding-top: 20px;
-    margin-bottom: 20px;
+    flex-grow: 1;
+    text-align: right;
 }
 
 .price-breakdown {
@@ -245,12 +242,33 @@ header {
 /* Cart Actions */
 .cart-actions {
     display: flex;
-    justify-content: flex-end !important;
-    float: right;
-    margin-left: auto;
-    width: auto;
+    justify-content: flex-end;
+    gap: 15px; /* Adds consistent spacing between buttons */
+    margin-top: 20px;
 }
 
+.delete-column {
+    text-align: center;
+    width: 50px; /* Adjust width as needed */
+    position: relative;
+}
+
+/* Style the delete button */
+.delete-btn {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Style the trash icon */
+.delete-btn i {
+    font-size: 1.2rem;
+}
 .cart-actions .btn {
     padding: 12px 30px;
     font-size: 18px;
@@ -261,7 +279,7 @@ header {
     transition: all 0.3s ease;
     text-align: center;
     display: inline-block;
-    min-width: 180px;
+    min-width: 180px; /* Ensures consistent width */
     text-decoration: none;
 }
 
@@ -418,11 +436,20 @@ footer {
 }
 
 .voucher-section {
-    margin: 20px 0;
+    width: 400px !important;
     padding: 15px;
     border: 1px solid #e0e0e0;
     border-radius: 5px;
     background-color: #f9f9f9;
+    flex-shrink: 0; /* Prevent it from shrinking */
+}
+
+.voucher-summary-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 20px;
+    gap: 40px; /* Adjust spacing */
 }
 
 .voucher-section h3 {
@@ -433,6 +460,7 @@ footer {
 .voucher-form {
     display: flex;
     align-items: center;
+    width: 300px;
 }
 
 .applied-voucher {
