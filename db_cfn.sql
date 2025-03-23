@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 22, 2025 at 01:47 PM
+-- Generation Time: Mar 23, 2025 at 06:17 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -40,9 +40,9 @@ CREATE TABLE `tb_bestsellers` (
 --
 
 INSERT INTO `tb_bestsellers` (`bestseller_id`, `productID`, `display_order`, `created_at`, `updated_at`) VALUES
-(1, 24, 0, '2025-03-21 15:55:52', '2025-03-21 15:55:52'),
-(2, 19, 0, '2025-03-21 15:59:18', '2025-03-21 15:59:18'),
-(3, 9, 0, '2025-03-22 03:46:19', '2025-03-22 03:46:19');
+(7, 17, 2, '2025-03-22 14:41:11', '2025-03-22 14:41:11'),
+(9, 8, 4, '2025-03-22 14:50:54', '2025-03-22 14:50:54'),
+(15, 22, 5, '2025-03-23 13:49:31', '2025-03-23 13:49:31');
 
 -- --------------------------------------------------------
 
@@ -64,16 +64,21 @@ CREATE TABLE `tb_cart` (
 --
 
 INSERT INTO `tb_cart` (`cart_id`, `user_id`, `productID`, `quantity`, `price`) VALUES
-(1, 72, 9, 1, 140.00),
-(2, 72, 9, 1, 140.00),
-(3, 72, 9, 1, 140.00),
-(4, 72, 9, 1, 140.00),
-(5, 72, 9, 1, 140.00),
-(6, 72, 9, 1, 140.00),
-(8, 72, 8, 2, 220.00),
 (11, 89, 11, 1, 190.00),
 (12, 89, 19, 1, 180.00),
-(13, 89, 15, 1, 180.00);
+(13, 89, 15, 1, 180.00),
+(14, 79, 9, 1, 140.00),
+(15, 79, 9, 1, 140.00),
+(16, 79, 9, 1, 140.00),
+(17, 79, 9, 1, 140.00),
+(18, 79, 9, 1, 140.00),
+(19, 79, 9, 1, 140.00),
+(20, 79, 9, 1, 140.00),
+(22, 72, 10, 1, 130.00),
+(23, 72, 10, 1, 130.00),
+(24, 72, 10, 1, 130.00),
+(25, 72, 10, 1, 130.00),
+(26, 72, 11, 1, 190.00);
 
 -- --------------------------------------------------------
 
@@ -127,7 +132,7 @@ CREATE TABLE `tb_payment_qr_codes` (
 --
 
 INSERT INTO `tb_payment_qr_codes` (`id`, `payment_type`, `qr_image`, `uploaded_by`, `upload_date`) VALUES
-(1, 'bank_transfer_bdo', 'bank_transfer_bdo_67dd1c612152a.jpg', NULL, '2025-03-21 07:59:29');
+(1, 'bank_transfer_bpi', 'bank_transfer_bpi_67dee520e9add.jpg', NULL, '2025-03-22 16:28:16');
 
 -- --------------------------------------------------------
 
@@ -151,15 +156,14 @@ CREATE TABLE `tb_products` (
 
 INSERT INTO `tb_products` (`productID`, `product_name`, `product_desc`, `category`, `product_image`, `created_at`, `updated_at`) VALUES
 (8, 'Buster D’ Acne Foam Wash 100ml w/ Silicone Brush', 'It is for rinsing away dirt, excess sebum, and other impurities without stripping the skin of its natural moisture balance.', 'Face', 'uploads/img_67c438d0d2ee75.43147062.jpg', '2025-03-02 18:54:08', '2025-03-20 00:16:24'),
-(9, 'Buster D’ Acne Toner 100ml', 'This toner serves as an astringent for oily and acne-prone skin that nourishes and protects the skin, minimizes pores, and calms redness due to skin irritants.', 'Face', 'uploads/67d997147fea2_1742313236.png', '2025-03-02 18:54:49', '2025-03-20 00:20:45'),
 (10, 'Buster D’ Acne Serum 30ml', 'Best for oily and acne-prone skin. It is a mattifying, pore-refining treatment that eaves skin flawless.', 'Face', 'uploads/Screenshot 2025-03-02 185610.jpg', '2025-03-02 18:55:50', '2025-03-20 00:20:54'),
 (11, 'Elixir Day Cream SPF50 PA+++ 50g', 'It contains safe, natural chemicals and minerals that are used as sunscreen to whiten, lubricate, and provide sun protection. It provides broad-spectrum UVA and UVB protection. Easy to apply, water-resistant, with sun protection.', 'Skin', 'uploads/Screenshot 2025-03-02 194023.jpg', '2025-03-02 18:57:49', '2025-03-20 00:21:01'),
 (12, 'SET + Box Packaging', 'It is formulated to treat acne-prone & oily skin and minimize pores. It reduces sebum production and kills bacteria to modulate oil and prevent pimples and breakouts. This set comes with the Elixir Day Cream for all skin types.', 'Face', 'uploads/img_67c439cfa57c16.10447680.jpg', '2025-03-02 18:58:23', '2025-03-20 00:21:13'),
-(13, 'Biocare ReVitagen Foam Wash 100ml w/ Silicone Brush', 'A mild, non-sulfate cleansing foam wash that gently removes debris, revitalizes skin, gives anti-aging effects, and reduces oil instantly.', 'Face', '', '2025-03-02 19:00:22', '2025-03-20 00:28:34'),
-(14, 'Biocare ReVitagen Toner 100ml', 'A mild toner that helps decrease the appearance of fine lines and wrinkles, counteract oxidative stress, and restore skin barriers.', 'Face', '', '2025-03-02 19:01:00', '2025-03-20 00:28:41'),
-(15, 'Biocare ReVitagen Serum 30ml', 'An anti-aging serum that serves as a muscle relaxant, reducing the appearance of crow\\\\\\\'s feet or creases and wrinkles around the eyes.', 'Face', 'uploads/67d997563fe6a_1742313302.png', '2025-03-02 19:01:56', '2025-03-20 00:28:46'),
-(16, 'SET + Box Packaging', 'It is a facial treatment and regimen that revitalize and regenerate the skin for a healthier and younger look.', 'Face', '', '2025-03-02 19:03:49', '2025-03-20 00:28:51'),
-(17, 'CollaBoost Foam Wash 100ml w/ Silicone Brush', 'A hydrating cleanser that washes away dirt, makeup residue, and excess oil, leaving the skin smooth, supple, and soft.', 'Face', '', '2025-03-02 19:04:43', '2025-03-20 00:28:56'),
+(13, 'Biocare ReVitagen Foam Wash 100ml w/ Silicone Brush', 'A mild, non-sulfate cleansing foam wash that gently removes debris, revitalizes skin, gives anti-aging effects, and reduces oil instantly.', 'Face', '', '2025-03-02 19:00:22', '2025-03-24 00:52:09'),
+(14, 'Biocare ReVitagen Toner 100ml', 'A mild toner that helps decrease the appearance of fine lines and wrinkles, counteract oxidative stress, and restore skin barriers.', 'Face', '', '2025-03-02 19:01:00', '2025-03-24 00:54:30'),
+(15, 'Biocare ReVitagen Serum 30ml', 'An anti-aging serum that serves as a muscle relaxant, reducing the appearance of crow\\\'s feet or creases and wrinkles around the eyes.', 'Face', 'uploads/67d997563fe6a_1742313302.png', '2025-03-02 19:01:56', '2025-03-24 00:54:23'),
+(16, 'SET + Box Packaging', 'It is a facial treatment and regimen that revitalize and regenerate the skin for a healthier and younger look.', 'Face', '', '2025-03-02 19:03:49', '2025-03-24 00:54:34'),
+(17, 'CollaBoost Foam Wash 100ml w/ Silicone Brush', 'A hydrating cleanser that washes away dirt, makeup residue, and excess oil, leaving the skin smooth, supple, and soft.', 'Face', '', '2025-03-02 19:04:43', '2025-03-24 00:54:40'),
 (18, 'CollaBoost Toner 100ml', 'It hydrates and conditions the skin, promoting a healthy and vivid complexion while preventing dryness.', 'Face', 'uploads/67d9972ea67c9_1742313262.png', '2025-03-02 19:05:23', '2025-03-20 00:29:04'),
 (19, 'CollaBoost BabyColla Serum 30ml', 'It makes the skin softer and more resilient, similar to newborn skin.', 'Face', '', '2025-03-02 19:06:04', '2025-03-20 00:29:09'),
 (20, 'SET + Box Packaging', 'It is formulated with type III collagen clinically proven to restore skin softness and resilience by producing and nurturing soft baby collagen. This set comes with the Elixir Day Cream for all skin types.', 'Face', '', '2025-03-02 19:11:56', '2025-03-20 00:29:36'),
@@ -171,12 +175,12 @@ INSERT INTO `tb_products` (`productID`, `product_name`, `product_desc`, `categor
 (26, '50ml Advance White Corrector Cream', 'No description yet.', 'Skin ', '', '2025-03-02 19:30:27', '2025-03-20 00:30:31'),
 (27, '100g Buster D’ Acne Face and Body Soap', 'No description yet.', 'Face', '', '2025-03-02 19:31:54', '2025-03-20 00:30:44'),
 (28, '100g Clear Blanc Face and Body Soap', 'A Multi-functional 17-in1 all-natural Anti-Aging, Whitening & Skin Brightening Soap. It decreases age spots on the face and smoothens the body. Regular use results in whiter and brighter skin in four weeks. ', 'Skin', '', '2025-03-02 19:32:30', '2025-03-20 00:31:09'),
-(29, '100g Pour Homme and Body Soap', 'A Moisturizing, Anti-aging, Pore Minimizing, Oil-control, and Antiperspirant soap bar specially formulated for men. It contains all-natural plant extracts and is free from harmful chemicals. Regular use results in lighter and smoother skin. \\\\r\\\\n\\\\r\\\\nActive', 'Skin', '', '2025-03-02 19:32:58', '2025-03-20 00:31:25'),
+(29, '100g Pour Homme and Body Soap', 'A Moisturizing, Anti-aging, Pore Minimizing, Oil-control, and Antiperspirant soap bar specially formulated for men. It contains all-natural plant extracts and is free from harmful chemicals. Regular use results in lighter and smoother skin.  ', 'Skin', '', '2025-03-02 19:32:58', '2025-03-24 00:51:24'),
 (30, '100g Ceramide Oat Face and Body Soap', 'No description yet.', 'Skin', '', '2025-03-02 19:33:24', '2025-03-20 00:32:00'),
-(31, 'Shampoo Bar 50g (Conditioning, Clarifying, Hair Growth & Scalp Care) with BOX', 'Formulated for Hair Fall Control &\\\\r\\\\nHair Growth.', 'Hair', '', '2025-03-02 19:34:50', '2025-03-20 00:32:14'),
-(32, 'Conditioner Bar 60g (Argan Repairing, Aloe Vera, Keratin) with BOX', 'Formulated to treat, hydrate, and\\\\r\\\\nmoisturize hair leaving it silky soft.', 'Hair', '', '2025-03-02 19:36:41', '2025-03-20 00:32:21'),
+(31, 'Shampoo Bar 50g (Conditioning, Clarifying, Hair Growth & Scalp Care) with BOX', 'Formulated for Hair Fall Control & Hair Growth.', 'Hair', '', '2025-03-02 19:34:50', '2025-03-24 00:50:45'),
+(32, 'Conditioner Bar 60g (Argan Repairing, Aloe Vera, Keratin) with BOX', 'Formulated to treat, hydrate, and moisturize hair leaving it silky soft.', 'Hair', '', '2025-03-02 19:36:41', '2025-03-24 00:50:58'),
 (33, '30ml Hair Biotin Serum', 'It can suppress root sheath aging,\\\\r\\\\nand activate root sheath and\\\\r\\\\ndermal papilla adhesion proteins.\\\\r\\\\nIt increases hair development by\\\\r\\\\nacting on hair follicles.', 'Hair', '', '2025-03-02 19:38:39', '2025-03-20 00:32:28'),
-(34, '100ml Hair Activator Spray', 'It can strengthen hair\\\\\\\\r\\\\\\\\nfollicle structure,\\\\\\\\r\\\\\\\\ndelay the aging\\\\\\\\r\\\\\\\\nprocess of hair\\\\\\\\r\\\\\\\\nfollicles, stop hair\\\\\\\\r\\\\\\\\nloss, and instantly\\\\\\\\r\\\\\\\\ngive hair moisture\\\\\\\\r\\\\\\\\nand plumpness.', 'Hair', 'uploads/67d9970765864_1742313223.png', '2025-03-02 19:39:10', '2025-03-20 00:32:35'),
+(34, '100ml Hair Activator Spray', 'It can strengthen hair follicle structure,delay the aging process of hair nfollicles, stop hair loss, and instantly give hair moisture and plumpness.', 'Hair', 'uploads/67d9970765864_1742313223.png', '2025-03-02 19:39:10', '2025-03-24 00:49:22'),
 (35, 'AMOII Parfum 85ml with BOX(HOMME)', 'No description yet.', 'Perfume', 'uploads/67d9978fcba27_1742313359.png', '2025-03-02 19:44:25', '2025-03-20 00:32:45'),
 (36, 'AMOII Parfum 60ml with BOX (HOMME)', 'No description yet.', 'Perfume', '', '2025-03-02 19:46:39', '2025-03-02 19:47:41'),
 (37, 'AMOII Parfum 85ml with BOX (FEMME)', 'AMOII which means \\\'beauty\\\' is an inspired perfume formulated with long-lasting distinct fragrances that elevate your fashion and boost your confidence with its finishing touch.\\r\\n\\r\\nCAUTION:\\r\\nKeep away from children\\\'s reach. Avoid contact with eyes', 'Perfume', 'uploads/67d997ab41804_1742313387.png', '2025-03-02 19:52:13', '2025-03-19 21:37:18'),
@@ -206,15 +210,14 @@ CREATE TABLE `tb_productvariants` (
 
 INSERT INTO `tb_productvariants` (`variant_id`, `productID`, `variant_name`, `price`, `stock`, `sku`, `is_default`, `created_at`, `updated_at`) VALUES
 (10, 8, 'Default', 220.00, 1, '', 1, '2025-03-02 18:54:08', '2025-03-20 00:16:24'),
-(11, 9, 'Default', 140.00, 1, '', 1, '2025-03-02 18:54:49', '2025-03-20 00:20:45'),
 (12, 10, 'Default', 130.00, 1, '', 1, '2025-03-02 18:55:50', '2025-03-20 00:20:54'),
 (13, 11, 'Default', 190.00, 1, '', 1, '2025-03-02 18:57:49', '2025-03-20 00:21:01'),
 (14, 12, 'Default', 720.00, 1, '', 1, '2025-03-02 18:58:23', '2025-03-20 00:21:13'),
-(15, 13, 'Default', 180.00, 1, '', 1, '2025-03-02 19:00:22', '2025-03-20 00:28:34'),
-(16, 14, 'Default', 130.00, 1, '', 1, '2025-03-02 19:01:00', '2025-03-20 00:28:41'),
-(17, 15, 'Default', 180.00, 1, '', 1, '2025-03-02 19:01:56', '2025-03-20 00:28:46'),
-(18, 16, 'default', 720.00, 1, '', 1, '2025-03-02 19:03:49', '2025-03-20 00:28:51'),
-(19, 17, 'Default', 190.00, 1, '', 1, '2025-03-02 19:04:43', '2025-03-20 00:28:56'),
+(15, 13, 'Default', 180.00, 1, '', 1, '2025-03-02 19:00:22', '2025-03-24 00:52:09'),
+(16, 14, 'Default', 130.00, 1, '', 1, '2025-03-02 19:01:00', '2025-03-24 00:54:30'),
+(17, 15, 'Default', 180.00, 1, '', 1, '2025-03-02 19:01:56', '2025-03-24 00:54:23'),
+(18, 16, 'default', 720.00, 1, '', 1, '2025-03-02 19:03:49', '2025-03-24 00:54:34'),
+(19, 17, 'Default', 190.00, 1, '', 1, '2025-03-02 19:04:43', '2025-03-24 00:54:40'),
 (20, 18, 'default', 120.00, 1, '', 1, '2025-03-02 19:05:23', '2025-03-20 00:29:04'),
 (21, 19, 'Default', 180.00, 1, '', 1, '2025-03-02 19:06:04', '2025-03-20 00:29:09'),
 (22, 20, 'Default', 720.00, 1, '', 1, '2025-03-02 19:11:56', '2025-03-20 00:29:36'),
@@ -226,12 +229,12 @@ INSERT INTO `tb_productvariants` (`variant_id`, `productID`, `variant_name`, `pr
 (28, 26, 'Default', 290.00, 1, '', 1, '2025-03-02 19:30:27', '2025-03-20 00:30:31'),
 (29, 27, 'Default', 99.00, 1, '', 1, '2025-03-02 19:31:54', '2025-03-20 00:30:44'),
 (30, 28, 'Default', 145.00, 1, '', 1, '2025-03-02 19:32:30', '2025-03-20 00:31:09'),
-(31, 29, 'Default', 112.00, 1, '', 1, '2025-03-02 19:32:58', '2025-03-20 00:31:25'),
+(31, 29, 'Default', 112.00, 1, '', 1, '2025-03-02 19:32:58', '2025-03-24 00:51:24'),
 (32, 30, 'Default', 102.00, 1, '', 1, '2025-03-02 19:33:24', '2025-03-20 00:32:00'),
-(33, 31, 'Default', 164.00, 1, '', 1, '2025-03-02 19:34:50', '2025-03-20 00:32:14'),
-(34, 32, 'Default', 266.00, 1, '', 1, '2025-03-02 19:36:41', '2025-03-20 00:32:21'),
+(33, 31, 'Default', 164.00, 1, '', 1, '2025-03-02 19:34:50', '2025-03-24 00:50:45'),
+(34, 32, 'Default', 266.00, 1, '', 1, '2025-03-02 19:36:41', '2025-03-24 00:50:58'),
 (35, 33, 'Default', 180.00, 1, '', 1, '2025-03-02 19:38:39', '2025-03-20 00:32:28'),
-(36, 34, 'Default', 230.00, 1, '', 1, '2025-03-02 19:39:10', '2025-03-20 00:32:35'),
+(36, 34, 'Default', 230.00, 1, '', 1, '2025-03-02 19:39:10', '2025-03-24 00:49:22'),
 (37, 35, 'Confident', 350.00, 1, '', 1, '2025-03-02 19:44:25', '2025-03-20 00:32:45'),
 (38, 35, 'Vibrant', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-20 00:32:45'),
 (39, 35, 'Modern', 350.00, 1, '', 0, '2025-03-02 19:44:25', '2025-03-20 00:32:45'),
@@ -364,7 +367,7 @@ CREATE TABLE `tb_vouchers` (
 --
 
 INSERT INTO `tb_vouchers` (`voucherID`, `discount`, `details`, `valid_until`, `code`, `created_at`, `updated_at`) VALUES
-(15, 5.00, 'For sets', '2025-03-27', 'FIVE', '2025-03-22 04:04:49', '2025-03-22 04:04:49');
+(15, 6.00, 'For sets', '2025-03-27', 'SIX', '2025-03-22 04:04:49', '2025-03-22 14:41:53');
 
 --
 -- Indexes for dumped tables
@@ -404,6 +407,13 @@ ALTER TABLE `tb_products`
   ADD PRIMARY KEY (`productID`);
 
 --
+-- Indexes for table `tb_productvariants`
+--
+ALTER TABLE `tb_productvariants`
+  ADD PRIMARY KEY (`variant_id`),
+  ADD KEY `fk_productID` (`productID`);
+
+--
 -- Indexes for table `tb_user`
 --
 ALTER TABLE `tb_user`
@@ -424,13 +434,13 @@ ALTER TABLE `tb_vouchers`
 -- AUTO_INCREMENT for table `tb_bestsellers`
 --
 ALTER TABLE `tb_bestsellers`
-  MODIFY `bestseller_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `bestseller_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `tb_cart`
 --
 ALTER TABLE `tb_cart`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `tb_orders`
@@ -442,7 +452,19 @@ ALTER TABLE `tb_orders`
 -- AUTO_INCREMENT for table `tb_payment_qr_codes`
 --
 ALTER TABLE `tb_payment_qr_codes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `tb_products`
+--
+ALTER TABLE `tb_products`
+  MODIFY `productID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+
+--
+-- AUTO_INCREMENT for table `tb_productvariants`
+--
+ALTER TABLE `tb_productvariants`
+  MODIFY `variant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=118;
 
 --
 -- AUTO_INCREMENT for table `tb_user`
@@ -454,7 +476,7 @@ ALTER TABLE `tb_user`
 -- AUTO_INCREMENT for table `tb_vouchers`
 --
 ALTER TABLE `tb_vouchers`
-  MODIFY `voucherID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `voucherID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- Constraints for dumped tables
@@ -471,6 +493,12 @@ ALTER TABLE `tb_bestsellers`
 --
 ALTER TABLE `tb_payment_qr_codes`
   ADD CONSTRAINT `tb_payment_qr_codes_ibfk_1` FOREIGN KEY (`uploaded_by`) REFERENCES `tb_user` (`user_id`);
+
+--
+-- Constraints for table `tb_productvariants`
+--
+ALTER TABLE `tb_productvariants`
+  ADD CONSTRAINT `fk_productID` FOREIGN KEY (`productID`) REFERENCES `tb_products` (`productID`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
