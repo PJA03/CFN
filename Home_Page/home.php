@@ -1,24 +1,7 @@
 <?php
-// Start the session (if needed)
-session_start();
-
-// Check if the user is logged in
-if (isset($_SESSION['email'])) {
-    $user = [
-        'username' => $_SESSION['username'],
-        'email' => $_SESSION['email'],
-        'first_name' => $_SESSION['first_name'],
-        'last_name' => $_SESSION['last_name'],
-        'contact_no' => $_SESSION['contact_no'],
-        'address' => $_SESSION['address'],
-        'profile_image' => $_SESSION['profile_image'],
-    ];
-} else {
-    $user = ['username' => 'Guest']; // Default for non-logged-in users
-}
-
-// Include database connection
+// Include database connection and sessions+cookies
 include '../conn.php'; 
+include '../cookie_handler.php';
 
 // Check if the search query is set
 if (isset($_GET['search'])) {
@@ -99,6 +82,14 @@ $conn->close();
             </div>
         </div>
     </header>
+
+    <!-- Cookie Consent Popup -->
+    <div id="cookie-consent">
+        <p>We use cookies to enhance your experience. Choose an option below:</p>
+        <button id="accept-all">Accept All</button>
+        <button id="accept-necessary">Accept Necessary Only</button>
+        <button id="decline">Decline</button>
+    </div>
 
     <!-- Main Banner -->
     <div class="main-banner d-flex justify-content-center align-items-center" 
@@ -307,6 +298,87 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
             return true;
         }       
     </script>
+
+<script>
+        // Cookie management functions
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                let date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            let cookieArr = document.cookie.split(';');
+            for(let i = 0; i < cookieArr.length; i++) {
+                let cookiePair = cookieArr[i].split('=');
+                if(name == cookiePair[0].trim()) {
+                    return decodeURIComponent(cookiePair[1]);
+                }
+            }
+            return null;
+        }
+
+        // Handle cookie consent
+        document.addEventListener('DOMContentLoaded', function() {
+            const consentPopup = document.getElementById('cookie-consent');
+            const acceptAllBtn = document.getElementById('accept-all');
+            const acceptNecessaryBtn = document.getElementById('accept-necessary');
+            const declineBtn = document.getElementById('decline');
+
+            // Check if user has already made a cookie choice
+            if (!getCookie('cookie_consent')) {
+                consentPopup.style.display = 'block';
+            }
+
+            acceptAllBtn.addEventListener('click', function() {
+                setCookie('cookie_consent', 'all', 365); // 1 year
+                handleCookies(true); // Set all cookies
+                consentPopup.style.display = 'none';
+            });
+            
+
+            acceptNecessaryBtn.addEventListener('click', function() {
+                setCookie('cookie_consent', 'necessary', 365); // 1 year
+                // Necessary cookies (like username) are already set in PHP
+                consentPopup.style.display = 'none';
+            });
+
+            declineBtn.addEventListener('click', function() {
+                setCookie('cookie_consent', 'declined', 365);
+                setCookie('last_visit', '', -1); // Clear last_visit
+                setCookie('first_visit', '', -1); // Clear first_visit
+                consentPopup.style.display = 'none';
+            });
+
+            // Function to handle optional cookies
+            function handleCookies(acceptAll) {
+                let currentTime = new Date().toLocaleString();
+                if (acceptAll) {
+                    let lastVisit = getCookie('last_visit');
+                    let firstVisit = getCookie('first_visit');
+
+                    if (lastVisit) {
+                        document.getElementById('last-visit').textContent = " | Last visit: " + lastVisit;
+                    }
+                    if (!firstVisit) {
+                        setCookie('first_visit', currentTime, 30);
+                    }
+                    setCookie('last_visit', currentTime, 30);
+                }
+            }
+
+            // Check existing consent and apply
+            const consent = getCookie('cookie_consent');
+            if (consent === 'all') {
+                handleCookies(true);
+            }
+        });
+    </script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="main.js"></script>

@@ -74,7 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_proof'])) {
                 unset($_SESSION['total_price']);
                 unset($_SESSION['payment_option']);
 
-                echo "<script>alert('Payment submitted successfully! Your order has been placed.'); window.location.href='../Home_Page/home.php';</script>";
+                // Redirect to success page instead of showing modal
+                header("Location: success_order.php");
                 exit();
             } else {
                 echo "<script>alert('Your order is empty.'); window.location.href='cart.php';</script>";
