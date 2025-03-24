@@ -96,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
                 <tr>
                     <td><?php echo htmlspecialchars(date('M j, Y', strtotime($order['order_date']))); ?></td>
                     <td><?php echo htmlspecialchars($order['product_name']); ?> (x<?php echo $order['quantity']; ?>)</td>
-                    <td>$<?php echo number_format($order['price_total'], 2); ?></td>
+                    <td>₱<?php echo number_format($order['price_total'], 2); ?></td>
                     <td><?php echo htmlspecialchars($order['trackingLink']); ?></td>
                     <td><?php echo htmlspecialchars($order['status']); ?></td>
                     <td>
@@ -211,8 +211,101 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
             </div>
         </div>
     </div>
+    
+    <div class="modal fade" id="cancelOrderModal" tabindex="-1" role="dialog" aria-labelledby="cancelOrderModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #1F4529;">
+                <h5 class="modal-title" id="cancelOrderModalTitle" style="font-weight: bold; color: white;">Confirm Cancellation</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to cancel this order?
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" name="orderID" id="cancelOrderId" value="">
+                <button type="button" class="btn btn-danger" style="background-color: #d34646 !important; color: white !important; border-color: #d34646 !important;">Yes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: #1f4529 !important; color: white !important; border-color: #1f4529 !important;">No</button>
+                <form id="confirmCancelForm" action="" method="POST"></form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #cancelOrderModal .btn-secondary:hover, 
+    #cancelOrderModal .btn-secondary:focus {
+        background-color: #1f4529 !important;
+        color: white !important;
+    }
+    #cancelOrderModal .btn-danger:hover, 
+    #cancelOrderModal .btn-danger:focus {
+        background-color: #d34646 !important;
+        color: white !important;
+    }
+</style>
 
     <!-- Bootstrap JS (with Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all cancel buttons
+    const cancelButtons = document.querySelectorAll('tr form button[type="submit"]');
+    const cancelOrderModal = new bootstrap.Modal(document.getElementById('cancelOrderModal'));
+    const confirmCancelForm = document.getElementById('confirmCancelForm');
+    const cancelOrderIdInput = document.getElementById('cancelOrderId');
+    const modalYesButton = document.querySelector('#cancelOrderModal .btn-danger');
+
+    // Add click event to each cancel button
+    cancelButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Get the orderID from the hidden input in the same form
+            const orderID = this.closest('form').querySelector('input[name="orderID"]').value;
+            
+            // Set the orderID in the modal's form
+            cancelOrderIdInput.value = orderID;
+            
+            // Show the modal
+            cancelOrderModal.show();
+        });
+    });
+
+    // Add click event to the "Yes" button in the modal
+    modalYesButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Submit the form with the orderID
+        confirmCancelForm.innerHTML = `
+            <input type="hidden" name="orderID" value="${cancelOrderIdInput.value}">
+        `;
+        confirmCancelForm.submit();
+    });
+});
+</script>
+
+<!-- Add this modal to the existing HTML, just before the closing </body> tag -->
+<div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelOrderModalLabel">Confirm Cancellation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to cancel this order?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <form id="confirmCancelForm" action="" method="POST">
+                    <input type="hidden" name="orderID" id="cancelOrderId" value="">
+                    <button type="submit" class="btn btn-danger">Yes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
