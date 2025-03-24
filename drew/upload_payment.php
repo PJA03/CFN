@@ -112,7 +112,7 @@ if ($qr_type) {
                         <img id="image-preview" src="" alt="Image Preview" style="max-width: 100%; max-height: 200px; display: none;">
                     </div>
                     <div class="submit-container">
-                        <button type="submit" class="btn submit-btn">Submit Payment</button>
+                        <button type="submit" class="upload-btn" style="margin-top: 50px;">Submit Payment</button>
                     </div>
                 </form>
             </div>
