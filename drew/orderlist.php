@@ -24,6 +24,24 @@ $orders = [];
 while ($row = $result->fetch_assoc()) {
     $orders[] = $row;
 }
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
+    $orderID = $_POST["orderID"];
+
+    // Delete the order only if the status is "waiting for payment"
+    $query = "DELETE FROM tb_orders WHERE orderID = ? AND status = 'waiting for payment'";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $orderID);
+    
+    if ($stmt->execute()) {
+        $_SESSION['message'] = "Order cancelled successfully.";
+    } else {
+        $_SESSION['message'] = "Failed to cancel order.";
+    }
+
+    header("Location: orderlist.php"); // Redirect back to order list
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -69,35 +87,35 @@ while ($row = $result->fetch_assoc()) {
                             <th class="payment-method-header">Payment Method</th>
                             <th class="status-header">Status</th>
                             <th class="tracking-link-header">Tracking Link</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                    <?php if (!empty($orders)): ?>
-                        <?php foreach ($orders as $order): ?>
-                            <tr>
-                                <td class="date-info"><?php echo htmlspecialchars(date('M j, Y', strtotime($order['order_date'])), ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td class="order-list-info">
-                                    <div><?php echo htmlspecialchars($order['product_name'], ENT_QUOTES, 'UTF-8'); ?></div>
-                                    <div>Quantity: <?php echo htmlspecialchars($order['quantity'], ENT_QUOTES, 'UTF-8'); ?></div>
-                                </td>
-                                <td class="total-info">₱<?php echo number_format($order['price_total'], 2); ?></td>
-                                <td class="payment-method-info">Debit/Credit Card</td>
-                                <td class="status-info"><?php echo htmlspecialchars($order['status'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td class="tracking-link-info">
-                                    <?php if (!empty($order['trackingLink'])): ?>
-                                        <a href="<?php echo htmlspecialchars($order['trackingLink'], ENT_QUOTES, 'UTF-8'); ?>">Track Order</a>
-                                    <?php else: ?>
-                                        N/A
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="6">You have no orders yet.</td>
-                        </tr>
-                    <?php endif; ?>
-                    </tbody>
+        <?php if (!empty($orders)): ?>
+            <?php foreach ($orders as $order): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars(date('M j, Y', strtotime($order['order_date']))); ?></td>
+                    <td><?php echo htmlspecialchars($order['product_name']); ?> (x<?php echo $order['quantity']; ?>)</td>
+                    <td>$<?php echo number_format($order['price_total'], 2); ?></td>
+                    <td><?php echo htmlspecialchars($order['trackingLink']); ?></td>
+                    <td><?php echo htmlspecialchars($order['status']); ?></td>
+                    <td>
+                        <?php if ($order['status'] === 'Waiting for Payment'): ?>
+                            <form action="" method="POST">
+                                <input type="hidden" name="orderID" value="<?php echo $order['orderID']; ?>">
+                                <button type="submit" style="background-color: red; color: white; border: none; padding: 5px 10px;">Cancel</button>
+                            </form>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="7">You have no orders yet.</td>
+            </tr>
+        <?php endif; ?>
+    </tbody>
+
                 </table>
             </div>
         </section>
