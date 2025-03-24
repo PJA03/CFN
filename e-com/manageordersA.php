@@ -141,6 +141,13 @@ require_once 'auth_check.php';
     .copy-icon:hover {
         color: #0d6efd; /* Bootstrap's primary color on hover */
     }
+    /* Style for the cancelled message */
+    #cancelledMessage {
+      display: none;
+      color: #dc3545; /* Bootstrap's danger color */
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
   </style>
 </head>
 
@@ -209,6 +216,8 @@ require_once 'auth_check.php';
     <div class="popup-content">
       <span class="close" onclick="closePopup()">×</span>
       <h4>Order Details</h4>
+      <!-- Add a message area for cancelled orders -->
+      <div id="cancelledMessage">This order is cancelled and cannot be modified.</div>
       <div class="table-container">
         <table class="table table-bordered">
           <thead class="table-success">
@@ -261,7 +270,7 @@ require_once 'auth_check.php';
         </table>
       </div>
       <div class="mt-3 text-end">
-        <button type="button" class="btn btn-primary" onclick="saveChanges()">Save changes</button>
+        <button type="button" class="btn btn-primary" id="saveChangesButton" onclick="saveChanges()">Save changes</button>
         <button type="button" class="btn btn-secondary" onclick="discardChanges()">Discard changes</button>
       </div>
     </div>
@@ -369,6 +378,36 @@ require_once 'auth_check.php';
           const receiptPath = data.payment_proof ? `../uploads/receipts/${data.payment_proof}` : "images/placeholder.jpg";
           document.getElementById("receiptImage").src = receiptPath;
 
+          // Check if the order is cancelled
+          const isCancelled = data.status === "Cancelled";
+          const statusSelect = document.getElementById("status");
+          const confirmPaymentCheckbox = document.getElementById("confirmPayment");
+          const trackingLinkInput = document.getElementById("trackingLink");
+          const saveChangesButton = document.getElementById("saveChangesButton");
+          const cancelledMessage = document.getElementById("cancelledMessage");
+
+          if (isCancelled) {
+            // Show the cancelled message
+            cancelledMessage.style.display = "block";
+            // Disable all editable fields
+            statusSelect.disabled = true;
+            confirmPaymentCheckbox.disabled = true;
+            trackingLinkInput.disabled = true;
+            // Disable the "Save changes" button
+            saveChangesButton.disabled = true;
+            saveChangesButton.classList.add("disabled");
+          } else {
+            // Hide the cancelled message
+            cancelledMessage.style.display = "none";
+            // Enable all editable fields
+            statusSelect.disabled = false;
+            confirmPaymentCheckbox.disabled = false;
+            trackingLinkInput.disabled = false;
+            // Enable the "Save changes" button
+            saveChangesButton.disabled = false;
+            saveChangesButton.classList.remove("disabled");
+          }
+
           isChanged = false;
           document.getElementById("orderPopup").style.display = "flex";
         })
@@ -462,6 +501,18 @@ require_once 'auth_check.php';
       const isPaymentConfirmed = document.getElementById("confirmPayment").checked ? 1 : 0;
       const trackingLink = document.getElementById("trackingLink").value.trim();
 
+      // Prevent cancellation if the order is in "Processing", "Shipped", or "Delivered"
+      if (status === "Cancelled" && ["Processing", "Shipped", "Delivered"].includes(originalStatus)) {
+        Swal.fire({
+          title: "Cannot Cancel Order",
+          text: "This order cannot be cancelled because it is currently in '" + originalStatus + "' status. Cancellation is only allowed for orders in 'Waiting for Payment' status.",
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+        return;
+      }
+
+      // Existing validation for status transitions
       if (isPaymentConfirmed && status === "Waiting for Payment") {
         status = "Processing";
         document.getElementById("status").value = status;
