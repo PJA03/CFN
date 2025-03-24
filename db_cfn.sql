@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 23, 2025 at 06:17 PM
+-- Generation Time: Mar 24, 2025 at 02:42 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -74,11 +74,8 @@ INSERT INTO `tb_cart` (`cart_id`, `user_id`, `productID`, `quantity`, `price`) V
 (18, 79, 9, 1, 140.00),
 (19, 79, 9, 1, 140.00),
 (20, 79, 9, 1, 140.00),
-(22, 72, 10, 1, 130.00),
-(23, 72, 10, 1, 130.00),
-(24, 72, 10, 1, 130.00),
-(25, 72, 10, 1, 130.00),
-(26, 72, 11, 1, 190.00);
+(28, 91, 10, 1, 130.00),
+(29, 91, 13, 1, 180.00);
 
 -- --------------------------------------------------------
 
@@ -111,7 +108,10 @@ CREATE TABLE `tb_orders` (
 
 INSERT INTO `tb_orders` (`orderID`, `order_date`, `productID`, `product_name`, `user_id`, `email`, `first_name`, `last_name`, `quantity`, `status`, `payment_option`, `payment_proof`, `isApproved`, `price_total`, `trackingLink`, `delivered_date`) VALUES
 (3, '2025-03-21 16:16:52', 10, 'Buster D’ Acne Serum 30ml', 89, 'princessjamie.galias.cics@ust.edu.ph', 'Arah', '0', 1, 'Delivered', '0', '67dd2074ef482-484292276_507224642440350_5531290597758342471_n.jpg', 1, 130, '930000123456', '2025-03-21 17:16:18'),
-(4, '2025-03-21 16:24:38', 11, 'Elixir Day Cream SPF50 PA+++ 50g', 89, 'princessjamie.galias.cics@ust.edu.ph', 'Arah', '0', 1, 'Shipped', '0', '67dd2246288bf-484292276_507224642440350_5531290597758342471_n.jpg', 1, 190, '', NULL);
+(4, '2025-03-21 16:24:38', 11, 'Elixir Day Cream SPF50 PA+++ 50g', 89, 'princessjamie.galias.cics@ust.edu.ph', 'Arah', '0', 1, 'Shipped', '0', '67dd2246288bf-484292276_507224642440350_5531290597758342471_n.jpg', 1, 190, '', NULL),
+(5, '2025-03-24 20:01:41', 10, 'Buster D’ Acne Serum 30ml', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 4, 'Processing', '0', '67e149a57849b-bank qr.jpg', 1, 1430, '', NULL),
+(6, '2025-03-24 20:01:41', 11, 'Elixir Day Cream SPF50 PA+++ 50g', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Waiting for Payment', '0', '67e149a57849b-bank qr.jpg', 0, 1430, NULL, NULL),
+(7, '2025-03-24 20:01:41', 12, 'SET + Box Packaging', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Waiting for Payment', '0', '67e149a57849b-bank qr.jpg', 0, 1430, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -123,7 +123,7 @@ CREATE TABLE `tb_payment_qr_codes` (
   `id` int(11) NOT NULL,
   `payment_type` varchar(50) NOT NULL,
   `qr_image` varchar(255) NOT NULL,
-  `uploaded_by` int(11) DEFAULT NULL,
+  `uploaded_by` varchar(30) DEFAULT NULL,
   `upload_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -132,7 +132,8 @@ CREATE TABLE `tb_payment_qr_codes` (
 --
 
 INSERT INTO `tb_payment_qr_codes` (`id`, `payment_type`, `qr_image`, `uploaded_by`, `upload_date`) VALUES
-(1, 'bank_transfer_bpi', 'bank_transfer_bpi_67dee520e9add.jpg', NULL, '2025-03-22 16:28:16');
+(1, 'bank_transfer_bpi', 'bank_transfer_bpi_67e148a573adc.jpg', 'Admin', '2025-03-24 11:57:25'),
+(4, 'gcash', 'gcash_67e148adcedcc.jpg', 'Admin', '2025-03-24 11:57:33');
 
 -- --------------------------------------------------------
 
@@ -341,10 +342,11 @@ CREATE TABLE `tb_user` (
 --
 
 INSERT INTO `tb_user` (`user_id`, `username`, `email`, `pass`, `first_name`, `last_name`, `contact_no`, `address`, `role`, `profile_image`, `validated`, `token`, `token_created_at`) VALUES
-(72, 'ironman123', 'pjarahgalias27@gmail.com', '$2y$10$ADKB6wCkyA4XlCiZaAGrn.lxH/Hp3ndcNjU8olRh6aQTC0024ymHK', 'Arah', 'Galias', '09669463472', 'Blk 1 Lot 1 I bañezSt', NULL, '../uploads/ey.png', 1, '8496', '2025-03-05 13:10:47'),
-(79, 'Admin', 'galias.pja@gmail.com', '$2y$10$xZh8zzSPbdyxUa7cng7aDu7LsPboC1x29eitjMxjd/gTU0GP3bcL.', NULL, NULL, NULL, NULL, 'admin', NULL, 1, '', '2025-03-10 19:50:28'),
+(72, 'ironman123', 'pjarahgalias27@gmail.com', '$2y$10$ADKB6wCkyA4XlCiZaAGrn.lxH/Hp3ndcNjU8olRh6aQTC0024ymHK', 'Arah', 'Galias', '09669463472', 'Makati', NULL, '../uploads/ey.png', 1, '8496', '2025-03-05 13:10:47'),
+(79, 'Admin', 'galias.pja@gmail.com', '$2y$10$xZh8zzSPbdyxUa7cng7aDu7LsPboC1x29eitjMxjd/gTU0GP3bcL.', 'Arah', 'Galias', '09669463472', 'dyan lang', 'admin', NULL, 1, '', '2025-03-10 19:50:28'),
 (89, 'pjarahgalias27', 'princessjamie.galias.cics@ust.edu.ph', '$2y$10$iSWy.9Kp9yJ7mZD4q9/THOGG31y3aRyXI98axhH4Ahb0Vj2MUYfYi', 'Arah', 'Galias', '09669463472', 'Blk 1 Lot 1 Ibañez St', 'user', '../uploads/100ml-frost-glass-bottle-silver-spray-1.png', 1, '', '2025-03-19 07:05:30'),
-(90, 'iSmooth', 'judesamonte1@gmail.com', '$2y$10$BE2XGuhaWyQT4MMoAhM.xOY5AhiAa8YVCbMNEX2ZrXPHlssSwCJqS', NULL, NULL, NULL, NULL, 'user', NULL, 0, '818349', '2025-03-20 18:10:25');
+(90, 'iSmooth', 'judesamonte1@gmail.com', '$2y$10$BE2XGuhaWyQT4MMoAhM.xOY5AhiAa8YVCbMNEX2ZrXPHlssSwCJqS', NULL, NULL, NULL, NULL, 'user', NULL, 0, '818349', '2025-03-20 18:10:25'),
+(91, 'bran', 'brandonfredrick.gomez.cics@ust.edu.ph', '$2y$10$GgrBN9l.3oi9erioJ51H6OkI/Az0kCg8zsD3f3ly1EIQhpJemnMla', NULL, NULL, NULL, NULL, 'user', NULL, 1, '', '2025-03-24 13:38:43');
 
 -- --------------------------------------------------------
 
@@ -417,7 +419,8 @@ ALTER TABLE `tb_productvariants`
 -- Indexes for table `tb_user`
 --
 ALTER TABLE `tb_user`
-  ADD PRIMARY KEY (`user_id`);
+  ADD PRIMARY KEY (`user_id`),
+  ADD UNIQUE KEY `uk_username` (`username`);
 
 --
 -- Indexes for table `tb_vouchers`
@@ -434,25 +437,25 @@ ALTER TABLE `tb_vouchers`
 -- AUTO_INCREMENT for table `tb_bestsellers`
 --
 ALTER TABLE `tb_bestsellers`
-  MODIFY `bestseller_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `bestseller_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `tb_cart`
 --
 ALTER TABLE `tb_cart`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `tb_orders`
 --
 ALTER TABLE `tb_orders`
-  MODIFY `orderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `orderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `tb_payment_qr_codes`
 --
 ALTER TABLE `tb_payment_qr_codes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `tb_products`
@@ -470,7 +473,7 @@ ALTER TABLE `tb_productvariants`
 -- AUTO_INCREMENT for table `tb_user`
 --
 ALTER TABLE `tb_user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
 
 --
 -- AUTO_INCREMENT for table `tb_vouchers`
@@ -492,7 +495,7 @@ ALTER TABLE `tb_bestsellers`
 -- Constraints for table `tb_payment_qr_codes`
 --
 ALTER TABLE `tb_payment_qr_codes`
-  ADD CONSTRAINT `tb_payment_qr_codes_ibfk_1` FOREIGN KEY (`uploaded_by`) REFERENCES `tb_user` (`user_id`);
+  ADD CONSTRAINT `tb_payment_qr_codes_ibfk_1` FOREIGN KEY (`uploaded_by`) REFERENCES `tb_user` (`username`);
 
 --
 -- Constraints for table `tb_productvariants`
