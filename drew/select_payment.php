@@ -89,8 +89,8 @@ while ($row = $result->fetch_assoc()) {
             <div class="modal-header" style="background-color: #1F4529;">
                 <h5 class="modal-title" id="privacyNoticeModalTitle" style="font-weight: bold; color: white;">PRIVACY NOTICE</h5>
             </div>
-            <div class="modal-body">
-                <p>We value your privacy and are committed to protecting your personal information.</p>
+            <div class="modal-body" style="text-align: justify;">
+            <p style="text-align: center; font-weight: bold;">We value your privacy and are committed to protecting your personal information.</p>
                 <p>When you upload your payment details, they are securely encrypted and used solely for processing your transactions. We do not store sensitive payment information such as card details beyond the necessary processing period, and all data is handled in compliance with applicable data protection laws.</p>
                 <p>If you have questions about how we handle your data, please <strong>contact us</strong> at cosmeticasfraichenaturale@gmail.com</p>
             </div>
