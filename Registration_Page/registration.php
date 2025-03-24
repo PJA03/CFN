@@ -81,12 +81,12 @@
                             </span>
                         </div>
                         </div>
-
-                        <span class="label mt-3">By creating an account, you agree to our 
+                        <input type="checkbox" id="accept-terms" required>
+                        <span class="label mt-3">To create an account, kindly read and accept the
                             <button type="button" class="btn-noBG" data-bs-toggle="modal" data-bs-target="#ModalTerms">
                             Terms
                         </button>
-                         and acknowledge our
+                         and
                         <button type="button" class="btn-noBG" data-bs-toggle="modal" data-bs-target="#ModalPrivacy">
                             Privacy Policy.
                         </button>
@@ -144,8 +144,7 @@ We may update these terms at any time. Continued use of the website means you ac
 For any questions, contact us at cosmeticasfraichenaturale@gmail.com.
                 </div>
                 <div class="modal-footer">
-                <button type="button" class="btn" id="accept-terms" data-bs-dismiss="modal">Accept</button>
-                <button type="button" class="btn" id="deny-terms" data-bs-dismiss="modal">Deny</button>
+                <button type="button" class="btn" id="deny-terms" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -178,8 +177,7 @@ We may update this policy. Continued use of our services after updates means you
 For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn" id="accept-privacy" data-bs-dismiss="modal">Accept</button>
-                    <button type="button" class="btn" id="deny-privacy" data-bs-dismiss="modal">Deny</button>
+                    <button type="button" class="btn" id="deny-privacy" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -470,66 +468,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const registerButton = document.querySelector("input[name='signup']");
-        const acceptButton = document.getElementById("accept-terms");
-        const denyButton = document.getElementById("deny-terms");
+    const registrationForm = document.getElementById("registrationForm");
+    const acceptTermsCheckbox = document.getElementById("accept-terms");
+    const registerButton = document.querySelector("input[name='signup']");
 
-        // Initially disable the register button
-        registerButton.disabled = true;
+    // Disable the button by default
+    registerButton.disabled = true;
 
-        // Enable the register button when "Accept" is clicked
-        acceptButton.addEventListener("click", function () {
-            registerButton.disabled = false;
-        });
-
-        // Disable the register button when "Deny" is clicked
-        denyButton.addEventListener("click", function () {
-            registerButton.disabled = true;
-        });
+    // Enable or disable the button based on the checkbox state
+    acceptTermsCheckbox.addEventListener("change", function () {
+        registerButton.disabled = !this.checked;
     });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const registerButton = document.querySelector("input[name='signup']");
-        const acceptTermsButton = document.getElementById("accept-terms");
-        const denyTermsButton = document.getElementById("deny-terms");
-        const acceptPrivacyButton = document.getElementById("accept-privacy");
-        const denyPrivacyButton = document.getElementById("deny-privacy");
 
-        // Track the acceptance state of both modals
-        let termsAccepted = false;
-        let privacyAccepted = false;
-
-        // Function to update the state of the register button
-        function updateRegisterButtonState() {
-            registerButton.disabled = !(termsAccepted && privacyAccepted);
+    // Prevent form submission if the checkbox is not checked
+    registrationForm.addEventListener("submit", function (event) {
+        if (!acceptTermsCheckbox.checked) {
+            event.preventDefault(); // Prevent form submission
+            Swal.fire({
+                icon: "error",
+                title: "Terms Not Accepted",
+                text: "You must accept the Terms and Privacy Policy to register.",
+                confirmButtonColor: "#1F4529"
+            });
         }
-
-        // Handle "Accept" and "Deny" for Terms and Conditions
-        acceptTermsButton.addEventListener("click", function () {
-            termsAccepted = true;
-            updateRegisterButtonState();
-        });
-
-        denyTermsButton.addEventListener("click", function () {
-            termsAccepted = false;
-            updateRegisterButtonState();
-        });
-
-        // Handle "Accept" and "Deny" for Privacy Policy
-        acceptPrivacyButton.addEventListener("click", function () {
-            privacyAccepted = true;
-            updateRegisterButtonState();
-        });
-
-        denyPrivacyButton.addEventListener("click", function () {
-            privacyAccepted = false;
-            updateRegisterButtonState();
-        });
-
-        // Initially disable the register button
-        registerButton.disabled = true;
     });
+});
 </script>
 <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -574,7 +537,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
  
-    </script>    
+    </script>   
 
     <style>
     #eyeicon {

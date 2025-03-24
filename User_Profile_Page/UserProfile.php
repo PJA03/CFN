@@ -71,7 +71,7 @@ if (isset($_POST['logout'])) {
                 <a href="UserProfile.php" class="active">Profile</a>
                 <a href="../drew/orderlist.php" class="transparent-button">Orders</a>
                 <form method="post" action="">
-                    <button class="transparent-button" name="logout">Logout</button>
+                    <button class="logout-button" name="logout">Logout</button>
                 </form>
             </div>
             <div class="col-md-8 right-panel container">

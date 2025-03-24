@@ -1,3 +1,8 @@
+<?php
+session_start();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,19 +22,27 @@
     </style>
 </head>
 <body>
-        <div class="card">
+        <div class="card ">
             <img src="../Resources/cfn_logo.png" class="logo" alt="Naturale">
             <h1 class="h1 text-center">Password Reset</h1>
             <form action="#" method="post">
-                <!-- //TODO: -->
-                <input type="password" name="password1" id="password1" class="form-control" placeholder="Enter new password" 
+                <div class="password-section">
+                    <input type="password" name="password1" id="password1" class="form-control" placeholder="Enter new password" 
                             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$" 
                             title="Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character."
                             required>
-                <input type="password" name="password2" id="password1" class="form-control" placeholder="Confirm new password" 
+                <span id="togglepassword" class="input-group-text">
+                    <img src="eye-close.jpg" id="eyeicon-login1" class="eyeicon">
+                </span>            
+                <input type="password" name="password2" id="password2" class="form-control" placeholder="Confirm new password" 
                             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$" 
                             title="Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character."
                             required>
+                <span id="togglepassword" class="input-group-text">
+                    <img src="eye-close.jpg" id="eyeicon-login2" class="eyeicon">
+                </span>
+                </div>
+                
                 <br>
                 <p style="width: 60%; text-align:justify; line-height: 20px; font-size: 13px; margin-top: 8px;" class="be-vietnam-pro-thin-italic">Password must contain a mix of numbers, letters, and special characters.</p> 
                 <div class="d-flex justify-content-center align-items-center">
@@ -38,13 +51,53 @@
                 <br>        
             </form>
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const togglePassword = document.getElementById("eyeicon-login1"); // Target the toggle icon
+                const passwordInput = document.getElementById("password1"); // Target the password input field
+
+                togglePassword.addEventListener("click", function () {
+                    // Toggle the type attribute between "password" and "text"
+                    const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+                    passwordInput.setAttribute("type", type);
+
+                    // Toggle the icon image
+                    if (type === "password") {
+                        togglePassword.src = "eye-close.jpg"; // Set to "eye-close" icon
+                    } else {
+                        togglePassword.src = "eye-open.jpg"; // Set to "eye-open" icon
+                    }
+                });
+            });
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const togglePassword = document.getElementById("eyeicon-login2"); // Target the toggle icon
+                const passwordInput = document.getElementById("password2"); // Target the password input field
+
+                togglePassword.addEventListener("click", function () {
+                    // Toggle the type attribute between "password" and "text"
+                    const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+                    passwordInput.setAttribute("type", type);
+
+                    // Toggle the icon image
+                    if (type === "password") {
+                        togglePassword.src = "eye-close.jpg"; // Set to "eye-close" icon
+                    } else {
+                        togglePassword.src = "eye-open.jpg"; // Set to "eye-open" icon
+                    }
+                });
+            });
+
+
+
+        </script>
 </body>
 </html>
 
 <!-- 1/28/25: fixed spacings, added hover -->
 
 <?php
-    session_start();
+    
     require_once "../conn.php";
     require_once "emailver.php";
 
