@@ -568,3 +568,64 @@ footer {
     max-height: 50vh; /* Adjust height */
     overflow-y: auto; /* Enables scrolling if content is too long */
 }
+
+/* Cookie Consent Popup */
+#cookie-consent {
+    position: fixed;
+    bottom: 20px; /* Distance from the bottom */
+    right: 20px; /* Distance from the right */
+    background-color: #E8ECD5; /* White background for contrast */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    z-index: 1000; /* Ensure it stays above other content */
+    max-width: 450px; /* Limit width for readability */
+    max-height: 300px;
+    text-align: center;
+    font-family: "Be Vietnam Pro", serif;
+    font-weight: bolder;
+    color: #1F4529; /* Dark green text for consistency */
+    display: none; /* Hidden by default, shown via JS when needed */
+}
+
+#cookie-consent p {
+    margin-bottom: 15px; /* Space between text and buttons */
+    font-size: 16px;
+}
+
+#cookie-consent button {
+    padding: 8px 16px;
+    margin: 5px; /* Spacing between buttons */
+    border: none;
+    border-radius: 5px;
+    font-family: "Bebas Neue", serif;
+    font-size: 18px;
+    color: #FFFFFF; /* White text for buttons */
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease; /* Smooth transitions */
+}
+
+#cookie-consent button:hover {
+    transform: scale(1.05); /* Slight scale effect on hover, matching other elements */
+}
+#accept-all {
+    background-color: #1F4529; /* Dark green from header/footer */
+}
+#accept-all:hover {
+    background-color: #b1d18c; /* Orange on hover for contrast */
+    color: #1F4529;
+}
+#accept-necessary {
+    background-color: #b3a647; /* Lighter green from category cards */
+}
+#accept-necessary:hover {
+    background-color: #d4c872; /* Beige on hover for subtle contrast */
+    color: #3b3507; 
+}
+#decline {
+    background-color: maroon; /* Orange to indicate action */
+}
+#decline:hover {
+    background-color: lightcoral; /* Dark green on hover for reversal effect */
+    color: maroon;
+}
