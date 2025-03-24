@@ -6,7 +6,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Fetch existing QR codes
+// Fetch the username of the logged-in admin from the session
+$logged_in_user = isset($_SESSION['username']) ? $_SESSION['username'] : 'Unknown';
+
+// Fetch existing QR codes (without uploaded_by since we don't need to display it)
 $query = "SELECT id, payment_type, qr_image FROM tb_payment_qr_codes";
 $result = $conn->query($query);
 $qr_codes = [];
@@ -30,11 +33,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['qr_image']) && !isse
         $file_path = $upload_dir . $file_name;
 
         if (move_uploaded_file($file['tmp_name'], $file_path)) {
-            $query = "INSERT INTO tb_payment_qr_codes (payment_type, qr_image) 
-                      VALUES (?, ?) 
-                      ON DUPLICATE KEY UPDATE qr_image = ?, upload_date = NOW()";
+            // Insert the new QR code with the uploaded_by field
+            $query = "INSERT INTO tb_payment_qr_codes (payment_type, qr_image, uploaded_by) 
+                      VALUES (?, ?, ?) 
+                      ON DUPLICATE KEY UPDATE qr_image = ?, upload_date = NOW(), uploaded_by = ?";
             $stmt = $conn->prepare($query);
-            $stmt->bind_param("sss", $payment_type, $file_name, $file_name);
+            $stmt->bind_param("sssss", $payment_type, $file_name, $logged_in_user, $file_name, $logged_in_user);
             $stmt->execute();
             echo "<script>
                     document.addEventListener('DOMContentLoaded', function() {
@@ -101,10 +105,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_id'])) {
                     unlink($upload_dir . $old_image);
                 }
 
-                // Update the database with the new image
-                $query = "UPDATE tb_payment_qr_codes SET payment_type = ?, qr_image = ?, upload_date = NOW() WHERE id = ?";
+                // Update the database with the new image and uploaded_by
+                $query = "UPDATE tb_payment_qr_codes SET payment_type = ?, qr_image = ?, upload_date = NOW(), uploaded_by = ? WHERE id = ?";
                 $stmt = $conn->prepare($query);
-                $stmt->bind_param("ssi", $payment_type, $file_name, $edit_id);
+                $stmt->bind_param("sssi", $payment_type, $file_name, $logged_in_user, $edit_id);
                 $stmt->execute();
                 echo "<script>
                         document.addEventListener('DOMContentLoaded', function() {
@@ -143,10 +147,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_id'])) {
                   </script>";
         }
     } else {
-        // Update only the payment type if no new file is uploaded
-        $query = "UPDATE tb_payment_qr_codes SET payment_type = ?, upload_date = NOW() WHERE id = ?";
+        // Update only the payment type and uploaded_by if no new file is uploaded
+        $query = "UPDATE tb_payment_qr_codes SET payment_type = ?, upload_date = NOW(), uploaded_by = ? WHERE id = ?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("si", $payment_type, $edit_id);
+        $stmt->bind_param("ssi", $payment_type, $logged_in_user, $edit_id);
         $stmt->execute();
         echo "<script>
                 document.addEventListener('DOMContentLoaded', function() {
@@ -338,12 +342,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_id'])) {
                 <div class="modal-field">
                     <label for="edit_payment_type" class="form-label">Payment Method</label>
                     <select name="payment_type" id="edit_payment_type" class="form-select" required>
-                                <option value="gcash">GCash</option>
-                                <option value="paymaya">PayMaya</option>
-                                <option value="instapay">Instapay</option>
-                                <option value="bank_transfer_bpi">Bank Transfer (BPI)</option>
-                                <option value="bank_transfer_pnb">Bank Transfer (PNB)</option>
-                                <option value="bank_transfer_bdo">Bank Transfer (BDO)</option>
+                        <option value="gcash">GCash</option>
+                        <option value="paymaya">PayMaya</option>
+                        <option value="instapay">Instapay</option>
+                        <option value="bank_transfer_bpi">Bank Transfer (BPI)</option>
+                        <option value="bank_transfer_pnb">Bank Transfer (PNB)</option>
+                        <option value="bank_transfer_bdo">Bank Transfer (BDO)</option>
                     </select>
                 </div>
                 <div class="modal-field">

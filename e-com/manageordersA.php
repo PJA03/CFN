@@ -114,6 +114,10 @@ require_once 'auth_check.php';
         width: 100%; /* Full width for the filter dropdown on small screens */
       }
     }
+    /* Ensure SweetAlert2 appears on top */
+    .swal2-container {
+      z-index: 10001 !important;
+    }
   </style>
 </head>
 
@@ -479,6 +483,13 @@ require_once 'auth_check.php';
       })
       .then(result => {
         if (result.success) {
+          // Close the modal first
+          document.getElementById("orderPopup").style.display = "none";
+          currentOrderID = null;
+          originalStatus = '';
+          isChanged = false;
+
+          // Then show the SweetAlert2 notification
           Swal.fire({
             title: "Success!",
             text: result.message,
@@ -486,7 +497,6 @@ require_once 'auth_check.php';
             confirmButtonText: "OK",
           }).then(() => {
             loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
-            closePopup();
           });
         } else {
           Swal.fire({
