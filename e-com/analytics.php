@@ -64,9 +64,9 @@ require_once 'auth_check.php';
             </nav>
             <div class="date-picker mt-4">
                 <label for="start">Start Date:</label>
-                <input type="date" id="start" class="form-control mb-3" value="2024-10-01">
+                <input type="date" id="start" class="form-control mb-3" value="2025-03-01">
                 <label for="end">End Date:</label>
-                <input type="date" id="end" class="form-control" value="2024-10-31">
+                <input type="date" id="end" class="form-control" value="2025-03-31">
                 <button id="filterBtn" class="btn btn-success mt-2 w-100">Filter Data <span id="filterSpinner" class="loading-spinner" style="display: none;"></span></button>
             </div>
             <div class="mt-auto">
