@@ -43,13 +43,16 @@ require_once 'auth_check.php';
       <?php
       require_once '../conn.php';
 
-      $pendingQuery = "SELECT COUNT(*) as pending FROM tb_orders WHERE status = 'Waiting for Payment' OR isApproved = 0";
+      // Pending Orders (updated to use AND instead of OR)
+      $pendingQuery = "SELECT COUNT(*) as pending FROM tb_orders WHERE status = 'Waiting for Payment' AND isApproved = 0";
       $pendingResult = $conn->query($pendingQuery);
       $pendingOrders = $pendingResult->fetch_assoc()['pending'] ?? 0;
 
+      // Top Selling Product (updated to only count approved payments)
       $topSellingQuery = "SELECT product_name, SUM(quantity) as total_sold 
                           FROM tb_orders 
                           WHERE status != 'Cancelled' 
+                          AND isApproved = 1 
                           GROUP BY productID, product_name 
                           ORDER BY total_sold DESC 
                           LIMIT 1";
@@ -57,21 +60,25 @@ require_once 'auth_check.php';
       $topSelling = $topSellingResult->fetch_assoc();
       $topSellingProduct = $topSelling ? $topSelling['product_name'] : 'N/A';
 
+      // Month Revenue (updated to only count approved payments)
       $monthRevenueQuery = "SELECT SUM(price_total) as revenue 
                             FROM tb_orders 
                             WHERE status != 'Cancelled' 
+                            AND isApproved = 1 
                             AND MONTH(order_date) = MONTH(CURDATE()) 
                             AND YEAR(order_date) = YEAR(CURDATE())";
       $monthRevenueResult = $conn->query($monthRevenueQuery);
       $monthRevenue = $monthRevenueResult->fetch_assoc()['revenue'] ?? 0;
       $monthRevenueFormatted = '₱' . number_format($monthRevenue, 2);
 
+      // All Delivered Orders
       $deliveredQuery = "SELECT COUNT(*) as delivered 
                          FROM tb_orders 
                          WHERE status = 'Delivered'";
       $deliveredResult = $conn->query($deliveredQuery);
       $totalDelivered = $deliveredResult->fetch_assoc()['delivered'] ?? 0;
 
+      // Total Orders
       $totalOrdersQuery = "SELECT COUNT(*) as total FROM tb_orders";
       $totalOrdersResult = $conn->query($totalOrdersQuery);
       $totalOrders = $totalOrdersResult->fetch_assoc()['total'] ?? 0;
