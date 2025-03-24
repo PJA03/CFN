@@ -22,11 +22,12 @@ session_start();
     </style>
 </head>
 <body>
-        <div class="card ">
+        <div class="card">
             <img src="../Resources/cfn_logo.png" class="logo" alt="Naturale">
             <h1 class="h1 text-center">Password Reset</h1>
             <form action="#" method="post">
-                <div class="password-section">
+                <div class="mb-3 password-section">
+                    <div class = input-group>
                     <input type="password" name="password1" id="password1" class="form-control" placeholder="Enter new password" 
                             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$" 
                             title="Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character."
@@ -34,6 +35,11 @@ session_start();
                 <span id="togglepassword" class="input-group-text">
                     <img src="eye-close.jpg" id="eyeicon-login1" class="eyeicon">
                 </span>            
+                </div>
+                </div>
+
+                <div class="mb-3 password-section">
+                    <div class = input-group>
                 <input type="password" name="password2" id="password2" class="form-control" placeholder="Confirm new password" 
                             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$" 
                             title="Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character."
@@ -42,8 +48,8 @@ session_start();
                     <img src="eye-close.jpg" id="eyeicon-login2" class="eyeicon">
                 </span>
                 </div>
+                </div>
                 
-                <br>
                 <p style="width: 60%; text-align:justify; line-height: 20px; font-size: 13px; margin-top: 8px;" class="be-vietnam-pro-thin-italic">Password must contain a mix of numbers, letters, and special characters.</p> 
                 <div class="d-flex justify-content-center align-items-center">
                     <button type="submit" class="reset" name="reset">Reset Password</button>
@@ -91,6 +97,29 @@ session_start();
 
 
         </script>
+
+<style>
+    #eyeicon {
+        width: 20px; 
+        height: 20px; 
+        cursor: pointer;
+    }
+
+    .form-control {
+    width: 80%; /* Ensures uniform width */
+    height: 50px; /* Adjust height to match other inputs */
+    }
+
+    .input-group-text {
+    width: 50px; /* Ensures uniform width */
+    height: 50px; /* Adjust height to match other inputs */
+    }
+
+    .input-group-text img {
+    width: 18px; 
+    height: 18px;
+    }
+</style>
 </body>
 </html>
 
