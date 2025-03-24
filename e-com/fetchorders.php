@@ -20,7 +20,7 @@ $sort = isset($_GET['sort']) ? $_GET['sort'] : 'orderID';
 $order = isset($_GET['order']) ? $_GET['order'] : 'asc';
 
 // Validate sort and order parameters
-$validSortFields = ['orderID', 'quantity', 'price_total', 'status', 'trackingLink']; // Add valid fields
+$validSortFields = ['orderID', 'quantity', 'price_total', 'status', 'trackingLink'];
 $validOrder = ['asc', 'desc'];
 $sort = in_array($sort, $validSortFields) ? $sort : 'orderID';
 $order = in_array($order, $validOrder) ? $order : 'asc';
@@ -60,15 +60,18 @@ while ($row = $result->fetch_assoc()) {
     // Handle null address by defaulting to empty string
     $address = $row['address'] ?? '';
     $truncatedAddress = strlen($address) > 20 ? substr($address, 0, 20) . '...' : $address;
+    $trackingLink = $row['trackingLink'] ? "<a href='{$row['trackingLink']}' target='_blank'>{$row['trackingLink']}</a>" : "-";
     echo "<tr>
             <td>{$row['orderID']}</td>
             <td>{$row['quantity']}</td>
             <td>₱{$row['price_total']}</td>
             <td>{$row['status']}</td>
-            <td><a href='{$row['trackingLink']}' target='_blank'>{$row['trackingLink']}</a></td>
+            <td>$trackingLink</td>
             <td>
-                <span title='{$address}'>$truncatedAddress</span>
-                <button class='btn btn-secondary btn-sm mt-1' onclick=\"copyToClipboard('{$address}')\">Copy Address</button>
+                <div class='address-container'>
+                    <span class='address-text' title='{$address}'>$truncatedAddress</span>
+                    <i class='bi bi-clipboard copy-icon' onclick=\"copyToClipboard('{$address}')\" title='Copy to Clipboard'></i>
+                </div>
             </td>
             <td>
                 <button class='btn btn-info btn-sm' onclick='openPopup({$row['orderID']})'>View Details</button>
@@ -80,13 +83,3 @@ echo '</tbody>';
 $stmt->close();
 $conn->close();
 ?>
-
-<script>
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        alert('Address copied to clipboard!');
-    }).catch(err => {
-        console.error('Failed to copy: ', err);
-    });
-}
-</script>

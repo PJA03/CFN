@@ -118,6 +118,29 @@ require_once 'auth_check.php';
     .swal2-container {
       z-index: 10001 !important;
     }
+    /* Style for the address container */
+    .address-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        gap: 10px; /* Space between address and icon */
+    }
+    /* Style for the address text */
+    .address-text {
+        flex: 1; /* Take up remaining space */
+        word-wrap: break-word; /* Ensure long addresses wrap */
+    }
+    /* Style for the copy icon */
+    .copy-icon {
+        cursor: pointer;
+        font-size: 1.2rem; /* Size of the icon */
+        color: #6c757d; /* Bootstrap's secondary color */
+        transition: color 0.2s; /* Smooth color transition on hover */
+    }
+    .copy-icon:hover {
+        color: #0d6efd; /* Bootstrap's primary color on hover */
+    }
   </style>
 </head>
 
