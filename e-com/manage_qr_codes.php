@@ -279,6 +279,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_id'])) {
                                 <option value="paymaya">PayMaya</option>
                                 <option value="instapay">Instapay</option>
                                 <option value="bank_transfer_bpi">Bank Transfer (BPI)</option>
+                                <option value="bank_transfer_pnb">Bank Transfer (PNB)</option>
+                                <option value="bank_transfer_bdo">Bank Transfer (BDO)</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -336,10 +338,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_id'])) {
                 <div class="modal-field">
                     <label for="edit_payment_type" class="form-label">Payment Method</label>
                     <select name="payment_type" id="edit_payment_type" class="form-select" required>
-                        <option value="gcash">GCash</option>
-                        <option value="paymaya">PayMaya</option>
-                        <option value="instapay">Instapay</option>
-                        <option value="bank_transfer_bpi">Bank Transfer (BPI)</option>
+                                <option value="gcash">GCash</option>
+                                <option value="paymaya">PayMaya</option>
+                                <option value="instapay">Instapay</option>
+                                <option value="bank_transfer_bpi">Bank Transfer (BPI)</option>
+                                <option value="bank_transfer_pnb">Bank Transfer (PNB)</option>
+                                <option value="bank_transfer_bdo">Bank Transfer (BDO)</option>
                     </select>
                 </div>
                 <div class="modal-field">
