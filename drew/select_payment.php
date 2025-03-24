@@ -81,6 +81,39 @@ while ($row = $result->fetch_assoc()) {
     <main>
         <h1 class="cart-title">Payment Method</h1>
         <section class="cart-container">
+
+        <!-- Modal Privacy Notice -->
+<div class="modal fade" id="ModalPrivacyNotice" tabindex="-1" role="dialog" aria-labelledby="privacyNoticeModalTitle" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #1F4529;">
+                <h5 class="modal-title" id="privacyNoticeModalTitle" style="font-weight: bold; color: white;">PRIVACY NOTICE</h5>
+            </div>
+            <div class="modal-body">
+                <p>We value your privacy and are committed to protecting your personal information.</p>
+                <p>When you upload your payment details, they are securely encrypted and used solely for processing your transactions. We do not store sensitive payment information such as card details beyond the necessary processing period, and all data is handled in compliance with applicable data protection laws.</p>
+                <p>If you have questions about how we handle your data, please <strong>contact us</strong> at cosmeticasfraichenaturale@gmail.com</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Accept</button>
+                <button type="button" class="btn btn-secondary" id="declinePrivacy">Decline</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Show privacy notice modal on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        var privacyModal = new bootstrap.Modal(document.getElementById('ModalPrivacyNotice'));
+        privacyModal.show();
+        
+        // Handle decline button click
+        document.getElementById('declinePrivacy').addEventListener('click', function() {
+            window.location.href = 'cart.php';
+        });
+    });
+</script>
             <div class="payment-method">
                 <h2>SELECT PAYMENT METHOD</h2>
                 <?php if (isset($_SESSION['payment_error'])): ?>
