@@ -352,3 +352,20 @@ textarea.form-control {
 .btn-success:hover {
     background-color: #218838;
 }
+.modal-body {
+    text-align: justify;
+    align-items: center;
+    border-radius: 30px;
+}
+.modal-header {
+    color:  whitesmoke;
+}
+
+.modal-dialog {
+     max-width: 40%; /* Adjust as needed */
+}
+
+.modal-content {
+    max-height: 50vh; /* Adjust height */
+    overflow-y: auto; /* Enables scrolling if content is too long */
+}
