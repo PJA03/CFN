@@ -295,7 +295,7 @@ if (isset($_POST['cancel_cart'])) {
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="3">Your cart is empty</td></tr>
+                        <tr><td colspan="4">Your cart is empty</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
@@ -348,9 +348,14 @@ if (isset($_POST['cancel_cart'])) {
             </div>
 
             <div class="cart-actions">
-                <a href="#" class="btn checkout-btn" data-bs-toggle="modal" data-bs-target="#checkoutModal">Proceed to Payment</a>
-                <button class="btn cancel-btn" id="cancel-cart-btn" data-bs-toggle="modal" data-bs-target="#cancelModal">Clear Cart</button>
-            </div>
+    <?php if (!empty($cart_items)): ?>
+        <a href="#" class="btn checkout-btn" data-bs-toggle="modal" data-bs-target="#checkoutModal">Proceed to Payment</a>
+    <?php else: ?>
+        <button class="btn checkout-btn" disabled style="background-color: #a7a7a7; color: #ffffff; cursor: not-allowed;">Proceed to Payment</button>
+    <?php endif; ?>
+    <button class="btn cancel-btn" id="cancel-cart-btn" data-bs-toggle="modal" data-bs-target="#cancelModal" <?php echo empty($cart_items) ? 'disabled style="background-color: #a7a7a7; color: #ffffff; cursor: not-allowed;"' : ''; ?>>Clear Cart</button>
+</div>
+
         </div>
     </section>
 </main>
