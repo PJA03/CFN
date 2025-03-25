@@ -599,6 +599,25 @@ if (isset($_POST['cancel_cart'])) {
     </div>
 </div>
 
+<!-- Delete Cart Item Confirmation Modal -->
+<div class="modal fade" id="deleteItemModal" tabindex="-1" aria-labelledby="deleteItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteItemModalLabel">Remove Item from Cart</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to remove this item from your cart?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteItemBtn">Remove</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Clear Cart Confirmation Modal -->
 <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -704,13 +723,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Event listeners for delete buttons
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const productId = this.getAttribute('data-product-id');
-            updateCartQuantity(productId, 'remove_item');
-        });
+// Add to existing script
+let currentDeleteProductId = null;
+const deleteItemModal = new bootstrap.Modal(document.getElementById('deleteItemModal'));
+
+// Modify existing delete button event listeners
+document.querySelectorAll('.delete-btn').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent default behavior
+        e.stopPropagation(); // Stop event bubbling
+        
+        // Store the product ID when delete button is clicked
+        currentDeleteProductId = this.getAttribute('data-product-id');
+        
+        // Show the confirmation modal
+        deleteItemModal.show();
     });
+});
+
+// Add event listener to confirm delete button in modal
+document.getElementById('confirmDeleteItemBtn').addEventListener('click', function() {
+    if (currentDeleteProductId) {
+        // Call existing update function with remove action
+        updateCartQuantity(currentDeleteProductId, 'remove_item');
+        
+        // Close the modal
+        deleteItemModal.hide();
+        
+        // Reset the current product ID
+        currentDeleteProductId = null;
+    }
+});
+
+// Close modal when clicking No/Cancel
+document.querySelector('#deleteItemModal .btn-secondary').addEventListener('click', function() {
+    currentDeleteProductId = null;
+    deleteItemModal.hide();
+});
+
 
     // Handle form submissions to prevent default behavior for AJAX actions
     document.querySelectorAll('form').forEach(form => {
