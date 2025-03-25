@@ -119,6 +119,10 @@ session_start();
     width: 18px; 
     height: 18px;
     }
+
+    .reset{
+    margin: 10px;
+    padding: 8px; }
 </style>
 </body>
 </html>
