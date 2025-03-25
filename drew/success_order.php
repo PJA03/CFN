@@ -99,7 +99,7 @@ if (isset($_SESSION['email'])) {
             <p>Thank you! Your payment has been successfully processed. A confirmation email/receipt has been sent to your provided address. Please note that the seller will still verify the transaction before completing the process.</p>
             <div class="btn-group">
                 <a href="../Home_Page/home.php" class="btn btn-home">Home</a>
-                <a href="../User_Profile_Page/orderlist.php" class="btn btn-orders">View orders</a>
+                <a href="../drew/orderlist.php" class="btn btn-orders">View orders</a>
             </div>
         </div>
     </main>

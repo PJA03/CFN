@@ -237,7 +237,6 @@ header {
     border-radius: 10px;
 }
 
-/* Style the link to take up full container space */
 .payment-option a {
     display: flex;
     flex-direction: column;
@@ -265,8 +264,10 @@ header {
 /* Optional: container for multiple payment options */
 .payment-options-container {
     display: flex;
-    gap: 20px;
-    margin: 20px 0;
+    flex-wrap: wrap; /* Allows wrapping to next line if needed */
+    justify-content: center; /* Centers the payment options horizontally */
+    gap: 20px; /* Adds spacing between payment options */
+    margin-top: 20px; /* Ensures space between heading and options */
 }
 
 
