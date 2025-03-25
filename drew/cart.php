@@ -189,38 +189,61 @@ $voucherMessage = '';
 if (isset($_POST['apply_voucher'])) {
     $voucherCode = filter_input(INPUT_POST, 'voucher_code', FILTER_SANITIZE_STRING);
     
-    // Check if voucher exists and is valid
-    $query = "SELECT * FROM tb_vouchers WHERE code = ? AND valid_until >= CURDATE()";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $voucherCode);
-    
-    if (!$stmt->execute()) {
-        $voucherMessage = "Error checking voucher: " . $stmt->error;
+    // Clear previous messages
+    unset($_SESSION['voucher_message']);
+    unset($_SESSION['voucher_message_type']);
+
+    if (empty($voucherCode)) {
+        $_SESSION['voucher_message'] = "Please enter a voucher code";
+        $_SESSION['voucher_message_type'] = 'error';
     } else {
-        $result = $stmt->get_result();
+        // Check if voucher exists and is valid
+        $query = "SELECT * FROM tb_vouchers WHERE code = ? AND valid_until >= CURDATE()";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("s", $voucherCode);
         
-        if ($result->num_rows > 0) {
-            $voucher = $result->fetch_assoc();
-            $voucherApplied = true;
-            $voucherDiscount = floatval($voucher['discount']);
-            $voucherMessage = "Voucher applied successfully! " . $voucher['details'];
-            
-            // Store voucher in session
-            $_SESSION['voucher'] = [
-                'code' => $voucherCode,
-                'discount' => $voucherDiscount,
-                'details' => $voucher['details']
-            ];
+        if (!$stmt->execute()) {
+            $_SESSION['voucher_message'] = "Error checking voucher: " . $stmt->error;
+            $_SESSION['voucher_message_type'] = 'error';
         } else {
-            $voucherMessage = "Invalid or expired voucher code.";
-            // Clear any previously applied voucher
-            unset($_SESSION['voucher']);
+            $result = $stmt->get_result();
+            
+            if ($result->num_rows > 0) {
+                $voucher = $result->fetch_assoc();
+                $voucherApplied = true;
+                $voucherDiscount = floatval($voucher['discount']);
+                $_SESSION['voucher_message'] = "Voucher applied: " . $voucher['details'];
+                $_SESSION['voucher_message_type'] = 'success';
+                
+                // Store voucher in session
+                $_SESSION['voucher'] = [
+                    'code' => $voucherCode,
+                    'discount' => $voucherDiscount,
+                    'details' => $voucher['details']
+                ];
+            } else {
+                $_SESSION['voucher_message'] = "Invalid or expired voucher code: " . htmlspecialchars($voucherCode);
+                $_SESSION['voucher_message_type'] = 'error';
+                // Clear any previously applied voucher
+                unset($_SESSION['voucher']);
+            }
         }
     }
     
     // Redirect to prevent form resubmission
     header('Location: cart.php');
     exit();
+}
+
+// Check for voucher messages in session
+$voucherMessage = '';
+$voucherMessageType = '';
+if (isset($_SESSION['voucher_message'])) {
+    $voucherMessage = $_SESSION['voucher_message'];
+    $voucherMessageType = $_SESSION['voucher_message_type'];
+    // Clear the message after displaying it
+    unset($_SESSION['voucher_message']);
+    unset($_SESSION['voucher_message_type']);
 }
 
 // Check if there's a voucher in session
@@ -433,10 +456,10 @@ if (isset($_POST['cancel_cart'])) {
                 <div class="voucher-section">
                     <h3>Apply Voucher</h3>
                     <?php if (!empty($voucherMessage)): ?>
-                        <div class="alert <?php echo $voucherApplied ? 'alert-success' : 'alert-danger'; ?>">
-                            <?php echo htmlspecialchars($voucherMessage); ?>
-                        </div>
-                    <?php endif; ?>
+    <div class="alert alert-<?php echo $voucherMessageType === 'success' ? 'success' : 'danger'; ?>">
+        <?php echo htmlspecialchars($voucherMessage); ?>
+    </div>
+<?php endif; ?>
                     
                     <?php if (!$voucherApplied): ?>
                         <form method="POST" class="voucher-form">
