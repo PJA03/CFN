@@ -121,7 +121,27 @@ $conn->close();
         </div>
     </header>
     
- 
+    <!-- Add to Cart Confirmation Modal -->
+<div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #1F4529; color: white;">
+                <h5 class="modal-title" id="addToCartModalLabel">Added to Cart</h5>
+                <button type="button" class="btn-close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-check-circle text-success me-3" style="font-size: 24px;"></i>
+                    <span id="addToCartMessage"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continue Shopping</button>
+                <a href="../drew/cart.php" class="btn btn-success">View Cart</a>
+            </div>
+        </div>
+    </div>
+</div>
     
     <div class="product-detail">
         <div class="product-image-container">
@@ -311,98 +331,76 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
         });
         
         // Add to cart form handler
-        const addToCartForm = document.getElementById('addToCartForm');
+const addToCartForm = document.getElementById('addToCartForm');
         
         addToCartForm.addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevent default submission until we check the cart
-
+            e.preventDefault(); // Prevent default submission
+            
+            // Check if user is logged in (not guest)
+            const isGuest = <?php echo isset($_SESSION['email']) ? 'false' : 'true'; ?>;
+            
+            if (isGuest) {
+                // Redirect to registration page for guests
+                window.location.href = '../Registration_Page/registration.php';
+                return;
+            }
+        
             const productID = <?php echo $productID; ?>;
             const productName = "<?php echo addslashes($product_name); ?>";
             const quantity = parseInt(quantityEl.textContent);
-
+        
             // Check if the product is already in the cart
             fetch(`check_cart.php?productID=${productID}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.in_cart) {
-                        // Product is already in the cart, show confirmation prompt
                         const confirmAddMore = confirm(`${productName} is already in your cart (Quantity: ${data.quantity}). Do you want to add ${quantity} more?`);
                         if (confirmAddMore) {
-                            // User confirmed, submit the form
                             submitForm(quantity, productName);
                         }
                     } else {
-                        // Product is not in the cart, submit the form
                         submitForm(quantity, productName);
                     }
                 })
                 .catch(error => {
                     console.error('Error checking cart:', error);
-                    // In case of error, proceed with adding to cart
                     submitForm(quantity, productName);
                 });
         });
 
-        // Function to submit the form and show toast notification
         function submitForm(quantity, productName) {
-            const formData = new FormData(addToCartForm);
-            
-            fetch('add_to_cart.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                // Check if the response is OK
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    // Show toast notification
-                    const confirmationMessage = data.message;
-                    
-                    const toast = document.createElement('div');
-                    toast.className = 'cart-toast';
-                    toast.innerHTML = `
-                        <div class="toast-content">
-                            <i class="fas fa-check-circle"></i>
-                            <span>${confirmationMessage}</span>
-                        </div>
-                    `;
-                    document.body.appendChild(toast);
-                    
-                    // Show toast
-                    setTimeout(() => {
-                        toast.classList.add('show-toast');
-                    }, 100);
-                    
-                    // Hide toast after 3 seconds
-                    setTimeout(() => {
-                        toast.classList.remove('show-toast');
-                        setTimeout(() => {
-                            document.body.removeChild(toast);
-                        }, 300);
-                    }, 3000);
-
-                    // Show alert as an additional confirmation
-                    alert(`${productName} has been added to your cart successfully!`);
-                    
-                    // Update cart indicator
-                    updateCartIndicator();
-                } else {
-                    // Handle specific error messages
-                    if (data.message === 'User not logged in') {
-                        alert('Please log in to add items to your cart.');
-                        window.location.href = '../Registration_Page/registration.php';
-                    } else {
-                        alert('Error adding to cart: ' + data.message);
-                    }
-                }
-            })
+    const formData = new FormData(addToCartForm);
+    
+    fetch('add_to_cart.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Show success modal
+            const modalMessage = document.getElementById('addToCartMessage');
+            modalMessage.textContent = `${productName} has been added to your cart successfully!`;
+            const addToCartModal = new bootstrap.Modal(document.getElementById('addToCartModal'));
+            addToCartModal.show();
+            
+            // Update cart indicator
+            updateCartIndicator();
+        } else {
+            if (data.message === 'User not logged in') {
+                // This should theoretically never happen since we check before
+                window.location.href = '../Registration_Page/registration.php';
+            } else {
+                alert('Error adding to cart: ' + data.message);
+            }
+        }
+    })
+}
         // Function to update cart indicator
         function updateCartIndicator() {
             let cartIndicator = document.querySelector('.cart-indicator');
