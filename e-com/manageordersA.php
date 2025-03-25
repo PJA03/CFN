@@ -270,6 +270,7 @@ require_once 'auth_check.php';
         </table>
       </div>
       <div class="mt-3 text-end">
+        <button type="button" class="btn btn-danger me-2" id="deleteOrderButton" onclick="deleteOrder()" style="display: none;">Delete Order</button>
         <button type="button" class="btn btn-primary" id="saveChangesButton" onclick="saveChanges()">Save changes</button>
         <button type="button" class="btn btn-secondary" onclick="discardChanges()">Discard changes</button>
       </div>
@@ -384,6 +385,7 @@ require_once 'auth_check.php';
           const confirmPaymentCheckbox = document.getElementById("confirmPayment");
           const trackingLinkInput = document.getElementById("trackingLink");
           const saveChangesButton = document.getElementById("saveChangesButton");
+          const deleteOrderButton = document.getElementById("deleteOrderButton");
           const cancelledMessage = document.getElementById("cancelledMessage");
 
           if (isCancelled) {
@@ -396,6 +398,8 @@ require_once 'auth_check.php';
             // Disable the "Save changes" button
             saveChangesButton.disabled = true;
             saveChangesButton.classList.add("disabled");
+            // Show the "Delete Order" button
+            deleteOrderButton.style.display = "inline-block";
           } else {
             // Hide the cancelled message
             cancelledMessage.style.display = "none";
@@ -406,6 +410,8 @@ require_once 'auth_check.php';
             // Enable the "Save changes" button
             saveChangesButton.disabled = false;
             saveChangesButton.classList.remove("disabled");
+            // Hide the "Delete Order" button
+            deleteOrderButton.style.display = "none";
           }
 
           isChanged = false;
@@ -594,7 +600,70 @@ require_once 'auth_check.php';
       isChanged = false;
     }
 
-    // 8. Copy to Clipboard function for the address
+    // 8. Delete the order (only available for cancelled orders)
+    function deleteOrder() {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you really want to delete this cancelled order? This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it',
+        cancelButtonText: 'No, keep it'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch("deleteorder.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              orderID: currentOrderID
+            }),
+          })
+          .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+          })
+          .then(result => {
+            if (result.success) {
+              // Close the modal first
+              document.getElementById("orderPopup").style.display = "none";
+              currentOrderID = null;
+              originalStatus = '';
+              isChanged = false;
+
+              // Show success message and reload the orders table
+              Swal.fire({
+                title: "Deleted!",
+                text: "The order has been deleted successfully.",
+                icon: "success",
+                confirmButtonText: "OK",
+              }).then(() => {
+                loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
+              });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: result.message,
+                confirmButtonText: 'OK'
+              });
+            }
+          })
+          .catch(error => {
+            console.error("Error deleting order:", error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to delete order: ' + error.message,
+              confirmButtonText: 'OK'
+            });
+          });
+        }
+      });
+    }
+
+    // 9. Copy to Clipboard function for the address
     function copyToClipboard(address) {
       // Create a temporary textarea element to copy the text
       const textarea = document.createElement('textarea');
