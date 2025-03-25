@@ -72,11 +72,11 @@ require_once 'auth_check.php';
             <div class="row">
               <div class="col-md-6">
                 <label class="form-label">Base Price</label>
-                <input type="number" class="form-control" name="basePrice" step="0.01">
+                <input type="number" class="form-control" name="basePrice" step="0.01" required>
               </div>
               <div class="col-md-6">
                 <label class="form-label">Base Stocks</label>
-                <input type="number" class="form-control" name="baseStock">
+                <input type="number" class="form-control" name="baseStock" required>
               </div>
             </div>
 
@@ -172,6 +172,66 @@ require_once 'auth_check.php';
 
     document.getElementById("productForm").addEventListener("submit", function(event) {
       event.preventDefault();
+
+      // Get the values of the required fields
+      const productName = document.querySelector('input[name="productName"]').value.trim();
+      const category = document.querySelector('select[name="category"]').value;
+      const basePrice = document.querySelector('input[name="basePrice"]').value;
+      const baseStock = document.querySelector('input[name="baseStock"]').value;
+      const productDescription = document.querySelector('textarea[name="productDescription"]').value.trim();
+
+      // Validate required fields
+      if (!productName) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Product Name is required.',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+
+      if (!category) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Category is required.',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+
+      if (basePrice === '' || basePrice < 0) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Base Price is required and must be a non-negative number.',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+
+      if (baseStock === '' || baseStock < 0) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Base Stocks is required and must be a non-negative number.',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+
+      if (!productDescription) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Product Description is required.',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+
+      // If all validations pass, proceed with form submission
       const formData = new FormData(this);
 
       fetch("processproduct.php", {

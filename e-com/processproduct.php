@@ -32,9 +32,9 @@ try {
     }
 
     // Validate required form fields
-    $requiredFields = ['productName', 'category', 'productDescription'];
+    $requiredFields = ['productName', 'category', 'basePrice', 'baseStock', 'productDescription'];
     foreach ($requiredFields as $field) {
-        if (!isset($_POST[$field]) || empty($_POST[$field])) {
+        if (!isset($_POST[$field]) || $_POST[$field] === '') {
             throw new Exception("Missing required field: $field");
         }
     }
@@ -43,8 +43,16 @@ try {
     $product_name = $conn->real_escape_string($_POST['productName']);
     $product_desc = $conn->real_escape_string($_POST['productDescription']);
     $category = $conn->real_escape_string($_POST['category']);
-    $base_price = isset($_POST['basePrice']) && $_POST['basePrice'] !== '' ? floatval($_POST['basePrice']) : 0;
-    $base_stock = isset($_POST['baseStock']) && $_POST['baseStock'] !== '' ? intval($_POST['baseStock']) : 0;
+    $base_price = floatval($_POST['basePrice']);
+    $base_stock = intval($_POST['baseStock']);
+
+    // Additional validation for basePrice and baseStock
+    if ($base_price < 0) {
+        throw new Exception("Base Price must be a non-negative number.");
+    }
+    if ($base_stock < 0) {
+        throw new Exception("Base Stocks must be a non-negative number.");
+    }
 
     // Handle file upload
     $product_img = '';
@@ -74,11 +82,11 @@ try {
     }
 
     // Insert product into tb_products
-    $stmt = $conn->prepare("INSERT INTO tb_products (product_name, product_desc, category, product_image) VALUES (?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO tb_products (product_name, product_desc, category, base_price, base_stock, product_image) VALUES (?, ?, ?, ?, ?, ?)");
     if (!$stmt) {
         throw new Exception("Prepare failed: " . $conn->error);
     }
-    $stmt->bind_param("ssss", $product_name, $product_desc, $category, $product_img);
+    $stmt->bind_param("sssdis", $product_name, $product_desc, $category, $base_price, $base_stock, $product_img);
     if (!$stmt->execute()) {
         throw new Exception("SQL Error on product insert: " . $stmt->error);
     }
@@ -115,6 +123,17 @@ try {
             $vStock = isset($variantStocks[$i]) && $variantStocks[$i] !== "" ? intval($variantStocks[$i]) : 0;
             $vSKU = isset($variantSKUs[$i]) ? $conn->real_escape_string($variantSKUs[$i]) : "";
             $is_default = ($i == 0) ? 1 : 0;
+
+            // Validate variant fields
+            if (empty($vName)) {
+                throw new Exception("Variant Name is required for variant #" . ($i + 1));
+            }
+            if ($vPrice < 0) {
+                throw new Exception("Price must be a non-negative number for variant #" . ($i + 1));
+            }
+            if ($vStock < 0) {
+                throw new Exception("Stock must be a non-negative number for variant #" . ($i + 1));
+            }
 
             $variantStmt->bind_param("isdisi", $product_id, $vName, $vPrice, $vStock, $vSKU, $is_default);
             if (!$variantStmt->execute()) {

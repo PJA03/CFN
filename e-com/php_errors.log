@@ -69,3 +69,5 @@ Stack trace:
 [23-Mar-2025 17:20:34 Europe/Berlin] Inserted default variant with ID: 116 for product ID: 41
 [23-Mar-2025 17:25:25 Europe/Berlin] Inserted product with ID: 42
 [23-Mar-2025 17:25:25 Europe/Berlin] Inserted default variant with ID: 117 for product ID: 42
+[25-Mar-2025 03:09:44 Europe/Berlin] Inserted product with ID: 43
+[25-Mar-2025 03:09:44 Europe/Berlin] Inserted default variant with ID: 118 for product ID: 43
