@@ -25,11 +25,12 @@ while ($row = $result->fetch_assoc()) {
     $orders[] = $row;
 }
 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
     $orderID = $_POST["orderID"];
 
-    // Delete the order only if the status is "waiting for payment"
-    $query = "DELETE FROM tb_orders WHERE orderID = ? AND status = 'waiting for payment'";
+    // Update the order status to "Cancelled" if the status is "waiting for payment"
+    $query = "UPDATE tb_orders SET status = 'Cancelled' WHERE orderID = ? AND status = 'waiting for payment'";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $orderID);
     
@@ -247,15 +248,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
 
     <!-- Bootstrap JS (with Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Get all cancel buttons
     const cancelButtons = document.querySelectorAll('tr form button[type="submit"]');
-    const cancelOrderModal = new bootstrap.Modal(document.getElementById('cancelOrderModal'));
-    const confirmCancelForm = document.getElementById('confirmCancelForm');
-    const cancelOrderIdInput = document.getElementById('cancelOrderId');
-    const modalYesButton = document.querySelector('#cancelOrderModal .btn-danger');
 
     // Add click event to each cancel button
     cancelButtons.forEach(button => {
@@ -265,47 +263,44 @@ document.addEventListener('DOMContentLoaded', function() {
             // Get the orderID from the hidden input in the same form
             const orderID = this.closest('form').querySelector('input[name="orderID"]').value;
             
-            // Set the orderID in the modal's form
-            cancelOrderIdInput.value = orderID;
-            
-            // Show the modal
-            cancelOrderModal.show();
-        });
-    });
+            // Show SweetAlert confirmation
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you want to cancel this order?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d34646',
+                cancelButtonColor: '#1f4529',
+                confirmButtonText: 'Yes, cancel it!',
+                cancelButtonText: 'No, keep it'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit the form via AJAX
+                    fetch('', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `orderID=${orderID}`
+                    })
+                    .then(response => response.text())
+                    .then(() => {
+                        // Update the status in the table
+                        const row = this.closest('tr');
+                        row.querySelector('td:nth-child(5)').textContent = 'Cancelled';
 
-    // Add click event to the "Yes" button in the modal
-    modalYesButton.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        // Submit the form with the orderID
-        confirmCancelForm.innerHTML = `
-            <input type="hidden" name="orderID" value="${cancelOrderIdInput.value}">
-        `;
-        confirmCancelForm.submit();
+                        // Disable the cancel button
+                        this.disabled = true;
+                        this.textContent = 'Cancelled';
+                        this.style.backgroundColor = 'gray';
+                    })
+                    .catch(error => console.error('Error:', error));
+                }
+            });
+        });
     });
 });
 </script>
 
-<!-- Add this modal to the existing HTML, just before the closing </body> tag -->
-<div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="cancelOrderModalLabel">Confirm Cancellation</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to cancel this order?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                <form id="confirmCancelForm" action="" method="POST">
-                    <input type="hidden" name="orderID" id="cancelOrderId" value="">
-                    <button type="submit" class="btn btn-danger">Yes</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 </body>
 </html>
