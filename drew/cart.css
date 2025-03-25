@@ -24,7 +24,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%; /* Ensure the header uses the full width */
+    width: 100%;
     flex-wrap: wrap;
 }
 
@@ -33,11 +33,11 @@ header {
     display: flex;
     align-items: center;
     margin-left: 30px;
-    gap: 10px; /* Adjust spacing between the image and text */
+    gap: 10px;
 }
 
 .logo img {
-    height: 40px; /* Adjust logo size */
+    height: 40px;
 }
 
 /* Navigation Bar Styling */
@@ -72,15 +72,15 @@ header {
     color: whitesmoke;
 }
 
-.cart::after, /* Show underline when active */
-.cart:hover::after { /* Show underline on hover */
+.cart::after,
+.cart:hover::after {
     content: "";
     display: block;
     width: 100%;
-    height: 4px; /* Thickness of underline */
-    background-color: whitesmoke; /* Change color if needed */
+    height: 4px;
+    background-color: whitesmoke;
     position: absolute;
-    bottom: -10px; /* Adjusts spacing below the icon */
+    bottom: -10px;
     border-radius: 2px;
     left: 0;
 }
@@ -243,17 +243,16 @@ header {
 .cart-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 15px; /* Adds consistent spacing between buttons */
+    gap: 15px;
     margin-top: 20px;
 }
 
 .delete-column {
     text-align: center;
-    width: 50px; /* Adjust width as needed */
+    width: 50px;
     position: relative;
 }
 
-/* Style the delete button */
 .delete-btn {
     background: transparent;
     border: none;
@@ -265,10 +264,10 @@ header {
     transform: translate(-50%, -50%);
 }
 
-/* Style the trash icon */
 .delete-btn i {
     font-size: 1.2rem;
 }
+
 .cart-actions .btn {
     padding: 12px 30px;
     font-size: 18px;
@@ -279,7 +278,7 @@ header {
     transition: all 0.3s ease;
     text-align: center;
     display: inline-block;
-    min-width: 180px; /* Ensures consistent width */
+    min-width: 180px;
     text-decoration: none;
 }
 
@@ -394,54 +393,14 @@ footer {
     opacity: 0.8;
 }
 
-@media (max-width: 768px) {
-    .main {
-        width: 90vw;
-    }
-    .cart-actions {
-        flex-direction: column;
-        gap: 10px;
-    }
-    .footer-container {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-    .footer-left,
-    .footer-right {
-        justify-content: center;
-        align-items: center;
-    }
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-::-webkit-scrollbar-track {
-    background: #E8ECD7;
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #FF8666;
-    border-radius: 10px;
-    transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #1F4529;
-}
-
+/* Voucher Section */
 .voucher-section {
     width: 400px !important;
     padding: 15px;
     border: 1px solid #e0e0e0;
     border-radius: 5px;
     background-color: #f9f9f9;
-    flex-shrink: 0; /* Prevent it from shrinking */
+    flex-shrink: 0;
 }
 
 .voucher-summary-container {
@@ -449,7 +408,7 @@ footer {
     justify-content: space-between;
     align-items: flex-start;
     margin-top: 20px;
-    gap: 40px; /* Adjust spacing */
+    gap: 40px;
 }
 
 .voucher-section h3 {
@@ -491,21 +450,247 @@ footer {
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
+
+/* Modal Styling */
 .modal-body {
     text-align: justify;
     align-items: center;
     border-radius: 30px;
 }
+
 .modal-header {
-    color:  whitesmoke;
+    color: whitesmoke;
     background-color: #1F4529;
 }
 
 .modal-dialog {
-     max-width: 40%; /* Adjust as needed */
+    max-width: 40%;
 }
 
 .modal-content {
-    max-height: 50vh; /* Adjust height */
-    overflow-y: auto; /* Enables scrolling if content is too long */
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #E8ECD7;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #FF8666;
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1F4529;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    /* Main Container */
+    .cart-container {
+        padding: 20px;
+        margin: 20px;
+    }
+
+    .cart-title {
+        font-size: 36px;
+    }
+
+    /* Header */
+    header {
+        flex-direction: column;
+        padding: 10px 20px;
+        gap: 10px;
+    }
+
+    .logo {
+        margin-left: 0;
+    }
+
+    .navbar {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .usernamedisplay {
+        font-size: 16px;
+        padding-top: 5px;
+    }
+
+    .icons {
+        margin-left: 0;
+        margin-right: 0;
+        gap: 20px;
+    }
+
+    /* Cart Table */
+    .cart-table {
+        display: block;
+    }
+
+    .cart-table thead {
+        display: none;
+    }
+
+    .cart-table tbody,
+    .cart-table tr {
+        display: block;
+    }
+
+    .cart-table tr {
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+    }
+
+    .cart-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+        padding: 10px;
+        border: none;
+    }
+
+    .cart-table td.product-info::before {
+        content: "Product: ";
+        font-weight: bold;
+        width: 30%;
+    }
+
+    .cart-table td.product-quantity::before {
+        content: "Quantity: ";
+        font-weight: bold;
+        width: 30%;
+    }
+
+    .cart-table td.product-price::before {
+        content: "Price: ";
+        font-weight: bold;
+        width: 30%;
+    }
+
+    .cart-table td.delete-column {
+        display: block;
+        text-align: right;
+        position: relative;
+    }
+
+    .cart-table td.delete-column::before {
+        content: none;
+    }
+
+    .delete-btn {
+        position: static;
+        transform: none;
+    }
+
+    .product-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .product-image {
+        width: 80px;
+        height: 80px;
+    }
+
+    .quantity-btn {
+        padding: 3px 8px;
+        font-size: 14px;
+    }
+
+    /* Voucher and Summary */
+    .voucher-summary-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .voucher-section {
+        width: 100% !important;
+    }
+
+    .voucher-form {
+        width: 100%;
+    }
+
+    .cart-summary {
+        text-align: left;
+    }
+
+    .price-breakdown {
+        text-align: left;
+    }
+
+    .price-breakdown p {
+        justify-content: space-between;
+    }
+
+    .delivery-note {
+        text-align: left;
+    }
+
+    /* Cart Actions */
+    .cart-actions {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .cart-actions .btn {
+        width: 100%;
+        max-width: 300px;
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+
+    /* Footer */
+    footer {
+        padding: 20px 30px;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .footer-left,
+    .footer-right,
+    .social-icons {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .footer-logo {
+        height: 100px;
+    }
+
+    .footer-nav li {
+        font-size: 18px;
+    }
+
+    .social-icons p {
+        font-size: 18px;
+    }
+
+    /* Modals */
+    .modal-dialog {
+        max-width: 90%;
+    }
+
+    .modal-content {
+        max-height: 80vh;
+    }
 }
