@@ -87,7 +87,7 @@ if (isset($_SESSION['email'])) {
             <div class="icons">
                 <a href="../Home_Page/home.php"><i class="fa-solid fa-house home"></i></a>
                 <a href="../drew/cart.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
-                <a href="../User_Profile_Page/UserProfile.php"><i class="far fa-user-circle fa-2x icon-profile"></i></a>
+                <a href="../drew/UserProfile.php"><i class="far fa-user-circle fa-2x icon-profile"></i></a>
             </div>
         </div>
     </header>
