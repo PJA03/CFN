@@ -65,7 +65,7 @@ require_once 'auth_check.php';
   <div class="container-fluid">
     <div class="row">
       <!-- Sidebar -->
-      <div class="col-md-2 sidebar d-flex flex-column p-3">
+      <div class="col-md-2 sidebar d-flex flex-column p-3 d-none d-md-flex" id="sidebar">
         <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3">
         <nav class="nav flex-column">
           <a class="nav-link" href="manageproductsA.php">Products</a>
@@ -83,8 +83,33 @@ require_once 'auth_check.php';
         </div>
       </div>
 
+      <!-- Mobile Menu Toggle -->
+      <nav class="navbar navbar-dark bg-dark d-md-none">
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <span class="navbar-brand">Admin Dashboard</span>
+        </div>
+      </nav>
+      <div class="collapse navbar-collapse d-md-none bg-dark text-white p-3" id="mobileSidebar">
+        <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3" style="max-width: 100px;">
+        <nav class="nav flex-column">
+          <a class="nav-link" href="manageproductsA.php">Products</a>
+          <a class="nav-link" href="managecontentA.php">Content</a>
+          <a class="nav-link" href="manageordersA.php">Orders</a>
+          <a class="nav-link" href="analytics.php">Analytics</a>
+        </nav>
+        <hr class="bg-white">
+        <div class="d-flex align-items-center mb-3">
+          <i class="bi bi-person-circle fs-4 me-2"></i>
+          <span>Admin User</span>
+        </div>
+        <a href="/CFN/e-com/logout.php" class="btn btn-danger">Logout</a>
+      </div>
+
       <!-- Main Content -->
-      <div class="col-md-10 p-4 main-content">
+      <div class="col-md-10 col-12 p-4 main-content">
         <h1 class="text-center display-4 mb-4">Welcome Back, Admin!</h1>
         <h3 class="mt-4 text-center">Products Table</h3>
 
@@ -112,9 +137,9 @@ require_once 'auth_check.php';
         </div>
 
         <!-- Search & Add Product Row -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-column flex-md-row">
           <input type="text" class="form-control" id="searchProduct" style="max-width:300px;" placeholder="Search Product">
-          <button id="addProductBtn" class="btn btn-success">+ Add Product</button>
+          <button id="addProductBtn" class="btn btn-success mt-2 mt-md-0">+ Add Product</button>
         </div>
 
         <!-- Products Grid -->

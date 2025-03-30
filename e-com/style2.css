@@ -11,32 +11,103 @@ body {
     height: 100vh;
     position: sticky;
     top: 0;
-    display: flex;
-    flex-direction: column;
     background-color: #1F4529;
     color: white;
     font-size: 1rem;
 }
 
-.sidebar h2 {
-    font-family: "Bebas Neue", sans-serif;
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
+.sidebar img {
+    max-width: 150px;
 }
 
 .sidebar nav .nav-link {
     font-family: "Bebas Neue", serif;
-    font-weight: 400;
-    font-size: 2rem;
-    text-decoration: none;
+    font-size: 1.5rem;
     color: #EED3B1;
-    display: block;
     transition: all 0.3s ease-in-out;
 }
 
 .sidebar nav .nav-link:hover {
     color: #b4d644;
     text-decoration: underline;
+}
+
+.sidebar hr {
+    border-color: white;
+}
+
+/* Main Content Styling */
+.main-content h1 {
+    font-size: 1.5rem;
+    font-family: "Bebas Neue", serif;
+    color: #1F4529;
+}
+
+.main-content h3 {
+    font-size: 2rem;
+    font-family: "Bebas Neue", serif;
+    color: #1F4529;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 10px;
+}
+
+.product-card {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    text-align: center;
+    padding: 10px;
+}
+
+.product-card img {
+    width: 100%;
+    height: auto;
+    max-height: 150px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.product-card h5 {
+    margin: 5px 0;
+    font-size: 1rem;
+}
+
+.product-card p {
+    font-size: 0.9rem;
+    color: #777;
+}
+
+.product-card .actions i {
+    font-size: 1.2rem;
+    margin: 0 8px;
+    cursor: pointer;
+}
+
+.btn-manage {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+}
+
+/* Filter Section */
+.filter-section {
+    padding: 10px;
+}
+
+.filter-section .form-range,
+.filter-section .form-control {
+    width: 100%;
+}
+
+/* Additional Styling from Original */
+.sidebar h2 {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .nav-link:visited {
@@ -46,30 +117,8 @@ body {
     font-weight: bold;
 }
 
-.sidebar hr {
-    margin: 2rem 0;
-    border-color: white;
-}
-
 .sidebar .mt-auto {
     margin-top: auto;
-}
-
-/* Main Content Styling */
-.main-content h1 {
-    font-size: 1.5rem;
-    font-family: "Bebas Neue", serif;
-    color: #1F4529;
-    margin-bottom: 1rem;
-    text-align: left;
-}
-
-.main-content h3 {
-    font-size: 2.5rem;
-    font-family: "Bebas Neue", serif;
-    color: #1F4529;
-    margin-bottom: 1rem;
-    text-align: center;
 }
 
 .table img {
@@ -92,48 +141,6 @@ body {
     background-color: #fff;
 }
 
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
-    padding: 10px;
-}
-
-.product-card {
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    text-align: center;
-    padding: 10px;
-}
-
-.product-card img {
-    width: 100%;
-    height: 120px;
-    object-fit: cover;
-    margin-bottom: 10px;
-    border-radius: 5px;
-}
-
-.product-card h5 {
-    margin: 5px 0;
-    font-size: 14px;
-}
-
-.product-card p {
-    font-size: 12px;
-    color: #777;
-}
-
-.product-card .actions {
-    margin-top: 10px;
-}
-
-.product-card .actions i {
-    margin: 0 5px;
-    font-size: 14px;
-    color: #555;
-}
-
 .btn-green {
     background-color: #1F4529;
     color: white;
@@ -153,33 +160,27 @@ body {
     align-items: center;
 }
 
-/* Make modal content wider so columns have more room */
 .popup-content {
-    max-width: 95% !important; /* Increase to nearly full viewport width */
-  }
-  
-  /* Let the table layout expand naturally, 
-     and allow horizontal scroll if it exceeds modal width */
-  .table-container {
+    max-width: 95% !important;
+}
+
+.table-container {
     overflow-x: auto !important;
-  }
-  
-  /* Remove forced centering, allow text to wrap */
-  .table th,
-  .table td {
-    text-align: left !important;         /* Switch from center to left */
-    white-space: normal !important;      /* Allow multi-line wrapping */
-    word-wrap: break-word !important;    /* Break long words onto new line */
+}
+
+.table th,
+.table td {
+    text-align: left !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
     overflow-wrap: break-word !important;
-  }
-  
-  /* If you want to remove or adjust the forced width on the first column */
-  .table td:first-child,
-  .table th:first-child {
-    width: auto !important;  /* Instead of 150px */
-    min-width: 100px;        /* Or set a min-width if you prefer */
-  }
-  
+}
+
+.table td:first-child,
+.table th:first-child {
+    width: auto !important;
+    min-width: 100px;
+}
 
 .table th {
     font-weight: bold;
@@ -254,17 +255,17 @@ body {
     color: white;
     cursor: pointer;
 }
-/* Modal Title */
+
+/* Modal Styling */
 .modal-title {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 2rem;
-    color: #1F4529; /* Match your green color */
+    color: #1F4529;
     margin-bottom: 20px;
     text-align: center;
     letter-spacing: 1px;
 }
 
-/* Modal Fields */
 .modal-field {
     margin-bottom: 20px;
 }
@@ -272,7 +273,7 @@ body {
 .modal-field label {
     font-family: 'Be Vietnam Pro', sans-serif;
     font-weight: 700;
-    color: #1F4529; /* Match your green color */
+    color: #1F4529;
     margin-bottom: 8px;
     display: block;
     font-size: 1rem;
@@ -285,29 +286,145 @@ body {
     padding: 10px;
     font-size: 1rem;
     transition: border-color 0.3s ease;
-    width: 100%; /* Ensure full width */
+    width: 100%;
 }
 
 .modal-field input:focus,
 .modal-field select:focus {
-    border-color: #1F4529; /* Match your green color */
+    border-color: #1F4529;
     outline: none;
-    box-shadow: 0 0 5px rgba(31, 69, 41, 0.3); /* Subtle green shadow */
+    box-shadow: 0 0 5px rgba(31, 69, 41, 0.3);
 }
+
 .modal-body {
     text-align: justify;
     align-items: center;
     border-radius: 30px;
 }
+
 .modal-header {
-    color:  whitesmoke;
+    color: whitesmoke;
 }
 
 .modal-dialog {
-     max-width: 40%; /* Adjust as needed */
+    max-width: 40%;
 }
 
 .modal-content {
-    max-height: 50vh; /* Adjust height */
-    overflow-y: auto; /* Enables scrolling if content is too long */
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none; /* Hidden by default on mobile, shown via toggle */
+    }
+
+    .main-content {
+        padding: 15px;
+    }
+
+    .main-content h1 {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
+    .main-content h3 {
+        font-size: 1.5rem;
+    }
+
+    .product-grid {
+        grid-template-columns: 1fr; /* Single column on mobile */
+    }
+
+    .product-card {
+        padding: 15px;
+    }
+
+    .product-card img {
+        max-height: 120px;
+    }
+
+    .filter-section .col-md-4 {
+        margin-bottom: 15px;
+    }
+
+    #searchOrder {
+        max-width: 100%;
+        margin-bottom: 10px;
+    }
+
+    #filterStatus {
+        width: 100%;
+        max-width: none;
+    }
+
+    .navbar-dark {
+        background-color: #1F4529 !important;
+    }
+
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    #mobileSidebar .nav-link {
+        font-size: 1.2rem;
+    }
+
+    .modal-dialog {
+        max-width: 90%;
+    }
+
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+
+    .table th, .table td {
+        padding: 0.5rem;
+    }
+
+    .popup-content {
+        padding: 1rem;
+        max-width: 95%;
+    }
+
+    .d-flex.justify-content-end {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-card h5 {
+        font-size: 0.9rem;
+    }
+
+    .product-card p {
+        font-size: 0.8rem;
+    }
+
+    .btn-manage {
+        font-size: 0.7rem;
+    }
+
+    .variant-table th, .variant-table td {
+        font-size: 0.8rem;
+    }
+
+    .table th, .table td {
+        font-size: 0.8rem;
+    }
+
+    #searchOrder {
+        width: 100%;
+    }
+
+    .main-content h3 {
+        font-size: 1.2rem;
+    }
 }

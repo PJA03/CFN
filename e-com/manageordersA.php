@@ -19,7 +19,7 @@ require_once 'auth_check.php';
   <!-- SweetAlert2 CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
 
-  <!-- Optional Custom CSS -->
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="style2.css" />
 
   <style>
@@ -102,18 +102,6 @@ require_once 'auth_check.php';
       width: 200px; /* Fixed width for better layout */
       max-width: 100%; /* Responsive on smaller screens */
     }
-    @media (max-width: 576px) {
-      #searchOrder {
-        width: 100%; /* Full width on small screens */
-      }
-      .d-flex.align-items-center {
-        flex-direction: column; /* Stack elements vertically on small screens */
-        gap: 10px; /* Add spacing between elements */
-      }
-      #filterStatus {
-        width: 100%; /* Full width for the filter dropdown on small screens */
-      }
-    }
     /* Ensure SweetAlert2 appears on top */
     .swal2-container {
       z-index: 10001 !important;
@@ -155,7 +143,7 @@ require_once 'auth_check.php';
   <div class="container-fluid">
     <div class="row">
       <!-- Sidebar -->
-      <div class="col-md-2 sidebar d-flex flex-column p-3">
+      <div class="col-md-2 sidebar d-flex flex-column p-3 d-none d-md-flex" id="sidebar">
         <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3" />
         <nav class="nav flex-column">
           <a class="nav-link" href="manageproductsA.php">Products</a>
@@ -173,13 +161,38 @@ require_once 'auth_check.php';
         </div>
       </div>
 
+      <!-- Mobile Menu Toggle -->
+      <nav class="navbar navbar-dark bg-dark d-md-none">
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <span class="navbar-brand">Admin Dashboard</span>
+        </div>
+      </nav>
+      <div class="collapse navbar-collapse d-md-none bg-dark text-white p-3" id="mobileSidebar">
+        <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3" style="max-width: 100px;" />
+        <nav class="nav flex-column">
+          <a class="nav-link" href="manageproductsA.php">Products</a>
+          <a class="nav-link" href="managecontentA.php">Content</a>
+          <a class="nav-link active" href="manageordersA.php">Orders</a>
+          <a class="nav-link" href="analytics.php">Analytics</a>
+        </nav>
+        <hr class="bg-white" />
+        <div class="d-flex align-items-center mb-3">
+          <i class="bi bi-person-circle fs-4 me-2"></i>
+          <span>Admin User</span>
+        </div>
+        <a href="/CFN/e-com/logout.php" class="btn btn-danger">Logout</a>
+      </div>
+
       <!-- Main Content -->
-      <div class="col-md-10 p-4 main-content">
+      <div class="col-md-10 col-12 p-4 main-content">
         <h3 class="mt-4 text-center">Orders Table</h3>
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <a href="manage_qr_codes.php" class="btn btn-primary">Manage QR Codes</a>
-          <div class="d-flex align-items-center">
-            <select id="filterStatus" class="form-select me-2" style="width: auto;">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-column flex-md-row gap-2">
+          <a href="manage_qr_codes.php" class="btn btn-primary w-100 w-md-auto">Manage QR Codes</a>
+          <div class="d-flex align-items-center flex-column flex-md-row gap-2 w-100 w-md-auto">
+            <select id="filterStatus" class="form-select" style="width: 100%; max-width: 200px;">
               <option value="">All Statuses</option>
               <option value="Waiting for Payment">Waiting for Payment</option>
               <option value="Processing">Processing</option>
@@ -192,20 +205,22 @@ require_once 'auth_check.php';
         </div>
 
         <div class="bg-white p-4 rounded shadow-sm">
-          <table class="table table-bordered text-center">
-            <thead>
-              <tr class="table-success">
-                <th>Order ID</th>
-                <th>Number of Items</th>
-                <th class="sortable" onclick="sortTable('total')">Total</th>
-                <th class="sortable" onclick="sortTable('status')">Status</th>
-                <th>Tracking Link</th>
-                <th>Address</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="ordersTable"></tbody>
-          </table>
+          <div class="table-responsive">
+            <table class="table table-bordered text-center">
+              <thead>
+                <tr class="table-success">
+                  <th>Order ID</th>
+                  <th>Number of Items</th>
+                  <th class="sortable" onclick="sortTable('total')">Total</th>
+                  <th class="sortable" onclick="sortTable('status')">Status</th>
+                  <th>Tracking Link</th>
+                  <th>Address</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTable"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -269,8 +284,8 @@ require_once 'auth_check.php';
           </tbody>
         </table>
       </div>
-      <div class="mt-3 text-end">
-        <button type="button" class="btn btn-danger me-2" id="deleteOrderButton" onclick="deleteOrder()" style="display: none;">Delete Order</button>
+      <div class="mt-3 text-end d-flex justify-content-end gap-2 flex-column flex-md-row">
+        <button type="button" class="btn btn-danger" id="deleteOrderButton" onclick="deleteOrder()" style="display: none;">Delete Order</button>
         <button type="button" class="btn btn-primary" id="saveChangesButton" onclick="saveChanges()">Save changes</button>
         <button type="button" class="btn btn-secondary" onclick="discardChanges()">Discard changes</button>
       </div>
@@ -389,28 +404,20 @@ require_once 'auth_check.php';
           const cancelledMessage = document.getElementById("cancelledMessage");
 
           if (isCancelled) {
-            // Show the cancelled message
             cancelledMessage.style.display = "block";
-            // Disable all editable fields
             statusSelect.disabled = true;
             confirmPaymentCheckbox.disabled = true;
             trackingLinkInput.disabled = true;
-            // Disable the "Save changes" button
             saveChangesButton.disabled = true;
             saveChangesButton.classList.add("disabled");
-            // Show the "Delete Order" button
             deleteOrderButton.style.display = "inline-block";
           } else {
-            // Hide the cancelled message
             cancelledMessage.style.display = "none";
-            // Enable all editable fields
             statusSelect.disabled = false;
             confirmPaymentCheckbox.disabled = false;
             trackingLinkInput.disabled = false;
-            // Enable the "Save changes" button
             saveChangesButton.disabled = false;
             saveChangesButton.classList.remove("disabled");
-            // Hide the "Delete Order" button
             deleteOrderButton.style.display = "none";
           }
 
@@ -507,7 +514,6 @@ require_once 'auth_check.php';
       const isPaymentConfirmed = document.getElementById("confirmPayment").checked ? 1 : 0;
       const trackingLink = document.getElementById("trackingLink").value.trim();
 
-      // Prevent cancellation if the order is in "Processing", "Shipped", or "Delivered"
       if (status === "Cancelled" && ["Processing", "Shipped", "Delivered"].includes(originalStatus)) {
         Swal.fire({
           title: "Cannot Cancel Order",
@@ -518,7 +524,6 @@ require_once 'auth_check.php';
         return;
       }
 
-      // Existing validation for status transitions
       if (isPaymentConfirmed && status === "Waiting for Payment") {
         status = "Processing";
         document.getElementById("status").value = status;
@@ -563,13 +568,11 @@ require_once 'auth_check.php';
       })
       .then(result => {
         if (result.success) {
-          // Close the modal first
           document.getElementById("orderPopup").style.display = "none";
           currentOrderID = null;
           originalStatus = '';
           isChanged = false;
 
-          // Then show the SweetAlert2 notification
           Swal.fire({
             title: "Success!",
             text: result.message,
@@ -626,13 +629,11 @@ require_once 'auth_check.php';
           })
           .then(result => {
             if (result.success) {
-              // Close the modal first
               document.getElementById("orderPopup").style.display = "none";
               currentOrderID = null;
               originalStatus = '';
               isChanged = false;
 
-              // Show success message and reload the orders table
               Swal.fire({
                 title: "Deleted!",
                 text: "The order has been deleted successfully.",
@@ -665,7 +666,6 @@ require_once 'auth_check.php';
 
     // 9. Copy to Clipboard function for the address
     function copyToClipboard(address) {
-      // Create a temporary textarea element to copy the text
       const textarea = document.createElement('textarea');
       textarea.value = address;
       document.body.appendChild(textarea);
