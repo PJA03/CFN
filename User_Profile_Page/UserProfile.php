@@ -67,7 +67,7 @@ if (isset($_POST['logout'])) {
                 <!-- profile picture -->
                 <img src="<?php echo htmlspecialchars(isset($user['profile_image']) && !empty($user['profile_image']) ? $user['profile_image'] : '../Resources/profile.png', ENT_QUOTES, 'UTF-8'); ?>" alt="Profile Icon" name="icon" id="icon" class="profile-icon" width="150" max-height="150" style="margin: 10px;">
                 <br>
-                <h2 style="color:whitesmoke">My Account</h2>
+                <h2>My Account</h2>
                 <a href="UserProfile.php" class="active">Profile</a>
                 <a href="../drew/orderlist.php" class="transparent-button">Orders</a>
                 <form method="post" action="">
@@ -127,7 +127,7 @@ if (isset($_POST['logout'])) {
                         </div>
 
                         <div class = "row">
-                        <div class = "col text-end">
+                        <div class = "col text-start">
                             <form action="editUserProfile.php">
                                 <button class="Edit" style="color: whitesmoke;" id="edit-button" href="editUserProfile.php">
                                     Edit 
@@ -194,7 +194,7 @@ We may update these terms at any time. Continued use of the website means you ac
 For any questions, contact us at cosmeticasfraichenaturale@gmail.com.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id = "close" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -227,7 +227,7 @@ We may update this policy. Continued use of our services after updates means you
 For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id = "close" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

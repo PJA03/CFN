@@ -81,6 +81,12 @@
                             </span>
                         </div>
                         </div>
+                        <div class="mb-3">
+                            <small class="text-body-secondary">Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, 
+                                a number, and a special character.
+                            </small>
+            
+                        </div>
                         <input type="checkbox" id="accept-terms" required>
                         <span class="label mt-3">To create an account, kindly read and accept the
                             <button type="button" class="btn-noBG" data-bs-toggle="modal" data-bs-target="#ModalTerms">

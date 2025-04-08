@@ -75,11 +75,11 @@ require_once 'auth_check.php';
         </nav>
         <div class="mt-auto">
           <hr>
-          <div class="d-flex align-items-center">
+          <div class="admin-name d-flex align-items-center">
             <i class="bi bi-person-circle fs-4 me-2"></i>
-            <span>Admin User</span>
+            <span class = "adminuser">Admin User</span>
+            <a href="/CFN/e-com/logout.php" class="btn btn-danger text-end" id="logout">Logout</a>
           </div>
-          <a href="/CFN/e-com/logout.php" class="btn btn-danger">Logout</a>
         </div>
       </div>
 
@@ -89,7 +89,7 @@ require_once 'auth_check.php';
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-          <span class="navbar-brand">Admin Dashboard</span>
+            <span class="navbar-brand">Admin Dashboard</span>
         </div>
       </nav>
       <div class="collapse navbar-collapse d-md-none bg-dark text-white p-3" id="mobileSidebar">
@@ -111,8 +111,6 @@ require_once 'auth_check.php';
       <!-- Main Content -->
       <div class="col-md-10 col-12 p-4 main-content">
         <h1 class="text-center display-4 mb-4">Welcome Back, Admin!</h1>
-        <h3 class="mt-4 text-center">Products Table</h3>
-
         <!-- Filter Section -->
         <div class="row mb-3 filter-section">
           <div class="col-md-4">
@@ -186,7 +184,7 @@ require_once 'auth_check.php';
                     <i class="bi bi-pencil-square edit-icon" onclick="redirectToEdit(<?= $product['productID']; ?>)"></i>
                     <i class="bi bi-trash delete-icon" onclick="removeItem(<?= $product['productID']; ?>, this.closest('.product-card'))"></i>
                     <?php if ($product['variant_count'] > 1): ?>
-                      <button class="btn btn-manage btn-sm mt-2" data-bs-toggle="collapse" data-bs-target="#variants-<?= $product['productID']; ?>">
+                      <button class="btn btn-manage btn-sm mt-2" id="variants" data-bs-toggle="collapse" data-bs-target="#variants-<?= $product['productID']; ?>">
                         View Variants
                       </button>
                     <?php endif; ?>

@@ -65,7 +65,6 @@ if (isset($_POST['logout'])) {
         <!-- Profile Picture and Navigation -->
         <div class="top-panel">
         <img src="../Home_Page/cfn_logo.png" alt="Logo" class="logo-image2"/>
-
         </div>
 
         <!-- Content Section -->
@@ -153,7 +152,7 @@ We may update these terms at any time. Continued use of the website means you ac
 For any questions, contact us at cosmeticasfraichenaturale@gmail.com.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id="close" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -186,7 +185,7 @@ We may update this policy. Continued use of our services after updates means you
 For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id="close" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
