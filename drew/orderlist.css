@@ -126,15 +126,7 @@ header {
 
 .icon-profile::after,
 .icon-profile:hover::after {
-    content: "";
-    display: block;
-    width: 100%;
-    height: 4px;
-    background-color: whitesmoke;
-    position: absolute;
-    bottom: -10px;
-    border-radius: 2px;
-    left: 0;
+    display: none;
 }
 
 .active {

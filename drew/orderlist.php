@@ -76,7 +76,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
     </header>
 
     <main>
-        <h1 class="cart-title">Order List</h1>
         <section class="cart-container">
             <div class="cart-content">
                 <table class="cart-table">
