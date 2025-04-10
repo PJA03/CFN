@@ -111,73 +111,72 @@ header {
     margin-bottom: 20px;
 }
 
-/* PRODUCT BOX */
+/* Updated Product Card Styling */
 .product-card {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     border: 1px solid #e0e0e0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     background-color: #fff;
     margin-bottom: 20px;
-    padding: 10px;
+    padding: 15px;
     text-align: center;
-    min-height: 300px;
-    overflow: visible;
+    height: 260px; /* Fixed height to make cards uniform */
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
 .product-card img {
-    max-width: 100%;
-    height: auto;
-    max-height: 150px;
-    object-fit: cover;
+    width: 100%;
+    height: 120px; /* Fixed height for images */
+    object-fit: contain;
     margin-bottom: 10px;
 }
 
 .product-card h5 {
-    font-size: 1.1em;
-    margin: 10px 0;
-    flex-grow: 0;
+    font-size: 0.95em;
+    margin: 8px 0;
+    font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .product-card p {
-    font-size: 0.9em;
+    font-size: 0.85em;
     margin: 5px 0;
-    flex-grow: 0;
+    color: #333;
 }
 
-.product-card .variant-options {
-    margin: 10px 0;
-    flex-grow: 0;
+/* Product Grid Layout */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    padding: 0 10px;
 }
 
-.product-card .variant-select {
-    width: 100%;
-    padding: 5px;
-    font-size: 0.9em;
-    max-height: 40px;
-}
-
+/* Remove the add-to-cart button styles since we're making the whole card clickable */
 .product-card .add-to-cart {
-    margin-top: auto;
-    padding: 8px 15px;
-    background-color: #1F4529;
-    color: #EED3B1;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-family: 'Be Vietnam Pro', sans-serif;
-    font-size: 1rem;
-    width: 100%;
-    transition: background-color 0.3s ease;
+    display: none;
 }
 
-.product-card .add-to-cart:hover {
-    background-color: #16331f;
+/* Variant styling adjustment */
+.product-card .variant-options {
+    display: none; /* Hide variants in card view */
+}
+
+/* Link styling for product cards */
+.product-card-link {
+    text-decoration: none;
+    color: inherit;
 }
 
 /* Footer */
