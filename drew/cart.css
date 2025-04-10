@@ -18,34 +18,25 @@ body {
 
 /* Header Styling */
 header {
-    background-color: #FFFFFF;
-    color: #000000;
-    padding: 10px 20px;
+    background-color: white;
+    padding: 20px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    width: 100%; /* Ensure the header uses the full width */
     flex-wrap: wrap;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* Logo Styling */
-.logo {
-    display: flex;
-    align-items: center;
-    margin-left: 0;
-    gap: 10px;
-}
-
 .logo img {
-    height: 40px;
+    height: 40px; /* Adjust logo size */
 }
 
 /* Navigation Bar Styling */
 .navbar {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     gap: 20px;
 }
 
@@ -56,13 +47,12 @@ header {
     justify-items: center;
     gap: 15px;
     transition: transform 0.3s ease, color 0.3s ease;
-    margin-left: 50px;
-    margin-right: 0;
 }
 
+/* Font Awesome Icon Styles */
 .icon-profile, .home, .cart {
     font-size: 1.6rem;
-    color: #000000;
+    color: black;
     cursor: pointer;
     margin-left: 10px;
     position: relative;
@@ -70,53 +60,36 @@ header {
 
 .icon-profile:hover, .home:hover, .cart:hover {
     transform: scale(1.1);
-    color: #1F4529;
+    color: orange;
 }
 
-.cart::after,
-.cart:hover::after {
-    content: "";
-    display: block;
-    width: 100%;
-    height: 4px;
-    background-color: #1F4529;
-    position: absolute;
-    bottom: -10px;
-    border-radius: 2px;
-    left: 0;
+.icon-profile::after,
+.icon-profile:hover::after {
+    display: none;
 }
 
-.usernamedisplay {
-    display: flex;
-    justify-content: flex-end;
-    text-align: right;
-    color: #000000;  
-    font-size: 16px;
-    flex-wrap: wrap;
-    padding-top: 0;
-    font-weight: bold;
-}
-
-.active {
+.active{
     text-decoration: underline;
-    color: #000000;
+    color: black;
     display: flex;
     align-items: center;
+    background-color: transparent;
+    border: none;
+    margin-left: 10px;
 }
 
-.transparent-button {
+.transparent-button{
     display: flex;
     align-items: center;
     background-color: transparent;
     text-decoration: none;
     border: none;
     margin-left: 10px;
-    color: #000000;
+    color: black;
 }
 
 .transparent-button:hover, .active:hover {
-    transform: scale(1.1);
-    color: #1F4529;
+    color: #a5b461;
 }
 
 /* Cart Page */
@@ -406,6 +379,7 @@ footer {
 }
 
 .voucher-summary-container {
+    justify-content: flex-end;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -614,6 +588,7 @@ footer {
 
     /* Voucher and Summary */
     .voucher-summary-container {
+    justify-content: flex-end;
         flex-direction: column;
         gap: 20px;
     }
@@ -656,36 +631,100 @@ footer {
         font-size: 16px;
     }
 
-    /* Footer */
-    footer {
-        padding: 20px 30px;
-    }
+    /*footer*/
+footer {
+    background-color: white;
+    color: black;
+    padding: 30px 30px;
+    display: flex;
+    flex-direction: column; /* Stack footer elements vertically */
+    align-items: center;
+    width: 100%;
+    margin-top: auto;
+}
 
-    .footer-container {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 15px;
-    }
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+    flex-wrap: wrap;
+    gap: 20px;
+    min-height: 200px;
+}
 
-    .footer-left,
-    .footer-right,
-    .social-icons {
-        justify-content: center;
-        align-items: center;
-    }
+.footer-left {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
 
-    .footer-logo {
-        height: 60px;
-    }
+.footer-logo {
+    height: 150px; /* Adjust according to your logo size */
+}
 
-    .footer-nav li {
-        font-size: 16px;
-    }
+.footer-logo img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+}
 
-    .social-icons p {
-        font-size: 16px;
-    }
+.footer-right {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.footer-nav {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-nav li {
+    font-family: "Bebas Neue", serif !important;
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.footer-nav a {
+    color: black;
+    text-decoration: none;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icons {
+    display: flex;
+    text-align: left;
+    flex-direction: column; /* Keeps the SOCIALS text on top and icons underneath */
+    align-items: flex-start; /* Aligns items to the left */
+    font-size: 20px;
+    font-family: "Bebas Neue", serif;
+    color: black;
+    text-decoration: none;
+    padding: 0;
+}
+
+.social-icons p {
+    margin-bottom: 8px;
+}
+
+.social-icons a {
+    margin-bottom: 8px;
+    color: black;
+}
+
+.social-icons a:hover, .footer-nav a:hover {
+    transform: scale(1.1);
+    color: orange;
+}
+
+.footer-center {
+    text-align: center;
+    width: 100%;
+    font-size: 14px;
+    opacity: 0.8;
+}
 
     /* Modals */
     .modal-dialog {
@@ -695,4 +734,20 @@ footer {
     .modal-content {
         max-height: 80vh;
     }
+}
+
+.cart.active::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 4px;
+    background-color: orange;
+    position: absolute;
+    bottom: -10px;
+    border-radius: 2px;
+    left: 0;
+}
+
+.modal-dialog {
+    margin: auto !important;
 }
