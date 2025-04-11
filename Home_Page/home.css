@@ -43,6 +43,10 @@ h3 {
     /* color: #FF8666 !important;    Override any conflicts */
 }
 
+.section-title-best{
+    font-size: 50px !important;
+}
+
 .col-md-5, .col-md-7 {
     line-height: 2;
     text-wrap: wrap;
@@ -242,6 +246,11 @@ header {
 }
 
 /* Bestsellers */
+
+.product-category{
+    font-size: 25px;
+
+}
 .product-card {
     width: 250px;
     height: 350px;
@@ -260,7 +269,7 @@ header {
     align-items: center;
     background-color: white;
     overflow: hidden; /* Ensures no extra space appears */
-    border-radius: 30px;
+    border-radius: 20px;
 }
 
 .product-image img {
@@ -282,11 +291,13 @@ header {
 .product-info h4 {
     margin-bottom: 0px !important;
     margin-top: 10px;
+    font-size: 35px;
 }
 
 .product-info p {
     margin-top: 0 !important;
     margin-bottom: 10px !important;
+   
 }
 
 .price {
@@ -339,8 +350,8 @@ header {
     font-family: "Bebas Neue", cursive;
     font-size: 2rem;
     border: none;
-    padding: 10px 15px;
-    border-radius: 20px;
+    padding: 15px 20px;
+    border-radius: 10px;
     cursor: pointer;
     animation: pulse 3s infinite ease-in-out;
 }
@@ -373,7 +384,7 @@ section {
 /* Category Grid */
 /* Category Section */
 .category-section {
-    background-color: #2f5e12;
+    background-color: #a3f5a3;
     padding: 50px 30px;
     display: flex;
     justify-content: center;
@@ -392,7 +403,7 @@ section {
 
 /* Title on the left */
 .category-title {
-    color: white;
+    color: rgb(0, 0, 0);
     font-size: 25px;
     font-family: Arial, sans-serif;
     margin-right: 100px;
@@ -409,7 +420,7 @@ section {
     padding: 20px 100px;
     border-radius: 999px;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 25px;
     transition: background-color 0.3s ease, transform 0.2s ease;
     display: inline-block;
 }
@@ -532,12 +543,14 @@ footer {
 
 .swiper-wrapper {
     display: flex;
+    justify-content: center; /* Center the slides horizontally */
+    align-items: center;
 }
 
 .swiper-slide {
     display: flex;
     justify-content: center;
-    border-radius: 50px;
+    border-radius: 30px;
 }
 
 .swiper-pagination {
