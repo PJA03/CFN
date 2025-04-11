@@ -263,8 +263,8 @@ header {
 }
 
 .cart-actions .checkout-btn:hover {
-    background-color: #EED3B1;
-    color: #1F4529;
+    background-color: #a5b461;
+    color: #ffffff;
 }
 
 .cart-actions .cancel-btn {
@@ -273,7 +273,7 @@ header {
 }
 
 .cart-actions .cancel-btn:hover {
-    background-color: #7e7b7b;
+    background-color: darkred;
     color: #FFFFFF;
 }
 
