@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 24, 2025 at 02:42 PM
+-- Generation Time: Apr 10, 2025 at 09:56 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -42,7 +42,11 @@ CREATE TABLE `tb_bestsellers` (
 INSERT INTO `tb_bestsellers` (`bestseller_id`, `productID`, `display_order`, `created_at`, `updated_at`) VALUES
 (7, 17, 2, '2025-03-22 14:41:11', '2025-03-22 14:41:11'),
 (9, 8, 4, '2025-03-22 14:50:54', '2025-03-22 14:50:54'),
-(15, 22, 5, '2025-03-23 13:49:31', '2025-03-23 13:49:31');
+(15, 22, 5, '2025-03-23 13:49:31', '2025-03-23 13:49:31'),
+(17, 11, 6, '2025-03-25 04:42:29', '2025-03-25 04:42:29'),
+(18, 35, 7, '2025-03-25 04:42:36', '2025-03-25 04:42:36'),
+(19, 37, 8, '2025-03-25 04:42:46', '2025-03-25 04:42:46'),
+(20, 33, 9, '2025-03-25 04:42:55', '2025-03-25 04:42:55');
 
 -- --------------------------------------------------------
 
@@ -108,10 +112,16 @@ CREATE TABLE `tb_orders` (
 
 INSERT INTO `tb_orders` (`orderID`, `order_date`, `productID`, `product_name`, `user_id`, `email`, `first_name`, `last_name`, `quantity`, `status`, `payment_option`, `payment_proof`, `isApproved`, `price_total`, `trackingLink`, `delivered_date`) VALUES
 (3, '2025-03-21 16:16:52', 10, 'Buster D’ Acne Serum 30ml', 89, 'princessjamie.galias.cics@ust.edu.ph', 'Arah', '0', 1, 'Delivered', '0', '67dd2074ef482-484292276_507224642440350_5531290597758342471_n.jpg', 1, 130, '930000123456', '2025-03-21 17:16:18'),
-(4, '2025-03-21 16:24:38', 11, 'Elixir Day Cream SPF50 PA+++ 50g', 89, 'princessjamie.galias.cics@ust.edu.ph', 'Arah', '0', 1, 'Shipped', '0', '67dd2246288bf-484292276_507224642440350_5531290597758342471_n.jpg', 1, 190, '', NULL),
+(4, '2025-03-21 16:24:38', 11, 'Elixir Day Cream SPF50 PA+++ 50g', 89, 'princessjamie.galias.cics@ust.edu.ph', 'Arah', '0', 1, 'Delivered', '0', '67dd2246288bf-484292276_507224642440350_5531290597758342471_n.jpg', 1, 190, 'dsafsadf', '2025-03-25 16:02:42'),
 (5, '2025-03-24 20:01:41', 10, 'Buster D’ Acne Serum 30ml', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 4, 'Processing', '0', '67e149a57849b-bank qr.jpg', 1, 1430, '', NULL),
-(6, '2025-03-24 20:01:41', 11, 'Elixir Day Cream SPF50 PA+++ 50g', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Waiting for Payment', '0', '67e149a57849b-bank qr.jpg', 0, 1430, NULL, NULL),
-(7, '2025-03-24 20:01:41', 12, 'SET + Box Packaging', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Waiting for Payment', '0', '67e149a57849b-bank qr.jpg', 0, 1430, NULL, NULL);
+(6, '2025-03-24 20:01:41', 11, 'Elixir Day Cream SPF50 PA+++ 50g', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Shipped', '0', '67e149a57849b-bank qr.jpg', 1, 1430, '234edffs', NULL),
+(7, '2025-03-24 20:01:41', 12, 'SET + Box Packaging', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Cancelled', '0', '67e149a57849b-bank qr.jpg', 0, 1430, NULL, NULL),
+(8, '2025-03-25 12:28:11', 10, 'Buster D’ Acne Serum 30ml', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Processing', '0', '67e230db2b311-Screenshot 2024-12-08 222746.png', 1, 130, '', NULL),
+(9, '2025-03-25 13:04:42', 11, 'Elixir Day Cream SPF50 PA+++ 50g', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 3, 'Cancelled', '0', '67e2396a4c3f9-Screenshot 2024-12-08 222734.png', 0, 1880, NULL, NULL),
+(10, '2025-03-25 13:04:42', 17, 'CollaBoost Foam Wash 100ml w/ Silicone Brush', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Waiting for Payment', '0', '67e2396a4c3f9-Screenshot 2024-12-08 222734.png', 0, 1880, NULL, NULL),
+(11, '2025-03-25 13:04:42', 22, 'Bright Radiance Toner 100ml', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Waiting for Payment', '0', '67e2396a4c3f9-Screenshot 2024-12-08 222734.png', 0, 1880, NULL, NULL),
+(12, '2025-03-25 13:04:42', 25, '250ml Gluta Kojic InstaWhite SPF50 Body Lotion', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 4, 'Waiting for Payment', '0', '67e2396a4c3f9-Screenshot 2024-12-08 222734.png', 0, 1880, NULL, NULL),
+(14, '2025-03-30 21:16:13', 11, 'Elixir Day Cream SPF50 PA+++ 50g', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 3, 'Delivered', '0', '67e9441d183ad-frassati.jpg', 0, 570, 'dsafsadf', '2025-03-30 21:17:09');
 
 -- --------------------------------------------------------
 
@@ -342,11 +352,13 @@ CREATE TABLE `tb_user` (
 --
 
 INSERT INTO `tb_user` (`user_id`, `username`, `email`, `pass`, `first_name`, `last_name`, `contact_no`, `address`, `role`, `profile_image`, `validated`, `token`, `token_created_at`) VALUES
-(72, 'ironman123', 'pjarahgalias27@gmail.com', '$2y$10$ADKB6wCkyA4XlCiZaAGrn.lxH/Hp3ndcNjU8olRh6aQTC0024ymHK', 'Arah', 'Galias', '09669463472', 'Makati', NULL, '../uploads/ey.png', 1, '8496', '2025-03-05 13:10:47'),
+(72, 'ironman123', 'pjarahgalias27@gmail.com', '$2y$10$ooz99XqFVVJgxMP7sDAZc.wU1Phl32pbsEn/dvLn8.Mu8ZX5ME0lO', 'Arah', 'Galias', '09669463472', 'Makati', 'user', '../uploads/ey.png', 1, '', '2025-03-05 13:10:47'),
 (79, 'Admin', 'galias.pja@gmail.com', '$2y$10$xZh8zzSPbdyxUa7cng7aDu7LsPboC1x29eitjMxjd/gTU0GP3bcL.', 'Arah', 'Galias', '09669463472', 'dyan lang', 'admin', NULL, 1, '', '2025-03-10 19:50:28'),
 (89, 'pjarahgalias27', 'princessjamie.galias.cics@ust.edu.ph', '$2y$10$iSWy.9Kp9yJ7mZD4q9/THOGG31y3aRyXI98axhH4Ahb0Vj2MUYfYi', 'Arah', 'Galias', '09669463472', 'Blk 1 Lot 1 Ibañez St', 'user', '../uploads/100ml-frost-glass-bottle-silver-spray-1.png', 1, '', '2025-03-19 07:05:30'),
 (90, 'iSmooth', 'judesamonte1@gmail.com', '$2y$10$BE2XGuhaWyQT4MMoAhM.xOY5AhiAa8YVCbMNEX2ZrXPHlssSwCJqS', NULL, NULL, NULL, NULL, 'user', NULL, 0, '818349', '2025-03-20 18:10:25'),
-(91, 'bran', 'brandonfredrick.gomez.cics@ust.edu.ph', '$2y$10$GgrBN9l.3oi9erioJ51H6OkI/Az0kCg8zsD3f3ly1EIQhpJemnMla', NULL, NULL, NULL, NULL, 'user', NULL, 1, '', '2025-03-24 13:38:43');
+(92, 'SE 2', 'waffles@waffles.com', '$2y$10$kjy4YAoUumSXi8vSxkPa1O35s87tR2HFbC0w.95OUWR0./HWtFXEq', NULL, NULL, NULL, NULL, 'user', NULL, 0, '268114', '2025-03-24 19:25:36'),
+(93, 'pjarahgalias', 'waffles1@waffles.com', '$2y$10$GDlceD0pD7lVGdD1ZlySC.xjTy68f3IZKcZLDfE1qG0LUumIt5HwS', NULL, NULL, NULL, NULL, 'user', NULL, 0, '98663', '2025-03-24 19:26:20'),
+(95, 'waffles', 'brandonfredrick.gomez.cics@ust.edu.ph', '$2y$10$qt4fgOcIaIUn/G916z3HuOeAkcirArAvqgjO0/NNEomin1SkauV/.', 'Brandon', 'Gomez', '09098412774', 'Taytay, Rizal', 'superadmin', NULL, 1, '', '2025-03-25 07:48:56');
 
 -- --------------------------------------------------------
 
@@ -437,19 +449,19 @@ ALTER TABLE `tb_vouchers`
 -- AUTO_INCREMENT for table `tb_bestsellers`
 --
 ALTER TABLE `tb_bestsellers`
-  MODIFY `bestseller_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `bestseller_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `tb_cart`
 --
 ALTER TABLE `tb_cart`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `tb_orders`
 --
 ALTER TABLE `tb_orders`
-  MODIFY `orderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `orderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `tb_payment_qr_codes`
@@ -473,7 +485,7 @@ ALTER TABLE `tb_productvariants`
 -- AUTO_INCREMENT for table `tb_user`
 --
 ALTER TABLE `tb_user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
 
 --
 -- AUTO_INCREMENT for table `tb_vouchers`

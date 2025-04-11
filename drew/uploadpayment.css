@@ -381,13 +381,29 @@ footer {
     margin-top: 10px;
 }
 
-/* Buttons */
-.cart-actions {
+
+
+.button-container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; /* This will vertically center the buttons */
     gap: 20px;
     margin-top: 30px;
+}
+
+/* Make sure both buttons have consistent styling */
+.upload-btn {
+    display: inline-flex; /* Using inline-flex instead of just flex */
+    align-items: center;
+    justify-content: center;
+    height: 50px; /* Set a consistent height for both buttons */
+    padding: 0 20px;
+    /* Keep your other button styles like color, background, etc. */
+}
+
+/* If necessary, adjust the icon spacing */
+.upload-btn i {
+    margin-right: 8px;
 }
 
 .cart-actions .btn {
@@ -528,4 +544,99 @@ footer {
 .modal-content {
     max-height: 50vh; /* Adjust height */
     overflow-y: auto; /* Enables scrolling if content is too long */
+}
+
+/* Side-by-side layout for QR code and image preview */
+.payment-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-bottom: 30px;
+    align-items: stretch;
+}
+
+.qr-and-text {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-section {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed #1F4529;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+    height: 100%;
+}
+
+.preview-section h5 {
+    font-family: "Bebas Neue", serif !important;
+    font-size: 20px;
+    color: #1F4529;
+    margin-bottom: 15px;
+}
+
+#image-preview-container {
+    width: 100%;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    border: none;
+}
+
+#image-preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.preview-placeholder {
+    text-align: center;
+    color: #888;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.preview-placeholder i {
+    margin-bottom: 15px;
+    color: #1F4529;
+    opacity: 0.5;
+}
+
+.preview-placeholder p {
+    font-style: italic;
+    margin: 0;
+}
+
+#file-name {
+    margin-top: 10px;
+    font-style: italic;
+    color: #555;
+    text-align: center;
+    word-break: break-word;
+    max-width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .payment-section {
+        flex-direction: column;
+    }
+    
+    .preview-section {
+        margin-top: 20px;
+    }
 }

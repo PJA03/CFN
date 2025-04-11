@@ -76,7 +76,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
     </header>
 
     <main>
-        <h1 class="cart-title">Order List</h1>
         <section class="cart-container">
             <div class="cart-content">
                 <table class="cart-table">
@@ -85,9 +84,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
                             <th class="date-header">Date</th>
                             <th class="order-list-header">Order List</th>
                             <th class="total-header">Total</th>
-                            <th class="payment-method-header">Payment Method</th>
+                            <th class="payment-method-header">Tracking Link</th>
                             <th class="status-header">Status</th>
-                            <th class="tracking-link-header">Tracking Link</th>
+                            <th class="tracking-link-header">Action</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -98,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
                     <td><?php echo htmlspecialchars(date('M j, Y', strtotime($order['order_date']))); ?></td>
                     <td><?php echo htmlspecialchars($order['product_name']); ?> (x<?php echo $order['quantity']; ?>)</td>
                     <td>₱<?php echo number_format($order['price_total'], 2); ?></td>
-                    <td><?php echo htmlspecialchars($order['trackingLink']); ?></td>
+                    <td><a href="<?= htmlspecialchars($order['trackingLink']) ?>"><?= htmlspecialchars($order['trackingLink']) ?></a></td>
                     <td><?php echo htmlspecialchars($order['status']); ?></td>
                     <td>
                         <?php if ($order['status'] === 'Waiting for Payment'): ?>

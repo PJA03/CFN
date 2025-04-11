@@ -1,3 +1,4 @@
+
 <?php
 header('Content-Type: application/json');
 require_once 'auth_check.php';
@@ -174,6 +175,25 @@ while ($row = $result->fetch_assoc()) {
     ];
 }
 
+$sql = "SELECT 
+            orderID,
+            status,
+            price_total as total_amount,
+            order_date
+        FROM tb_orders
+        WHERE order_date BETWEEN '$startDate' AND '$endDate 23:59:59'";
+$result = $conn->query($sql);
+$orders = [];
+while ($row = $result->fetch_assoc()) {
+    $orders[] = [
+        'orderID' => $row['orderID'],
+        // 'customer_name' => $row['customer_name'],
+        'status' => $row['status'],
+        'total_amount' => (float)$row['total_amount'],
+        'order_date' => $row['order_date']
+    ];
+}
+
 $response = [
     'totalSales' => (float)$totalSales,
     'newUsers' => (int)$newUsers,
@@ -181,6 +201,8 @@ $response = [
     'chartLabels' => $chartLabels,
     'chartData' => $chartData,
     'topProducts' => $topProducts
+    ,
+    'orders' => $orders
 ];
 
 echo json_encode($response);

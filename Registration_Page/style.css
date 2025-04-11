@@ -215,14 +215,13 @@ p{
     transition: all 0.8s;
     transform: translateX(0);
     background-color: #1F4529 !important;
-    z-index: 1;
-    overflow: hidden;
     z-index: 5;
+    overflow: hidden;
     opacity: 1;
     color: #fff !important;
     padding: 15px;
-    margin: 0px !important;
-    width: 43%;
+    margin: 20px 20px !important;
+    width: 50vw;
     height: 80% !important;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
     border-radius: 50px;

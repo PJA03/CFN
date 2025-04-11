@@ -18,9 +18,8 @@ body {
 
 /* Header Styling */
 header {
-    background-color: #1F4529;
-    color: #EED3B1;
-    padding: 20px 20px;
+    background-color: white;
+    padding: 20px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -29,13 +28,6 @@ header {
 }
 
 /* Logo Styling */
-.logo {
-    display: flex;
-    align-items: center;
-    margin-left: 30px;
-    gap: 10px; /* Adjust spacing between the image and text */
-}
-
 .logo img {
     height: 40px; /* Adjust logo size */
 }
@@ -44,7 +36,7 @@ header {
 .navbar {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     gap: 20px;
 }
 
@@ -55,13 +47,12 @@ header {
     justify-items: center;
     gap: 15px;
     transition: transform 0.3s ease, color 0.3s ease;
-    margin-left: 50px;
-    margin-right: 40px;
 }
 
+/* Font Awesome Icon Styles */
 .icon-profile, .home, .cart {
     font-size: 1.6rem;
-    color: #EED3B1;
+    color: black;
     cursor: pointer;
     margin-left: 10px;
     position: relative;
@@ -69,52 +60,36 @@ header {
 
 .icon-profile:hover, .home:hover, .cart:hover {
     transform: scale(1.1);
-    color: whitesmoke;
+    color: orange;
 }
 
-.cart::after, /* Show underline when active */
-.cart:hover::after { /* Show underline on hover */
-    content: "";
-    display: block;
-    width: 100%;
-    height: 4px; /* Thickness of underline */
-    background-color: whitesmoke; /* Change color if needed */
-    position: absolute;
-    bottom: -10px; /* Adjusts spacing below the icon */
-    border-radius: 2px;
-    left: 0;
+.icon-profile::after,
+.icon-profile:hover::after {
+    display: none;
 }
 
-.usernamedisplay {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    color: #EED3B1;  
-    font-size: 20px;
-    flex-wrap: wrap;
-    padding-top: 15px;
-}
-
-.active {
+.active{
     text-decoration: underline;
-    color: white;
+    color: black;
     display: flex;
     align-items: center;
+    background-color: transparent;
+    border: none;
+    margin-left: 10px;
 }
 
-.transparent-button {
+.transparent-button{
     display: flex;
     align-items: center;
     background-color: transparent;
     text-decoration: none;
     border: none;
     margin-left: 10px;
-    color: white;
+    color: black;
 }
 
 .transparent-button:hover, .active:hover {
-    transform: scale(1.1);
-    color: #EED3B1;
+    color: #a5b461;
 }
 
 /* Cart Page */
@@ -243,17 +218,16 @@ header {
 .cart-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 15px; /* Adds consistent spacing between buttons */
+    gap: 15px;
     margin-top: 20px;
 }
 
 .delete-column {
     text-align: center;
-    width: 50px; /* Adjust width as needed */
+    width: 50px;
     position: relative;
 }
 
-/* Style the delete button */
 .delete-btn {
     background: transparent;
     border: none;
@@ -265,10 +239,10 @@ header {
     transform: translate(-50%, -50%);
 }
 
-/* Style the trash icon */
 .delete-btn i {
     font-size: 1.2rem;
 }
+
 .cart-actions .btn {
     padding: 12px 30px;
     font-size: 18px;
@@ -279,7 +253,7 @@ header {
     transition: all 0.3s ease;
     text-align: center;
     display: inline-block;
-    min-width: 180px; /* Ensures consistent width */
+    min-width: 180px;
     text-decoration: none;
 }
 
@@ -305,13 +279,14 @@ header {
 
 /* Footer */
 footer {
-    background-color: #1F4529;
-    color: white;
-    padding: 40px 60px;
+    background-color: #FFFFFF;
+    color: #000000;
+    padding: 30px 60px;
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
+    border-top: 1px solid #E8ECD7;
 }
 
 .footer-container {
@@ -326,19 +301,19 @@ footer {
 
 .footer-left {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 20px;
 }
 
 .footer-logo {
-    height: 150px;
+    height: 80px;
 }
 
 .footer-right {
     display: flex;
     flex-direction: column;
     text-align: left;
-    gap: 20px;
+    gap: 10px;
 }
 
 .footer-nav {
@@ -347,19 +322,18 @@ footer {
 }
 
 .footer-nav li {
-    font-family: "Bebas Neue", serif;
-    font-size: 20px;
+    font-size: 16px;
     margin-bottom: 8px;
 }
 
 .footer-nav a {
-    color: white;
+    color: #000000;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .footer-nav a:hover {
-    color: #EED3B1;
+    color: #1F4529;
 }
 
 .social-icons {
@@ -370,13 +344,13 @@ footer {
 }
 
 .social-icons p {
-    font-size: 20px;
-    font-family: "Bebas Neue", serif;
+    font-size: 16px;
+    font-weight: bold;
     margin: 0;
 }
 
 .social-icons a {
-    color: white;
+    color: #000000;
     font-size: 18px;
     text-decoration: none;
     transition: transform 0.3s ease, color 0.3s ease;
@@ -384,7 +358,7 @@ footer {
 
 .social-icons a:hover {
     transform: scale(1.1);
-    color: #EED3B1;
+    color: #1F4529;
 }
 
 .footer-center {
@@ -394,62 +368,23 @@ footer {
     opacity: 0.8;
 }
 
-@media (max-width: 768px) {
-    .main {
-        width: 90vw;
-    }
-    .cart-actions {
-        flex-direction: column;
-        gap: 10px;
-    }
-    .footer-container {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-    .footer-left,
-    .footer-right {
-        justify-content: center;
-        align-items: center;
-    }
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-::-webkit-scrollbar-track {
-    background: #E8ECD7;
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #FF8666;
-    border-radius: 10px;
-    transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #1F4529;
-}
-
+/* Voucher Section */
 .voucher-section {
     width: 400px !important;
     padding: 15px;
     border: 1px solid #e0e0e0;
     border-radius: 5px;
     background-color: #f9f9f9;
-    flex-shrink: 0; /* Prevent it from shrinking */
+    flex-shrink: 0;
 }
 
 .voucher-summary-container {
+    justify-content: flex-end;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     margin-top: 20px;
-    gap: 40px; /* Adjust spacing */
+    gap: 40px;
 }
 
 .voucher-section h3 {
@@ -491,21 +426,328 @@ footer {
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
+
+/* Modal Styling */
 .modal-body {
     text-align: justify;
     align-items: center;
     border-radius: 30px;
 }
+
 .modal-header {
-    color:  whitesmoke;
+    color: whitesmoke;
     background-color: #1F4529;
 }
 
 .modal-dialog {
-     max-width: 40%; /* Adjust as needed */
+    max-width: 40%;
 }
 
 .modal-content {
-    max-height: 50vh; /* Adjust height */
-    overflow-y: auto; /* Enables scrolling if content is too long */
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #E8ECD7;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #FF8666;
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1F4529;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    /* Main Container */
+    .cart-container {
+        padding: 20px;
+        margin: 20px;
+    }
+
+    .cart-title {
+        font-size: 36px;
+    }
+
+    /* Header */
+    header {
+        flex-direction: column;
+        padding: 10px 20px;
+        gap: 10px;
+    }
+
+    .logo {
+        margin-left: 0;
+    }
+
+    .navbar {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .usernamedisplay {
+        font-size: 16px;
+        padding-top: 5px;
+    }
+
+    .icons {
+        margin-left: 0;
+        margin-right: 0;
+        gap: 20px;
+    }
+
+    /* Cart Table */
+    .cart-table {
+        display: block;
+    }
+
+    .cart-table thead {
+        display: none;
+    }
+
+    .cart-table tbody,
+    .cart-table tr {
+        display: block;
+    }
+
+    .cart-table tr {
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+    }
+
+    .cart-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+        padding: 10px;
+        border: none;
+    }
+
+    .cart-table td.product-info::before {
+        content: "Product: ";
+        font-weight: bold;
+        width: 30%;
+    }
+
+    .cart-table td.product-quantity::before {
+        content: "Quantity: ";
+        font-weight: bold;
+        width: 30%;
+    }
+
+    .cart-table td.product-price::before {
+        content: "Price: ";
+        font-weight: bold;
+        width: 30%;
+    }
+
+    .cart-table td.delete-column {
+        display: block;
+        text-align: right;
+        position: relative;
+    }
+
+    .cart-table td.delete-column::before {
+        content: none;
+    }
+
+    .delete-btn {
+        position: static;
+        transform: none;
+    }
+
+    .product-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .product-image {
+        width: 80px;
+        height: 80px;
+    }
+
+    .quantity-btn {
+        padding: 3px 8px;
+        font-size: 14px;
+    }
+
+    /* Voucher and Summary */
+    .voucher-summary-container {
+    justify-content: flex-end;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .voucher-section {
+        width: 100% !important;
+    }
+
+    .voucher-form {
+        width: 100%;
+    }
+
+    .cart-summary {
+        text-align: left;
+    }
+
+    .price-breakdown {
+        text-align: left;
+    }
+
+    .price-breakdown p {
+        justify-content: space-between;
+    }
+
+    .delivery-note {
+        text-align: left;
+    }
+
+    /* Cart Actions */
+    .cart-actions {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .cart-actions .btn {
+        width: 100%;
+        max-width: 300px;
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+
+    /*footer*/
+footer {
+    background-color: white;
+    color: black;
+    padding: 30px 30px;
+    display: flex;
+    flex-direction: column; /* Stack footer elements vertically */
+    align-items: center;
+    width: 100%;
+    margin-top: auto;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+    flex-wrap: wrap;
+    gap: 20px;
+    min-height: 200px;
+}
+
+.footer-left {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
+
+.footer-logo {
+    height: 150px; /* Adjust according to your logo size */
+}
+
+.footer-logo img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+}
+
+.footer-right {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.footer-nav {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-nav li {
+    font-family: "Bebas Neue", serif !important;
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.footer-nav a {
+    color: black;
+    text-decoration: none;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icons {
+    display: flex;
+    text-align: left;
+    flex-direction: column; /* Keeps the SOCIALS text on top and icons underneath */
+    align-items: flex-start; /* Aligns items to the left */
+    font-size: 20px;
+    font-family: "Bebas Neue", serif;
+    color: black;
+    text-decoration: none;
+    padding: 0;
+}
+
+.social-icons p {
+    margin-bottom: 8px;
+}
+
+.social-icons a {
+    margin-bottom: 8px;
+    color: black;
+}
+
+.social-icons a:hover, .footer-nav a:hover {
+    transform: scale(1.1);
+    color: orange;
+}
+
+.footer-center {
+    text-align: center;
+    width: 100%;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+    /* Modals */
+    .modal-dialog {
+        max-width: 90%;
+    }
+
+    .modal-content {
+        max-height: 80vh;
+    }
+}
+
+.cart.active::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 4px;
+    background-color: orange;
+    position: absolute;
+    bottom: -10px;
+    border-radius: 2px;
+    left: 0;
+}
+
+.modal-dialog {
+    margin: auto !important;
 }

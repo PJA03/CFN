@@ -354,7 +354,6 @@ const addToCartForm = document.getElementById('addToCartForm');
                 .then(response => response.json())
                 .then(data => {
                     if (data.in_cart) {
-                        const confirmAddMore = confirm(`${productName} is already in your cart (Quantity: ${data.quantity}). Do you want to add ${quantity} more?`);
                         if (confirmAddMore) {
                             submitForm(quantity, productName);
                         }

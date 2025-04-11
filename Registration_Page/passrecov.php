@@ -18,12 +18,12 @@
 <body>
         <div class="card">
             <img src="../Resources/cfn_logo.png" class="logo" alt="Naturale">
-            <h1 class="h1 text-center">Password Reset</h1>
-            <br>
-            <p class="lead" style="width:75%";> Please enter the email address associated with your account and click on the button below to receive a reset link.</p>
+            <h1 class="h1 text-center" style ="width: 90%";>Password Reset</h1>
+                <br>
+            <p class="lead" style="width:70%";> Please enter the email address associated with your account and click on the button below to receive a reset link.</p>
                 <br>
             <form action="#" method="post">
-            <div class ="input-group">
+            <div class ="input-group" style = "width: 30vw";>
                 <input type="text" name="email1" id="email1" class="form-control" placeholder="Email" required>
             </div>
                 <br>

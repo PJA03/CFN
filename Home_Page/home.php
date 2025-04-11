@@ -1,3 +1,4 @@
+
 <?php
 // Include database connection and sessions+cookies
 include '../conn.php'; 
@@ -66,19 +67,19 @@ $conn->close();
 </head>
 
 <body>
-    <header>
+<header>
         <div class="logo">
-            <a href = "../Home_Page/home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
+            <a href = "../Home_Page/Home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
         </div>
         <div class="navbar">
-        <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
+        <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>            
         <form action="../Home_Page/ProductScroll.php" method="GET" class="search-form" onsubmit="return validateSearch()">
             <input type="text" name="search" class="search-bar" id="searchBar" placeholder="Search Product">
         </form>            
         <div class="icons">
                 <a href = "../Home_Page/Home.php"><i class="fa-solid fa-house home"></i></a>
                 <a href ="../drew/cart.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
-                <a href="../User_Profile_Page/UserProfile.php"><i class ="far fa-user-circle fa-2x icon-profile"></i></a>
+                <a href="UserProfile.php"><i class ="far fa-user-circle fa-2x icon-profile"></i></a>
             </div>
         </div>
     </header>
@@ -93,12 +94,10 @@ $conn->close();
 
     <!-- Main Banner -->
     <div class="main-banner d-flex justify-content-center align-items-center" 
-         style="height: 400px; width: 100%; background-image: url('banner.png'); 
+         style="height: 300px; width: 100%; background-image: url('banner.png'); 
          background-size: cover; background-position: center; text-align: center;">
         <div class="banner-content">
             <h1 class="banner-title">Cosmeticas</h1>
-            <h3 class="banner-subtitle">Just Like Nature Intended</h3>
-            <a href="ProductScroll.php"><button class="banner-btn">SHOP NOW</button></a>
         </div>
     </div>
 
@@ -153,26 +152,34 @@ $conn->close();
 
 
     <section class="description-section" data-animate="fade-in">
-        <div class="description-container">
-            <div class="left-container">
-                <div class="description-text">
-                    <h3>Explore our all-natural ingredients, eco-friendly packaging, and innovative formulas designed to enhance your beauty while nourishing your skin—just as nature intended.</h3>
-                </div>
-                <h2 class="section-title">SHOP BY CATEGORY</h2>
-                <div class="category-grid">
-                    <a href="ProductScroll.php?category=skin" class="category-card-skin" data-animate="fade-in-scale">SKIN</a>
-                    <a href="ProductScroll.php?category=hair" class="category-card-hair" data-animate="fade-in-scale">HAIR</a>
-                    <a href="ProductScroll.php?category=face" class="category-card-face" data-animate="fade-in-scale">FACE</a>
-                    <a href="ProductScroll.php?category=perfume" class="category-card-perfume" data-animate="fade-in-scale">PERFUME</a>
-                </div>
-            </div>
-            <div class="description-image">
-                <img src="description.png" alt="Description Image" class="description">
-            </div>
-        </div>
-    </section>
+  <div class="description-container">
+    <div class="left-container">
+      <div class="description-text">
+        <h3>
+          Explore our all-natural ingredients, eco-friendly packaging, and innovative formulas designed to enhance your beauty while nourishing your skin — just as nature intended.
+        </h3>
+      </div>
+      <a href="ProductScroll.php"><button class="banner-btn">SHOP NOW</button></a>
+    </div>
+    <div class="description-image">
+      <img src="description.png" alt="Description Image" class="description">
+    </div>
+  </div>
+</section>
 
-    <footer>
+
+    <section class="category-section">
+    <div class="category-row">
+        <h2 class="category-title">Shop by category</h2>
+        <a href="ProductScroll.php?category=skin" class="category-button">SKIN</a>
+        <a href="ProductScroll.php?category=face" class="category-button">FACE</a>
+        <a href="ProductScroll.php?category=hair" class="category-button active">HAIR</a>
+        <a href="ProductScroll.php?category=perfume" class="category-button">PERFUME</a>
+    </div>
+</section>
+
+
+                <footer>
         <div class="footer-container">
             <div class="footer-left">
                 <img src="../Resources/cfn_logo.png" alt="Naturale Logo" class="footer-logo">
