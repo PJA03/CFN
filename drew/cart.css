@@ -427,25 +427,86 @@ footer {
     border: 1px solid #f5c6cb;
 }
 
-/* Modal Styling */
+/* Modal Styling - Enhanced */
 .modal-body {
     text-align: justify;
     align-items: center;
     border-radius: 30px;
+    padding: 25px;  /* Increased padding */
 }
 
 .modal-header {
     color: whitesmoke;
     background-color: #1F4529;
+    border-radius: 30px 30px 0 0;  /* Matching the modal-body border-radius */
+    padding: 15px 20px;  /* Increased padding */
 }
 
 .modal-dialog {
     max-width: 40%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) !important;  /* Center perfectly */
+    margin: 0 !important;  /* Remove any margins affecting positioning */
+    animation: modalPop 0.4s ease-out forwards;  /* Add animation */
+}
+
+/* Animation for the modal to "pop" */
+@keyframes modalPop {
+    0% {
+        transform: translate(-50%, -50%) scale(0.7);
+        opacity: 0;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
 }
 
 .modal-content {
-    max-height: 50vh;
+    max-height: 80vh;  /* Increased from 50vh */
     overflow-y: auto;
+    border-radius: 30px;  /* Match the header/body border-radius */
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);  /* Stronger shadow for "pop" effect */
+    border: none;  /* Remove default border */
+}
+
+/* Modal backdrop enhancement */
+.modal-backdrop.show {
+    opacity: 0.7;  /* Darker backdrop for better contrast */
+}
+
+/* Button styles for modal */
+.modal .btn {
+    border-radius: 25px;
+    padding: 8px 20px;
+    font-family: "Bebas Neue", serif !important;
+    transition: all 0.3s ease;
+}
+
+.modal .btn-primary {
+    background-color: #1F4529;
+    border-color: #1F4529;
+}
+
+.modal .btn-primary:hover {
+    background-color: #a5b461;
+    border-color: #a5b461;
+}
+
+.modal .btn-secondary {
+    background-color: #B0B0B0;
+    color: #1F4529;
+    border-color: #B0B0B0;
+}
+
+.modal .btn-secondary:hover {
+    background-color: #999;
+    border-color: #999;
 }
 
 /* Custom Scrollbar */
@@ -588,7 +649,7 @@ footer {
 
     /* Voucher and Summary */
     .voucher-summary-container {
-    justify-content: flex-end;
+        justify-content: flex-end;
         flex-direction: column;
         gap: 20px;
     }
@@ -631,108 +692,109 @@ footer {
         font-size: 16px;
     }
 
-    /*footer*/
-footer {
-    background-color: white;
-    color: black;
-    padding: 30px 30px;
-    display: flex;
-    flex-direction: column; /* Stack footer elements vertically */
-    align-items: center;
-    width: 100%;
-    margin-top: auto;
-}
-
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
-    max-width: 1200px;
-    flex-wrap: wrap;
-    gap: 20px;
-    min-height: 200px;
-}
-
-.footer-left {
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-}
-
-.footer-logo {
-    height: 150px; /* Adjust according to your logo size */
-}
-
-.footer-logo img {
-    max-width: 80%;
-    max-height: 80%;
-    object-fit: contain;
-}
-
-.footer-right {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-}
-
-.footer-nav {
-    list-style: none;
-    padding: 0;
-}
-
-.footer-nav li {
-    font-family: "Bebas Neue", serif !important;
-    font-size: 20px;
-    margin-bottom: 8px;
-}
-
-.footer-nav a {
-    color: black;
-    text-decoration: none;
-    transition: transform 0.3s ease, color 0.3s ease;
-}
-
-.social-icons {
-    display: flex;
-    text-align: left;
-    flex-direction: column; /* Keeps the SOCIALS text on top and icons underneath */
-    align-items: flex-start; /* Aligns items to the left */
-    font-size: 20px;
-    font-family: "Bebas Neue", serif;
-    color: black;
-    text-decoration: none;
-    padding: 0;
-}
-
-.social-icons p {
-    margin-bottom: 8px;
-}
-
-.social-icons a {
-    margin-bottom: 8px;
-    color: black;
-}
-
-.social-icons a:hover, .footer-nav a:hover {
-    transform: scale(1.1);
-    color: orange;
-}
-
-.footer-center {
-    text-align: center;
-    width: 100%;
-    font-size: 14px;
-    opacity: 0.8;
-}
-
-    /* Modals */
-    .modal-dialog {
-        max-width: 90%;
+    /* Footer */
+    footer {
+        background-color: white;
+        color: black;
+        padding: 30px 30px;
+        display: flex;
+        flex-direction: column; /* Stack footer elements vertically */
+        align-items: center;
+        width: 100%;
+        margin-top: auto;
     }
 
-    .modal-content {
-        max-height: 80vh;
+    .footer-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        width: 100%;
+        max-width: 1200px;
+        flex-wrap: wrap;
+        gap: 20px;
+        min-height: 200px;
+    }
+
+    .footer-left {
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+    }
+
+    .footer-logo {
+        height: 150px; /* Adjust according to your logo size */
+    }
+
+    .footer-logo img {
+        max-width: 80%;
+        max-height: 80%;
+        object-fit: contain;
+    }
+
+    .footer-right {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .footer-nav {
+        list-style: none;
+        padding: 0;
+    }
+
+    .footer-nav li {
+        font-family: "Bebas Neue", serif !important;
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+
+    .footer-nav a {
+        color: black;
+        text-decoration: none;
+        transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .social-icons {
+        display: flex;
+        text-align: left;
+        flex-direction: column; /* Keeps the SOCIALS text on top and icons underneath */
+        align-items: flex-start; /* Aligns items to the left */
+        font-size: 20px;
+        font-family: "Bebas Neue", serif;
+        color: black;
+        text-decoration: none;
+        padding: 0;
+    }
+
+    .social-icons p {
+        margin-bottom: 8px;
+    }
+
+    .social-icons a {
+        margin-bottom: 8px;
+        color: black;
+    }
+
+    .social-icons a:hover, .footer-nav a:hover {
+        transform: scale(1.1);
+        color: orange;
+    }
+
+    .footer-center {
+        text-align: center;
+        width: 100%;
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    /* Modals - Mobile Responsive */
+    .modal-dialog {
+        max-width: 90%;
+        width: 90%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) !important;
     }
 }
 
@@ -747,7 +809,6 @@ footer {
     border-radius: 2px;
     left: 0;
 }
-
 .modal-dialog {
     margin: auto !important;
 }
