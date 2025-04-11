@@ -87,34 +87,43 @@ if ($qr_type) {
     <main>
         <section class="cart-container">
             <div class="upload-receipt">
-                <h2>QR Payment</h2>
-                <div class="qr-and-text">
-                    <div class="qr-code-placeholder">
-                        <img src="<?php echo htmlspecialchars($qr_image); ?>" alt="QR Code" class="qr-code-image">
+                <div class="payment-section">
+                    <div class="qr-and-text">
+                        <div class="qr-code-placeholder">
+                            <img src="<?php echo htmlspecialchars($qr_image); ?>" alt="QR Code" class="qr-code-image">
+                        </div>
+                        <div class="text-content">
+                            <p>QR PH (<?php echo strtoupper(str_replace('_', ' ', $qr_type)); ?>)</p>
+                            <p>Scan the QR code to make your payment</p>
+                            <p>SCAN TO PAY HERE</p>
+                            <p>Kindly upload your E-receipt to verify your payment</p>
+                        </div>
                     </div>
-                    <div class="text-content">
-                        <p>QR PH (<?php echo strtoupper(str_replace('_', ' ', $qr_type)); ?>)</p>
-                        <p>Scan the QR code to make your payment</p>
-                        <p>SCAN TO PAY HERE</p>
-                        <p>Kindly upload your E-receipt to verify your payment</p>
+                    
+                    <div class="preview-section">
+                        <h5>Payment Receipt Preview</h5>
+                        <div id="image-preview-container">
+                            <img id="image-preview" src="" alt="Receipt Preview" style="display: none;">
+                            <div class="preview-placeholder" id="preview-placeholder">
+                                <i class="fas fa-image fa-4x"></i>
+                                <p>Your receipt preview will appear here</p>
+                            </div>
+                        </div>
+                        <p id="file-name"></p>
                     </div>
                 </div>
 
                 <form action="process_payment.php" method="POST" enctype="multipart/form-data">
-                    <div class="upload-container">
-                        <label for="payment-proof" class="upload-btn">
-                            <i class="fas fa-upload"></i> Upload E-Receipt
-                        </label>
-                        <input type="file" id="payment-proof" name="payment_proof" accept=".png, .jpeg, .jpg" required style="display: none;">
-                        <p id="file-name"></p>
-                    </div>
-                    <div id="image-preview-container" style="margin-top: 10px;">
-                        <img id="image-preview" src="" alt="Image Preview" style="max-width: 100%; max-height: 200px; display: none;">
-                    </div>
-                    <div class="submit-container">
-                        <button type="submit" class="upload-btn" style="margin-top: 50px;">Submit Payment</button>
-                    </div>
-                </form>
+                <div class="button-container">
+    <label for="payment-proof" class="upload-btn">
+        <i class="fas fa-upload"></i> Upload E-Receipt
+    </label>
+    <input type="file" id="payment-proof" name="payment_proof" accept=".png, .jpeg, .jpg" required style="display: none;">
+    
+    <button type="submit" class="upload-btn">Submit Payment</button>
+</div>
+    </div>
+</form>
             </div>
         </section>
     </main>
@@ -142,8 +151,8 @@ if ($qr_type) {
         </div>
     </footer>
 
-       <!-- Modal -->
-       <div class="modal fade" id="ModalTerms" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <!-- Modal -->
+    <div class="modal fade" id="ModalTerms" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #1F4529;">
@@ -209,7 +218,6 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
             </div>
         </div>
     </div>
-</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -218,17 +226,22 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
             const fileName = fileInput.files[0] ? fileInput.files[0].name : '';
             const file = fileInput.files[0];
             const previewImage = document.getElementById('image-preview');
+            const previewPlaceholder = document.getElementById('preview-placeholder');
+            
             document.getElementById('file-name').textContent = fileName;
+            
             if (file && file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     previewImage.src = e.target.result;
                     previewImage.style.display = 'block';
+                    previewPlaceholder.style.display = 'none';
                 };
                 reader.readAsDataURL(file);
             } else {
                 previewImage.src = '';
                 previewImage.style.display = 'none';
+                previewPlaceholder.style.display = 'block';
             }
         });
     </script>
