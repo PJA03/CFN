@@ -54,30 +54,32 @@ require_once 'auth_check.php';
 <body>
     <div class="d-flex flex-wrap">
         <!-- Sidebar -->
-        <div class="col-12 col-md-2 sidebar d-flex flex-column p-3">
-            <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3">
-            <nav class="nav flex-column">
-                <a class="nav-link" href="manageproductsA.php">Products</a>
-                <a class="nav-link" href="managecontentA.php">Content</a>
-                <a class="nav-link" href="manageordersA.php">Orders</a>
-                <a class="nav-link active" href="analytics.php">Analytics</a>
-            </nav>
-            <div class="date-picker mt-4">
-                <label for="start">Start Date:</label>
-                <input type="date" id="start" class="form-control mb-3" value="2025-03-01">
-                <label for="end">End Date:</label>
-                <input type="date" id="end" class="form-control" value="2025-03-31">
-                <button id="filterBtn" class="btn btn-success mt-2 w-100">Filter Data <span id="filterSpinner" class="loading-spinner" style="display: none;"></span></button>
-            </div>
-            <div class="mt-auto">
-                <hr>
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-person-circle fs-4 me-2"></i>
-                    <span>Admin User</span>
-                </div>
-                <a href="/CFN/e-com/logout.php" class="btn btn-danger">Logout</a>
+<div class="col-12 col-md-2 sidebar d-flex flex-column p-3">
+    <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3">
+    <nav class="nav flex-column">
+        <a class="nav-link" href="manageproductsA.php">Products</a>
+        <a class="nav-link" href="managecontentA.php">Content</a>
+        <a class="nav-link" href="manageordersA.php">Orders</a>
+        <a class="nav-link active" href="analytics.php">Analytics</a>
+    </nav>
+    <div class="date-picker mt-4">
+        <label for="start">Start Date:</label>
+        <input type="date" id="start" class="form-control mb-3" value="2025-03-01">
+        <label for="end">End Date:</label>
+        <input type="date" id="end" class="form-control" value="2025-03-31">
+        <button id="filterBtn" class="btn btn-success mt-2 w-100">Filter Data <span id="filterSpinner" class="loading-spinner" style="display: none;"></span></button>
+    </div>
+    <div class="mt-auto">
+        <hr>
+        <div class="admin-name d-flex align-items-center">
+            <i class="bi bi-person-circle fs-4 me-2"></i>
+            <div class="d-flex align-items-center gap-2">
+                <span class="adminuser">Admin User</span>
+                <a href="/CFN/e-com/logout.php" class="btn btn-danger btn-sm" id="logout">Logout</a>
             </div>
         </div>
+    </div>
+</div>
 
         <!-- Main Content -->
         <div class="col-12 col-md-10 p-4 main-content">

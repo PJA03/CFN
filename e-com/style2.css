@@ -471,10 +471,41 @@ html, body {
 
 #logout {
     padding: 5px 5px;
-    margin-left: 90px;
+    margin-left: 20px;
 }
 
-.admin-name, .adminuser {
-    margin-left: 10px !important;
-    padding-left: 5px;
-}
+/* Admin Name and User Styling */
+.admin-name {
+    display: flex;
+    align-items: center;
+  }
+  
+  .admin-name .d-flex {
+    gap: 8px; /* Small gap between Admin User text and logout button */
+  }
+  
+  .adminuser {
+    font-size: 1rem;
+    color: white; /* Ensure text is visible against sidebar background */
+  }
+  
+  #logout {
+    padding: 4px 8px; /* Compact padding for the button */
+    font-size: 0.8rem; /* Smaller font size for better fit */
+  }
+  
+  /* Mobile Menu Adjustments */
+  @media (max-width: 768px) {
+    .admin-name .d-flex {
+      gap: 6px; /* Slightly smaller gap for mobile */
+    }
+  
+    .adminuser {
+      font-size: 0.9rem; /* Slightly smaller text for mobile */
+    }
+  
+    #logout {
+      padding: 3px 6px; /* Smaller padding for mobile */
+      font-size: 0.75rem; /* Smaller font for mobile */
+    }
+  }

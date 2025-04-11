@@ -16,23 +16,44 @@ require_once 'auth_check.php';
 <body>
   <div class="d-flex flex-wrap">
     <!-- Sidebar -->
-    <div class="col-12 col-md-2 sidebar p-3">
-      <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3" />
-      <nav class="nav flex-column">
-        <a class="nav-link" href="manageproductsA.php">Products</a>
-        <a class="nav-link" href="managecontentA.php">Content</a>
-        <a class="nav-link" href="manageordersA.php">Orders</a>
-        <a class="nav-link" href="analytics.php">Analytics</a>
-      </nav>
-      <div class="mt-auto">
-        <hr />
-        <div class="d-flex align-items-center">
-          <i class="bi bi-person-circle fs-4 me-2"></i>
-          <span>Admin User</span>
-        </div>
-        <a href="/CFN/e-com/logout.php" class="btn btn-danger">Logout</a>
+<div class="col-md-2 sidebar d-flex flex-column p-3 d-none d-md-flex" id="sidebar">
+  <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3">
+  <nav class="nav flex-column">
+    <a class="nav-link" href="manageproductsA.php">Products</a>
+    <a class="nav-link" href="managecontentA.php">Content</a>
+    <a class="nav-link" href="manageordersA.php">Orders</a>
+    <a class="nav-link" href="analytics.php">Analytics</a>
+  </nav>
+  <div class="mt-auto">
+    <hr>
+    <div class="admin-name d-flex align-items-center">
+      <i class="bi bi-person-circle fs-4 me-2"></i>
+      <div class="d-flex align-items-center gap-2">
+        <span class="adminuser">Admin User</span>
+        <a href="/CFN/e-com/logout.php" class="btn btn-danger btn-sm" id="logout">Logout</a>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Mobile Menu -->
+<div class="collapse navbar-collapse d-md-none bg-dark text-white p-3" id="mobileSidebar">
+  <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3" style="max-width: 100px;">
+  <nav class="nav flex-column">
+    <a class="nav-link" href="manageproductsA.php">Products</a>
+    <a class="nav-link" href="managecontentA.php">Content</a>
+    <a class="nav-link" href="manageordersA.php">Orders</a>
+    <a class="nav-link" href="analytics.php">Analytics</a>
+  </nav>
+  <hr class="bg-white">
+  <div class="d-flex align-items-center mb-3">
+    <i class="bi bi-person-circle fs-4 me-2"></i>
+    <div class="d-flex align-items-center gap-2">
+      <span class="adminuser">Admin User</span>
+      <a href="/CFN/e-com/logout.php" class="btn btn-danger btn-sm" id="logout">Logout</a>
+    </div>
+  </div>
+</div>
 
     <!-- Main Content -->
     <div class="col-md-10 p-4 main-content">
