@@ -63,12 +63,12 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="product-scroll-styles.css">
 </head>
 <body>
-    <header>
+<header>
         <div class="logo">
-            <a href = "../Home_Page/home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
+            <a href = "../Home_Page/Home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
         </div>
         <div class="navbar">
-        <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
+        <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>            
         <form action="../Home_Page/ProductScroll.php" method="GET" class="search-form" onsubmit="return validateSearch()">
             <input type="text" name="search" class="search-bar" id="searchBar" placeholder="Search Product">
         </form>            
@@ -150,7 +150,8 @@ $result = $conn->query($sql);
     ?>
 </div>
 
-    <footer>
+</div>
+<footer>
         <div class="footer-container">
             <div class="footer-left">
                 <img src="../Resources/cfn_logo.png" alt="Naturale Logo" class="footer-logo">

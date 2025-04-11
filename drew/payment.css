@@ -470,17 +470,17 @@ footer {
 }
 
 .cart-actions .payment-btn:hover {
-    background-color: #EED3B1;
+    background-color: #a5b461;
     color: #1F4529;
 }
 
 .cart-actions .cancel-btn {
-    background-color: #B22222;
+    background-color: #8f1111;
     color: #FFFFFF;
 }
 
 .cart-actions .cancel-btn:hover {
-    background-color: #7e7b7b;
+    background-color: #ff0000;
 }.modal-body {
     text-align: justify;
     align-items: center;

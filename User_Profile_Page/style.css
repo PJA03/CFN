@@ -63,6 +63,7 @@ h3 {
     overflow-wrap: break-word; /* Ensures proper word wrapping */
 }
 
+/*HEADER*/
 .usernamedisplay{
     display: flex;
     justify-content: center;
@@ -86,7 +87,10 @@ h3 {
     width: auto; /* Keep aspect ratio */
 }
 
-/* Header Styling */
+.logo img {
+    height: 40px; /* Adjust logo size */
+}
+
 header {
     background-color: white;
     padding: 20px 30px;
@@ -95,11 +99,6 @@ header {
     align-items: center;
     width: 100%; /* Ensure the header uses the full width */
     flex-wrap: wrap;
-}
-
-/* Logo Styling */
-.logo img {
-    height: 40px; /* Adjust logo size */
 }
 
 /* Navigation Bar Styling */
@@ -145,6 +144,17 @@ header {
     border-radius: 2px;
     left: 0;
 }
+
+.search-bar {
+    padding: 8px 12px;
+    border-radius: 25px;
+    border: 1px solid #ccc; /* Add border with a light grey color */
+    outline: none;
+    font-size: 1rem;
+    width: 300px;
+    background-color: #FFFFFF;
+}
+/*END OF HEADER*/
 
 .active{
     text-decoration: underline;
@@ -297,7 +307,7 @@ header {
 }
 
 
-/*footer*/
+/* Footer */
 footer {
     background-color: white;
     color: black;
@@ -392,33 +402,55 @@ footer {
     opacity: 0.8;
 }
 
-/* Custom Scrollbar */
+/*footer responsiveness*/
+@media (max-width: 768px) {
+    .product-detail {
+        flex-direction: column;
+    }
+    
+    .product-card {
+        width: calc(50% - 20px);
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .footer-links {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
-    width: 6px; /* Thin scrollbar */
-    height: 6px; /* Thin scrollbar for horizontal scrolling */
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #E8ECD7; /* Light background */
+    background: #E8ECD7;
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #FF8666; /* Soft green thumb */
+    background: #FF8666;
     border-radius: 10px;
     transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #1F4529; /* Darker green when hovered */
+    background: #1F4529;
 }
 
+/*modal*/
 .modal-body {
     text-align: justify;
     align-items: center;
     border-radius: 30px;
 }
-
 .modal-header {
     color:  whitesmoke;
 }

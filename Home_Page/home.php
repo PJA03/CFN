@@ -102,7 +102,7 @@ $conn->close();
     </div>
 
     <section data-animate="fade-in">
-    <h2 class="section-title-best">Our Best Sellers</h2>
+    <h2 class="section-title-best">Best Sellers</h2>
     <div class="swiper-container">
         <div class="swiper-wrapper">
             <?php 
@@ -179,7 +179,7 @@ $conn->close();
 </section>
 
 
-                <footer>
+<footer>
         <div class="footer-container">
             <div class="footer-left">
                 <img src="../Resources/cfn_logo.png" alt="Naturale Logo" class="footer-logo">
@@ -200,7 +200,7 @@ $conn->close();
         <div class="footer-center">
             &copy; COSMETICAS 2024
         </div>
-    </footer>
+</footer>
 
        <!-- Modal -->
        <div class="modal fade" id="ModalTerms" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
