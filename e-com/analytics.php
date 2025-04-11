@@ -9,7 +9,6 @@ require_once 'auth_check.php';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="style1.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,8 +16,8 @@ require_once 'auth_check.php';
     <style>
         .chart-container {
             max-width: 800px;
-            margin: 30px auto; /* Increased margin for better spacing */
-            display: none; /* Initially hidden */
+            margin: 30px auto;
+            display: none;
         }
         .loading-spinner {
             display: inline-block;
@@ -35,10 +34,10 @@ require_once 'auth_check.php';
         }
         .stat-card {
             text-align: center;
-            padding: 1.5rem; /* Increased padding */
+            padding: 1.5rem;
             border-radius: 8px;
             background-color: #f8f9fa;
-            margin: 1rem; /* Increased margin for better spacing */
+            margin: 1rem;
         }
         .stat-title {
             font-size: 1rem;
@@ -50,8 +49,8 @@ require_once 'auth_check.php';
             color: #1F4529;
         }
         .main-content {
-            position: relative; /* For positioning the export button */
-            padding-bottom: 4rem; /* Ensure space for the bottom-right button */
+            position: relative;
+            padding-bottom: 4rem;
         }
         .export-btn-container {
             position: absolute;
@@ -61,16 +60,16 @@ require_once 'auth_check.php';
         .orders-header {
             display: flex;
             align-items: center;
-            gap: 1rem; /* Space between heading and filter */
+            gap: 1rem;
             margin-bottom: 1rem;
         }
         .orders-heading {
             font-family: 'Be Vietnam Pro', sans-serif;
             font-size: 1.5rem;
-            margin: 0; /* Remove default margin */
+            margin: 0;
         }
         .table-responsive {
-            margin: 1.5rem 0; /* Increased margin for tables */
+            margin: 1.5rem 0;
         }
     </style>
 </head>
@@ -84,6 +83,7 @@ require_once 'auth_check.php';
                 <a class="nav-link" href="managecontentA.php">Content</a>
                 <a class="nav-link" href="manageordersA.php">Orders</a>
                 <a class="nav-link active" href="analytics.php">Analytics</a>
+                <a class="nav-link" href="manageuser.php">Users</a>
             </nav>
             <div class="date-picker mt-4">
                 <label for="start">Start Date:</label>
@@ -124,7 +124,6 @@ require_once 'auth_check.php';
                 </div>
             </div>
 
-            <!-- Chart Container -->
             <div class="chart-container bg-white p-4 shadow-sm rounded" id="chartContainer">
                 <canvas id="salesChart"></canvas>
             </div>
@@ -143,7 +142,6 @@ require_once 'auth_check.php';
                 </table>
             </div>
 
-            <!-- Orders by Status Table -->
             <div class="table-responsive mt-4">
                 <div class="orders-header">
                     <h5 class="orders-heading">Orders by Status</h5>
@@ -171,7 +169,6 @@ require_once 'auth_check.php';
                 </table>
             </div>
 
-            <!-- Export Button Moved to Bottom Right -->
             <div class="export-btn-container">
                 <button class="btn btn-success" id="exportPDFBtn">Export as PDF <span id="pdfSpinner" class="loading-spinner" style="display: none;"></span></button>
             </div>
@@ -182,9 +179,8 @@ require_once 'auth_check.php';
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         let salesChart = null;
-        let allOrders = []; // Global variable to store orders
+        let allOrders = [];
 
-        // Function to calculate the difference in days between two dates
         function getDaysDifference(startDate, endDate) {
             const start = new Date(startDate);
             const end = new Date(endDate);
@@ -192,7 +188,6 @@ require_once 'auth_check.php';
             return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         }
 
-        // Function to initialize or update the chart
         function updateChart(labels, data) {
             const ctx = document.getElementById('salesChart').getContext('2d');
             if (salesChart) {
@@ -227,14 +222,10 @@ require_once 'auth_check.php';
             });
         }
 
-        // Define updateOrdersTable globally
         function updateOrdersTable(orders) {
             const ordersTableBody = document.getElementById('ordersTableBody');
             const statusFilter = document.getElementById('statusFilter').value;
             
-            console.log('Selected status:', statusFilter);
-            console.log('Orders:', orders);
-
             ordersTableBody.innerHTML = '';
             if (!orders || orders.length === 0) {
                 ordersTableBody.innerHTML = '<tr><td colspan="4">No orders available for this period.</td></tr>';
@@ -261,7 +252,6 @@ require_once 'auth_check.php';
             });
         }
 
-        // Function to fetch analytics data and update the page
         function fetchAnalyticsData(startDate, endDate) {
             const filterBtn = document.getElementById('filterBtn');
             const filterSpinner = document.getElementById('filterSpinner');
@@ -275,12 +265,10 @@ require_once 'auth_check.php';
                     return response.json();
                 })
                 .then(data => {
-                    // Update stat cards
                     document.getElementById('totalSales').textContent = `₱${data.totalSales.toFixed(2)}`;
                     document.getElementById('newUsers').textContent = data.newUsers;
                     document.getElementById('repeatPurchase').textContent = `${data.repeatPurchase.toFixed(1)}%`;
 
-                    // Update chart based on date range
                     const daysDiff = getDaysDifference(startDate, endDate);
                     if (daysDiff < 5) {
                         chartContainer.style.display = 'none';
@@ -295,7 +283,6 @@ require_once 'auth_check.php';
                         updateChart(data.chartLabels, data.chartData);
                     }
 
-                    // Update top selling products table
                     const topProductsTable = document.getElementById('topProductsTable');
                     topProductsTable.innerHTML = '';
                     if (data.topProducts.length === 0) {
@@ -307,11 +294,9 @@ require_once 'auth_check.php';
                         });
                     }
 
-                    // Store orders globally and update table
                     allOrders = data.orders || [];
                     updateOrdersTable(allOrders);
 
-                    // Store the data in a hidden input for PDF export
                     document.getElementById('exportPDFBtn').dataset.analytics = JSON.stringify(data);
 
                     filterBtn.disabled = false;
@@ -338,7 +323,6 @@ require_once 'auth_check.php';
                 });
         }
 
-        // Function to export as PDF
         function exportAsPDF() {
             const exportBtn = document.getElementById('exportPDFBtn');
             const pdfSpinner = document.getElementById('pdfSpinner');
@@ -350,7 +334,7 @@ require_once 'auth_check.php';
             if (!startDate || !endDate || !analyticsData.totalSales) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'No Data',
+                    title: ' ülkeninData',
                     text: 'Please fetch analytics data before exporting.',
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#3085d6'
@@ -358,7 +342,6 @@ require_once 'auth_check.php';
                 return;
             }
 
-            // Get the filtered orders based on the current status filter
             const filteredOrders = statusFilter === 'all' 
                 ? allOrders 
                 : allOrders.filter(order => order.status.toLowerCase() === statusFilter);
@@ -376,8 +359,8 @@ require_once 'auth_check.php';
                     newUsers: analyticsData.newUsers,
                     repeatPurchase: analyticsData.repeatPurchase,
                     topProducts: analyticsData.topProducts,
-                    orders: filteredOrders, // Send filtered orders
-                    statusFilter: statusFilter // Send status filter for header/filename
+                    orders: filteredOrders,
+                    statusFilter: statusFilter
                 })
             })
             .then(response => {
@@ -419,8 +402,26 @@ require_once 'auth_check.php';
             });
         }
 
-        // Initialize on page load with default dates
         document.addEventListener('DOMContentLoaded', function() {
+            // Check user role
+            const userRole = '<?php echo $_SESSION['role']; ?>';
+            if (userRole !== 'superadmin') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Access Denied',
+                    text: 'You are not authorized to access this page!',
+                    confirmButtonText: 'OK',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'manageordersA.php';
+                    }
+                });
+                return; // Stop further execution
+            }
+
+            // Proceed with analytics if authorized
             const startDate = document.getElementById('start').value;
             const endDate = document.getElementById('end').value;
             fetchAnalyticsData(startDate, endDate);
@@ -443,10 +444,7 @@ require_once 'auth_check.php';
 
             document.getElementById('exportPDFBtn').addEventListener('click', exportAsPDF);
 
-            // Add status filter event listener
             document.getElementById('statusFilter').addEventListener('change', function() {
-                console.log('Status filter changed to:', this.value);
-                console.log('Orders data:', allOrders);
                 updateOrdersTable(allOrders);
             });
         });

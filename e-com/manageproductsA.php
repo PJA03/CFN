@@ -1,5 +1,5 @@
 <?php
-require_once 'auth_check.php';
+require_once 'auth_check.php'; // Ensures user is logged in with either admin or superadmin role
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,44 +65,46 @@ require_once 'auth_check.php';
   <div class="container-fluid">
     <div class="row">
       <!-- Sidebar -->
-<div class="col-md-2 sidebar d-flex flex-column p-3 d-none d-md-flex" id="sidebar">
-  <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3">
-  <nav class="nav flex-column">
-    <a class="nav-link" href="manageproductsA.php">Products</a>
-    <a class="nav-link" href="managecontentA.php">Content</a>
-    <a class="nav-link" href="manageordersA.php">Orders</a>
-    <a class="nav-link" href="analytics.php">Analytics</a>
-  </nav>
-  <div class="mt-auto">
-    <hr>
-    <div class="admin-name d-flex align-items-center">
-      <i class="bi bi-person-circle fs-4 me-2"></i>
-      <div class="d-flex align-items-center gap-2">
-        <span class="adminuser">Admin User</span>
-        <a href="/CFN/e-com/logout.php" class="btn btn-danger btn-sm" id="logout">Logout</a>
+      <div class="col-md-2 sidebar d-flex flex-column p-3 d-none d-md-flex" id="sidebar">
+        <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3">
+        <nav class="nav flex-column">
+          <a class="nav-link" href="manageproductsA.php">Products</a>
+          <a class="nav-link" href="managecontentA.php">Content</a>
+          <a class="nav-link" href="manageordersA.php">Orders</a>
+          <a class="nav-link" href="analytics.php">Analytics</a>
+          <a class="nav-link" href="manageuser.php">Users</a>
+        </nav>
+        <div class="mt-auto">
+          <hr>
+          <div class="admin-name d-flex align-items-center">
+            <i class="bi bi-person-circle fs-4 me-2"></i>
+            <div class="d-flex align-items-center gap-2">
+              <span class="adminuser"><?php echo htmlspecialchars(ucfirst($_SESSION['role'])); ?> User</span>
+              <a href="/CFN/e-com/logout.php" class="btn btn-danger btn-sm" id="logout">Logout</a>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
 
-<!-- Mobile Menu -->
-<div class="collapse navbar-collapse d-md-none bg-dark text-white p-3" id="mobileSidebar">
-  <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3" style="max-width: 100px;">
-  <nav class="nav flex-column">
-    <a class="nav-link" href="manageproductsA.php">Products</a>
-    <a class="nav-link" href="managecontentA.php">Content</a>
-    <a class="nav-link" href="manageordersA.php">Orders</a>
-    <a class="nav-link" href="analytics.php">Analytics</a>
-  </nav>
-  <hr class="bg-white">
-  <div class="d-flex align-items-center mb-3">
-    <i class="bi bi-person-circle fs-4 me-2"></i>
-    <div class="d-flex align-items-center gap-2">
-      <span class="adminuser">Admin User</span>
-      <a href="/CFN/e-com/logout.php" class="btn btn-danger btn-sm" id="logout">Logout</a>
-    </div>
-  </div>
-</div>
+      <!-- Mobile Menu -->
+      <div class="collapse navbar-collapse d-md-none bg-dark text-white p-3" id="mobileSidebar">
+        <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3" style="max-width: 100px;">
+        <nav class="nav flex-column">
+          <a class="nav-link" href="manageproductsA.php">Products</a>
+          <a class="nav-link" href="managecontentA.php">Content</a>
+          <a class="nav-link" href="manageordersA.php">Orders</a>
+          <a class="nav-link" href="analytics.php">Analytics</a>
+          <a class="nav-link" href="manageuser.php">Users</a>
+        </nav>
+        <hr class="bg-white">
+        <div class="d-flex align-items-center mb-3">
+          <i class="bi bi-person-circle fs-4 me-2"></i>
+          <div class="d-flex align-items-center gap-2">
+            <span class="adminuser"><?php echo htmlspecialchars(ucfirst($_SESSION['role'])); ?> User</span>
+            <a href="/CFN/e-com/logout.php" class="btn btn-danger btn-sm" id="logout">Logout</a>
+          </div>
+        </div>
+      </div>
 
       <!-- Main Content -->
       <div class="col-md-10 col-12 p-4 main-content">
@@ -229,6 +231,21 @@ require_once 'auth_check.php';
   <!-- SweetAlert2 JS -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
+    // Role check and SweetAlert2 for non-superadmin users
+    <?php if ($_SESSION['role'] !== 'superadmin'): ?>
+      document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+          icon: 'error',
+          title: 'Access Denied',
+          text: 'You are not authorized to access this page!',
+          confirmButtonText: 'OK',
+          allowOutsideClick: false
+        }).then(() => {
+          window.location.href = 'manageordersA.php'; // Redirect to an admin-accessible page
+        });
+      });
+    <?php endif; ?>
+
     // Redirect to Add Product page
     document.getElementById("addProductBtn").addEventListener("click", function() {
       window.location.href = "addproduct.php";

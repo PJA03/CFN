@@ -232,6 +232,20 @@ $result = $conn->query($sql);
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
+<?php if ($_SESSION['role'] !== 'superadmin'): ?>
+      document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+          icon: 'error',
+          title: 'Access Denied',
+          text: 'You are not authorized to access this page!',
+          confirmButtonText: 'OK',
+          allowOutsideClick: false
+        }).then(() => {
+          window.location.href = 'manageordersA.php'; // Redirect to an admin-accessible page
+        });
+      });
+    <?php endif; ?>
+    
     // Search functionality
     document.getElementById('searchUser').addEventListener('input', function() {
       const searchValue = this.value.toLowerCase();

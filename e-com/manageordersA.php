@@ -177,6 +177,7 @@ require_once 'auth_check.php';
           <a class="nav-link" href="managecontentA.php">Content</a>
           <a class="nav-link" href="manageordersA.php">Orders</a>
           <a class="nav-link" href="analytics.php">Analytics</a>
+          <a class="nav-link" href="manageuser.php">Users</a>
         </nav>
         <div class="mt-auto">
           <hr>

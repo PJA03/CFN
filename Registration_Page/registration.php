@@ -329,23 +329,31 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                         $_SESSION['role'] = $user['role'];
                         
                         // Redirect based on role
-                        if ($user['role'] == 'admin') {
-                            ?>
-                            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                            <script>
-                                window.location.href = '../e-com/manageproductsA.php'; // Redirect to admin page
-                            </script>
-                            <?php
-                            session_regenerate_id(true);
-                        } else {
-                            ?>
-                            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                            <script>
-                                window.location.href = '../Home_Page/home.php'; // Redirect to home page
-                            </script>
-                            <?php
-                            session_regenerate_id(true);
-                        }
+if ($user['role'] == 'admin') {
+    ?>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.location.href = '../e-com/manageordersA.php'; // Redirect admin to manage orders
+    </script>
+    <?php
+    session_regenerate_id(true);
+} elseif ($user['role'] == 'superadmin') {
+    ?>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.location.href = '../e-com/manageproductsA.php'; // Redirect superadmin to manage orders
+    </script>
+    <?php
+    session_regenerate_id(true);
+} else {
+    ?>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.location.href = '../Home_Page/home.php'; // Redirect others to home page
+    </script>
+    <?php
+    session_regenerate_id(true);
+}
                     } else {
                         // Email not validated
                         ?>
