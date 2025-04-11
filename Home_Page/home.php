@@ -102,7 +102,7 @@ $conn->close();
     </div>
 
     <section data-animate="fade-in">
-    <h2 class="section-title-best">Our Best Sellers</h2>
+    <h2 class="section-title-best">Best Sellers</h2>
     <div class="swiper-container">
         <div class="swiper-wrapper">
             <?php 

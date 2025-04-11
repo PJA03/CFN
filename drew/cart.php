@@ -510,26 +510,26 @@ if (isset($_POST['cancel_cart'])) {
 </main>
 
 <footer>
-    <div class="footer-container">
-        <div class="footer-left">
-            <img src="../Resources/cfn_logo.png" alt="Naturale Logo" class="footer-logo">
+        <div class="footer-container">
+            <div class="footer-left">
+                <img src="../Resources/cfn_logo.png" alt="Naturale Logo" class="footer-logo">
+            </div>
+            <div class="footer-right">
+                <ul class="footer-nav">
+                    <li><a href="../User_Profile_Page/aboutUs.php">About Us</a></li>
+                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#ModalTerms">Terms and Conditions</a></li>
+                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#ModalPrivacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="social-icons">
+                <p>SOCIALS</p>
+                <a href="https://www.facebook.com/share/1CRTizfAxP/?mibextid=wwXIfr" target="_blank"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/cosmeticasfraiche?igsh=ang2MHg1MW5qZHQw" target="_blank"><i class="fab fa-instagram"></i></a>
+            </div>            
         </div>
-        <div class="footer-right">
-            <ul class="footer-nav">
-                <li><a href="../User_Profile_Page/aboutUs.php">About Us</a></li>
-                <li><a href="#" data-bs-toggle="modal" data-bs-target="#ModalTerms">Terms and Conditions</a></li>
-                <li><a href="#" data-bs-toggle="modal" data-bs-target="#ModalPrivacy">Privacy Policy</a></li>
-            </ul>
+        <div class="footer-center">
+            &copy; COSMETICAS 2024
         </div>
-        <div class="social-icons">
-            <p>SOCIALS</p>
-            <a href="https://www.facebook.com/share/1CRTizfAxP/?mibextid=wwXIfr" target="_blank"><i class="fab fa-facebook"></i></a>
-            <a href="https://www.instagram.com/cosmeticasfraiche?igsh=ang2MHg1MW5qZHQw" target="_blank"><i class="fab fa-instagram"></i></a>
-        </div>            
-    </div>
-    <div class="footer-center">
-        &copy; COSMETICAS 2024
-    </div>
 </footer>
 
 <!-- Modal -->
