@@ -16,7 +16,34 @@ body {
     overflow: auto;
 }
 
-/* Header Styling */
+/*HEADER*/
+.usernamedisplay{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    color: black;  
+    font-size: 20px;
+    font-family: "Bebas Neue", serif;    
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjust spacing between the image and text */
+}
+
+.logo-image {
+    height: 40px; /* Adjust size as needed */
+    width: auto; /* Keep aspect ratio */
+}
+
+.logo img {
+    height: 40px; /* Adjust logo size */
+}
+
 header {
     background-color: white;
     padding: 20px 30px;
@@ -25,11 +52,6 @@ header {
     align-items: center;
     width: 100%; /* Ensure the header uses the full width */
     flex-wrap: wrap;
-}
-
-/* Logo Styling */
-.logo img {
-    height: 40px; /* Adjust logo size */
 }
 
 /* Navigation Bar Styling */
@@ -63,10 +85,30 @@ header {
     color: orange;
 }
 
-.icon-profile::after,
-.icon-profile:hover::after {
-    display: none;
+.cart::after, /* Show underline when active */
+.cart:hover::after { /* Show underline on hover */
+    content: "";
+    display: block;
+    width: 100%;
+    height: 4px; /* Thickness of underline */
+    background-color: orange; /* Change color if needed */
+    position: absolute;
+    bottom: -10px; /* Adjusts spacing below the icon */
+    border-radius: 2px;
+    left: 0;
 }
+
+.search-bar {
+    padding: 8px 12px;
+    border-radius: 25px;
+    border: 1px solid #ccc; /* Add border with a light grey color */
+    outline: none;
+    font-size: 1rem;
+    width: 300px;
+    background-color: #FFFFFF;
+}
+/*END OF HEADER*/
+
 
 .active{
     text-decoration: underline;
@@ -279,14 +321,14 @@ header {
 
 /* Footer */
 footer {
-    background-color: #FFFFFF;
-    color: #000000;
-    padding: 30px 60px;
+    background-color: white;
+    color: black;
+    padding: 30px 30px;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Stack footer elements vertically */
     align-items: center;
     width: 100%;
-    border-top: 1px solid #E8ECD7;
+    margin-top: auto;
 }
 
 .footer-container {
@@ -297,23 +339,29 @@ footer {
     max-width: 1200px;
     flex-wrap: wrap;
     gap: 20px;
+    min-height: 200px;
 }
 
 .footer-left {
     display: flex;
-    align-items: flex-start;
-    gap: 20px;
+    flex-direction: column;
+    align-items: left;
 }
 
 .footer-logo {
-    height: 80px;
+    height: 150px; /* Adjust according to your logo size */
+}
+
+.footer-logo img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
 }
 
 .footer-right {
     display: flex;
     flex-direction: column;
     text-align: left;
-    gap: 10px;
 }
 
 .footer-nav {
@@ -322,43 +370,41 @@ footer {
 }
 
 .footer-nav li {
-    font-size: 16px;
+    font-family: "Bebas Neue", serif !important;
+    font-size: 20px;
     margin-bottom: 8px;
 }
 
 .footer-nav a {
-    color: #000000;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.footer-nav a:hover {
-    color: #1F4529;
-}
-
-.social-icons {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-}
-
-.social-icons p {
-    font-size: 16px;
-    font-weight: bold;
-    margin: 0;
-}
-
-.social-icons a {
-    color: #000000;
-    font-size: 18px;
+    color: black;
     text-decoration: none;
     transition: transform 0.3s ease, color 0.3s ease;
 }
 
-.social-icons a:hover {
+.social-icons {
+    display: flex;
+    text-align: left;
+    flex-direction: column; /* Keeps the SOCIALS text on top and icons underneath */
+    align-items: flex-start; /* Aligns items to the left */
+    font-size: 20px;
+    font-family: "Bebas Neue", serif;
+    color: black;
+    text-decoration: none;
+    padding: 0;
+}
+
+.social-icons p {
+    margin-bottom: 8px;
+}
+
+.social-icons a {
+    margin-bottom: 8px;
+    color: black;
+}
+
+.social-icons a:hover, .footer-nav a:hover {
     transform: scale(1.1);
-    color: #1F4529;
+    color: orange;
 }
 
 .footer-center {
@@ -366,6 +412,58 @@ footer {
     width: 100%;
     font-size: 14px;
     opacity: 0.8;
+}
+
+/* Footer Modal Styling - NEW SPECIFIC CLASSES */
+.footer-modal-body {
+    text-align: justify;
+    align-items: center;
+    border-radius: 30px;
+    padding: 25px;
+}
+
+.footer-modal-header {
+    color: whitesmoke;
+    background-color: #1F4529;
+    border-radius: 30px 30px 0 0;
+    padding: 15px 20px;
+}
+
+.footer-modal-dialog {
+    max-width: 40%;
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - 1rem);
+    margin: 1rem auto;
+    animation: modalPop 0.4s ease-out forwards;
+}
+
+.footer-modal-content {
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    border-radius: 30px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    border: none;
+}
+
+.footer-modal-footer {
+    padding: 15px;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #dee2e6;
+    border-bottom-right-radius: 30px;
+    border-bottom-left-radius: 30px;
+}
+
+.footer-modal .btn-secondary {
+    background-color: #B0B0B0;
+    color: #1F4529;
+}
+
+.footer-modal .btn-secondary:hover {
+    background-color: #999;
+    border-color: #999;
 }
 
 /* Voucher Section */
@@ -427,22 +525,21 @@ footer {
     border: 1px solid #f5c6cb;
 }
 
-/* Modal Styling - Enhanced */
+/* Cart Modal Styling - These are now separate from footer modals */
 .modal-body {
     text-align: justify;
     align-items: center;
     border-radius: 30px;
-    padding: 25px;  /* Increased padding */
+    padding: 25px;
 }
 
 .modal-header {
     color: whitesmoke;
     background-color: #1F4529;
-    border-radius: 30px 30px 0 0;  /* Matching the modal-body border-radius */
-    padding: 15px 20px;  /* Increased padding */
+    border-radius: 30px 30px 0 0;
+    padding: 15px 20px;
 }
 
-/* Modal Styling - Enhanced */
 .modal-dialog {
     max-width: 40%;
     display: flex;
@@ -454,7 +551,8 @@ footer {
 
 /* Specific modal centering for checkout and cancel modals */
 #checkoutModal .modal-dialog,
-#cancelModal .modal-dialog {
+#cancelModal .modal-dialog,
+#deleteItemModal .modal-dialog {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -462,7 +560,7 @@ footer {
 }
 
 .modal-content {
-    width: 100%; /* Ensure content fills the dialog */
+    width: 100%;
     max-height: 80vh;
     overflow-y: auto;
     border-radius: 30px;
@@ -470,50 +568,9 @@ footer {
     border: none;
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-    /* Update the mobile modal styles */
-    .modal-dialog {
-        max-width: 90%;
-        width: 90%;
-        margin: 0 auto;
-        position: relative;
-        top: auto;
-        left: auto;
-        transform: none !important;
-    }
-
-    #checkoutModal .modal-dialog,
-    #cancelModal .modal-dialog {
-        min-height: auto;
-    }
-}
-
-/* Animation for the modal to "pop" */
-@keyframes modalPop {
-    0% {
-        transform: scale(0.7);
-        opacity: 0;
-    }
-    50% {
-        transform: scale(1.05);
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-.modal-content {
-    max-height: 80vh;  /* Increased from 50vh */
-    overflow-y: auto;
-    border-radius: 30px;  /* Match the header/body border-radius */
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);  /* Stronger shadow for "pop" effect */
-    border: none;  /* Remove default border */
-}
-
 /* Modal backdrop enhancement */
 .modal-backdrop.show {
-    opacity: 0.7;  /* Darker backdrop for better contrast */
+    opacity: 0.7;
 }
 
 /* Button styles for modal */
@@ -564,6 +621,21 @@ footer {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #1F4529;
+}
+
+/* Animation for the modal to "pop" */
+@keyframes modalPop {
+    0% {
+        transform: scale(0.7);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 /* Mobile Responsiveness */
@@ -730,107 +802,27 @@ footer {
 
     /* Footer */
     footer {
-        background-color: white;
-        color: black;
-        padding: 30px 30px;
-        display: flex;
-        flex-direction: column; /* Stack footer elements vertically */
-        align-items: center;
-        width: 100%;
-        margin-top: auto;
+        padding: 20px;
     }
 
     .footer-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        width: 100%;
-        max-width: 1200px;
-        flex-wrap: wrap;
-        gap: 20px;
-        min-height: 200px;
-    }
-
-    .footer-left {
-        display: flex;
         flex-direction: column;
-        align-items: left;
+        align-items: center;
+        gap: 15px;
     }
 
-    .footer-logo {
-        height: 150px; /* Adjust according to your logo size */
-    }
-
-    .footer-logo img {
-        max-width: 80%;
-        max-height: 80%;
-        object-fit: contain;
-    }
-
-    .footer-right {
-        display: flex;
-        flex-direction: column;
-        text-align: left;
-    }
-
-    .footer-nav {
-        list-style: none;
-        padding: 0;
-    }
-
-    .footer-nav li {
-        font-family: "Bebas Neue", serif !important;
-        font-size: 20px;
-        margin-bottom: 8px;
-    }
-
-    .footer-nav a {
-        color: black;
-        text-decoration: none;
-        transition: transform 0.3s ease, color 0.3s ease;
-    }
-
-    .social-icons {
-        display: flex;
-        text-align: left;
-        flex-direction: column; /* Keeps the SOCIALS text on top and icons underneath */
-        align-items: flex-start; /* Aligns items to the left */
-        font-size: 20px;
-        font-family: "Bebas Neue", serif;
-        color: black;
-        text-decoration: none;
-        padding: 0;
-    }
-
-    .social-icons p {
-        margin-bottom: 8px;
-    }
-
-    .social-icons a {
-        margin-bottom: 8px;
-        color: black;
-    }
-
-    .social-icons a:hover, .footer-nav a:hover {
-        transform: scale(1.1);
-        color: orange;
-    }
-
-    .footer-center {
-        text-align: center;
-        width: 100%;
-        font-size: 14px;
-        opacity: 0.8;
-    }
-
-    /* Modals - Mobile Responsive */
-    .modal-dialog {
+    /* Mobile Modal Responsiveness */
+    .modal-dialog,
+    .footer-modal-dialog {
         max-width: 90%;
         width: 90%;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) !important;
+        margin: 0 auto;
+    }
+
+    #checkoutModal .modal-dialog,
+    #cancelModal .modal-dialog,
+    #deleteItemModal .modal-dialog {
+        min-height: auto;
     }
 }
 

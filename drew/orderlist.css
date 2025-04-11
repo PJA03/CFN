@@ -56,38 +56,41 @@ h3 {
     overflow-wrap: break-word;
 }
 
-.usernamedisplay {
+/*HEADER*/
+.usernamedisplay{
     display: flex;
     justify-content: center;
     text-align: center;
-    color: #EED3B1;
+    color: black;  
     font-size: 20px;
-    flex-wrap: wrap;
-    padding-top: 15px;
+    font-family: "Bebas Neue", serif;    
+    margin: 0;
+    white-space: nowrap;
 }
 
 /* Logo */
 .logo {
     display: flex;
     align-items: center;
-    margin-left: 30px;
-    gap: 10px;
+    gap: 10px; /* Adjust spacing between the image and text */
 }
 
 .logo-image {
-    height: 40px;
-    width: auto;
+    height: 40px; /* Adjust size as needed */
+    width: auto; /* Keep aspect ratio */
 }
 
-/* Header Styling */
+.logo img {
+    height: 40px; /* Adjust logo size */
+}
+
 header {
-    background-color: #1F4529;
-    color: #EED3B1;
-    padding: 20px 20px;
+    background-color: white;
+    padding: 20px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    width: 100%; /* Ensure the header uses the full width */
     flex-wrap: wrap;
 }
 
@@ -95,7 +98,7 @@ header {
 .navbar {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     gap: 20px;
 }
 
@@ -106,14 +109,12 @@ header {
     justify-items: center;
     gap: 15px;
     transition: transform 0.3s ease, color 0.3s ease;
-    margin-left: 50px;
-    margin-right: 40px;
 }
 
 /* Font Awesome Icon Styles */
 .icon-profile, .home, .cart {
     font-size: 1.6rem;
-    color: #EED3B1;
+    color: black;
     cursor: pointer;
     margin-left: 10px;
     position: relative;
@@ -121,13 +122,20 @@ header {
 
 .icon-profile:hover, .home:hover, .cart:hover {
     transform: scale(1.1);
-    color: whitesmoke;
+    color: orange;
 }
 
-.icon-profile::after,
-.icon-profile:hover::after {
-    display: none;
+.search-bar {
+    padding: 8px 12px;
+    border-radius: 25px;
+    border: 1px solid #ccc; /* Add border with a light grey color */
+    outline: none;
+    font-size: 1rem;
+    width: 300px;
+    background-color: #FFFFFF;
 }
+/*END OF HEADER*/
+
 
 .active {
     text-decoration: underline;
@@ -310,16 +318,16 @@ main {
     background-color: #7e7b7b;
 }
 
-/* Footer Styling */
+/* Footer */
 footer {
-    background-color: #1F4529;
-    color: white;
-    padding: 40px 60px;
+    background-color: white;
+    color: black;
+    padding: 30px 30px;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Stack footer elements vertically */
     align-items: center;
     width: 100%;
-    margin-top: auto; /* Add this to push the footer to the bottom */
+    margin-top: auto;
 }
 
 .footer-container {
@@ -330,21 +338,22 @@ footer {
     max-width: 1200px;
     flex-wrap: wrap;
     gap: 20px;
+    min-height: 200px;
 }
 
 .footer-left {
     display: flex;
-    align-items: center; /* Match ProductScroll.php and cart.php */
-    gap: 20px;
+    flex-direction: column;
+    align-items: left;
 }
 
 .footer-logo {
-    height: 150px;
+    height: 150px; /* Adjust according to your logo size */
 }
 
 .footer-logo img {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 80%;
+    max-height: 80%;
     object-fit: contain;
 }
 
@@ -352,7 +361,6 @@ footer {
     display: flex;
     flex-direction: column;
     text-align: left;
-    gap: 20px; /* Match ProductScroll.php and cart.php */
 }
 
 .footer-nav {
@@ -367,42 +375,35 @@ footer {
 }
 
 .footer-nav a {
-    color: white;
+    color: black;
     text-decoration: none;
-    transition: color 0.3s ease; /* Match ProductScroll.php and cart.php */
-}
-
-.footer-nav a:hover {
-    color: #EED3B1;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .social-icons {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+    text-align: left;
+    flex-direction: column; /* Keeps the SOCIALS text on top and icons underneath */
+    align-items: flex-start; /* Aligns items to the left */
+    font-size: 20px;
+    font-family: "Bebas Neue", serif;
+    color: black;
+    text-decoration: none;
+    padding: 0;
+}
+
+.social-icons p {
+    margin-bottom: 8px;
 }
 
 .social-icons a {
-    color: white;
-    font-size: 18px;
-    text-decoration: none;
-    gap: 10px;
-    margin-left: 4px;
-    transition: transform 0.3s ease, color 0.3s ease;
+    margin-bottom: 8px;
+    color: black;
 }
 
 .social-icons a:hover, .footer-nav a:hover {
     transform: scale(1.1);
-    color: #EED3B1;
-}
-
-.social-icons p {
-    color: white;
-    font-size: 20px;
-    font-family: "Bebas Neue", serif !important;
-    margin-bottom: 0px;
-    margin-top: 0;
+    color: orange;
 }
 
 .footer-center {
@@ -412,7 +413,29 @@ footer {
     opacity: 0.8;
 }
 
-/* Custom Scrollbar */
+/*footer responsiveness*/
+@media (max-width: 768px) {
+    .product-detail {
+        flex-direction: column;
+    }
+    
+    .product-card {
+        width: calc(50% - 20px);
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .footer-links {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -433,24 +456,27 @@ footer {
     background: #1F4529;
 }
 
-/* Modal Styling */
+/*modal*/
 .modal-body {
     text-align: justify;
     align-items: center;
     border-radius: 30px;
 }
-
 .modal-header {
-    color: whitesmoke;
+    color:  whitesmoke;
 }
 
 .modal-dialog {
-    max-width: 40%;
+     max-width: 40%; /* Adjust as needed */
 }
 
 .modal-content {
-    max-height: 50vh;
-    overflow-y: auto;
+    max-height: 50vh; /* Adjust height */
+    overflow-y: auto; /* Enables scrolling if content is too long */
+}
+
+.btn-secondary {
+    background-color: red;
 }
 
 .btn-close {

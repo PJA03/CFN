@@ -1,6 +1,6 @@
 <?php
-session_start();
-require_once '../conn.php';
+include '../conn.php'; 
+include '../cookie_handler.php';
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -61,16 +61,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
 </head>
 <body>
-    <header>
+<header>
         <div class="logo">
-            <a href="../Home_Page/Home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
+            <a href = "../Home_Page/Home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
         </div>
         <div class="navbar">
-            <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($_SESSION['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
-            <div class="icons">
-                <a href="../Home_Page/Home.php"><i class="fa-solid fa-house home"></i></a>
-                <a href="../drew/cart.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
-                <a href="../User_Profile_Page/UserProfile.php"><i class="far fa-user-circle fa-2x icon-profile"></i></a>
+        <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>            
+        <form action="../Home_Page/ProductScroll.php" method="GET" class="search-form" onsubmit="return validateSearch()">
+            <input type="text" name="search" class="search-bar" id="searchBar" placeholder="Search Product">
+        </form>            
+        <div class="icons">
+                <a href = "../Home_Page/Home.php"><i class="fa-solid fa-house home"></i></a>
+                <a href ="../drew/cart.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
+                <a href="../User_Profile_Page/UserProfile.php"><i class ="far fa-user-circle fa-2x icon-profile"></i></a>
             </div>
         </div>
     </header>

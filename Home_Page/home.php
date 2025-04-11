@@ -178,7 +178,6 @@ $conn->close();
     </div>
 </section>
 
-
 <footer>
         <div class="footer-container">
             <div class="footer-left">
@@ -200,7 +199,9 @@ $conn->close();
         <div class="footer-center">
             &copy; COSMETICAS 2024
         </div>
-</footer>
+    </footer>
+
+
 
        <!-- Modal -->
        <div class="modal fade" id="ModalTerms" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
