@@ -95,26 +95,32 @@ if ($qr_type) {
                         <div class="qr-code-placeholder">
                             <img src="<?php echo htmlspecialchars($qr_image); ?>" alt="QR Code" class="qr-code-image">
                         </div>
-                        <div class="text-content">
-                    <p><strong style="color: darkred; font-size: 1.5em;">QR PH</strong> (<?php echo strtoupper(str_replace('_', ' ', $qr_type)); ?>) 
-                    <p><strong style="color: darkgreen; font-size: 1.0em;">NAME: MARY JANE J.</strong></p>
-                    <p>Scan the QR code to make your payment</p>
-                        </div>
+
                     </div>
                     
                     <div class="preview-section">
-                        <h5>Payment Receipt Preview</h5>
-                        <div id="image-preview-container">
-                            <img id="image-preview" src="" alt="Receipt Preview" style="display: none;">
-                            <div class="preview-placeholder" id="preview-placeholder">
-                                <i class="fas fa-image fa-4x"></i>
-                                <p>Your receipt preview will appear here</p>
-                            </div>
-                        </div>
-                        <p id="file-name"></p>
-    <p><strong style="color: darkred; font-size: 1.5em;">SCAN TO PAY HERE</strong></p>
-    <p>Kindly upload your E-receipt to verify your payment</p>
-  </div>
+    <h5>Payment Receipt Preview</h5>
+    <div id="image-preview-container">
+        <img id="image-preview" src="" alt="Receipt Preview" style="display: none;">
+        <div class="preview-placeholder" id="preview-placeholder">
+            <i class="fas fa-image fa-4x"></i>
+            <p>Your receipt preview will appear here</p>
+        </div>
+    </div>
+    <p id="file-name"></p>
+</div>
+
+</div>
+<div class="payment-header">
+    <div class="qr-info">
+        <p><strong style="color: darkred; font-size: 1.5em;">QR PH</strong> (<?php echo strtoupper(str_replace('_', ' ', $qr_type)); ?>)</p>
+        <p><strong style="color: darkgreen; font-size: 1.0em;">NAME: MARY JANE J.</strong></p>
+        <p>Scan the QR code to make your payment</p>
+    </div>
+    <div class="scan-info">
+        <p><strong style="color: darkred; font-size: 1.5em;">SCAN TO PAY HERE</strong></p>
+        <p>Kindly upload your E-receipt to verify your payment</p>
+    </div>
 </div>
 
                 <form action="process_payment.php" method="POST" enctype="multipart/form-data">
