@@ -442,31 +442,67 @@ footer {
     padding: 15px 20px;  /* Increased padding */
 }
 
+/* Modal Styling - Enhanced */
 .modal-dialog {
     max-width: 40%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) !important;  /* Center perfectly */
-    margin: 0 !important;  /* Remove any margins affecting positioning */
-    animation: modalPop 0.4s ease-out forwards;  /* Add animation */
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - 1rem);
+    margin: 1rem auto;
+    animation: modalPop 0.4s ease-out forwards;
+}
+
+/* Specific modal centering for checkout and cancel modals */
+#checkoutModal .modal-dialog,
+#cancelModal .modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100% - 1rem);
+}
+
+.modal-content {
+    width: 100%; /* Ensure content fills the dialog */
+    max-height: 80vh;
+    overflow-y: auto;
+    border-radius: 30px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    border: none;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    /* Update the mobile modal styles */
+    .modal-dialog {
+        max-width: 90%;
+        width: 90%;
+        margin: 0 auto;
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none !important;
+    }
+
+    #checkoutModal .modal-dialog,
+    #cancelModal .modal-dialog {
+        min-height: auto;
+    }
 }
 
 /* Animation for the modal to "pop" */
 @keyframes modalPop {
     0% {
-        transform: translate(-50%, -50%) scale(0.7);
+        transform: scale(0.7);
         opacity: 0;
     }
     50% {
-        transform: translate(-50%, -50%) scale(1.05);
+        transform: scale(1.05);
     }
     100% {
-        transform: translate(-50%, -50%) scale(1);
+        transform: scale(1);
         opacity: 1;
     }
 }
-
 .modal-content {
     max-height: 80vh;  /* Increased from 50vh */
     overflow-y: auto;
@@ -808,7 +844,4 @@ footer {
     bottom: -10px;
     border-radius: 2px;
     left: 0;
-}
-.modal-dialog {
-    margin: auto !important;
 }
