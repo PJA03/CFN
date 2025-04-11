@@ -63,6 +63,7 @@ h3 {
     overflow-wrap: break-word; /* Ensures proper word wrapping */
 }
 
+/*HEADER*/
 .usernamedisplay{
     display: flex;
     justify-content: center;
@@ -86,7 +87,10 @@ h3 {
     width: auto; /* Keep aspect ratio */
 }
 
-/* Header Styling */
+.logo img {
+    height: 40px; /* Adjust logo size */
+}
+
 header {
     background-color: white;
     padding: 20px 30px;
@@ -95,11 +99,6 @@ header {
     align-items: center;
     width: 100%; /* Ensure the header uses the full width */
     flex-wrap: wrap;
-}
-
-/* Logo Styling */
-.logo img {
-    height: 40px; /* Adjust logo size */
 }
 
 /* Navigation Bar Styling */
@@ -145,6 +144,17 @@ header {
     border-radius: 2px;
     left: 0;
 }
+
+.search-bar {
+    padding: 8px 12px;
+    border-radius: 25px;
+    border: 1px solid #ccc; /* Add border with a light grey color */
+    outline: none;
+    font-size: 1rem;
+    width: 300px;
+    background-color: #FFFFFF;
+}
+/*END OF HEADER*/
 
 .active{
     text-decoration: underline;

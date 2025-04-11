@@ -104,17 +104,17 @@ $conn->close();
     <link rel="stylesheet" href="productpage.css?v=<?php echo time(); ?>">
 </head>
 <body>
-    <header>
+<header>
         <div class="logo">
-            <a href = "../Home_Page/home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
+            <a href = "../Home_Page/Home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
         </div>
         <div class="navbar">
-        <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>
+        <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>            
         <form action="../Home_Page/ProductScroll.php" method="GET" class="search-form" onsubmit="return validateSearch()">
             <input type="text" name="search" class="search-bar" id="searchBar" placeholder="Search Product">
         </form>            
         <div class="icons">
-                <a href = "../Home_Page/home.php"><i class="fa-solid fa-house home"></i></a>
+                <a href = "../Home_Page/Home.php"><i class="fa-solid fa-house home"></i></a>
                 <a href ="../drew/cart.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
                 <a href="../User_Profile_Page/UserProfile.php"><i class ="far fa-user-circle fa-2x icon-profile"></i></a>
             </div>
@@ -229,7 +229,7 @@ $conn->close();
         <div class="footer-center">
             &copy; COSMETICAS 2024
         </div>
-    </footer>
+</footer>
 
        <!-- Modal -->
        <div class="modal fade" id="ModalTerms" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
