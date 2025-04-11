@@ -112,10 +112,10 @@ if ($qr_type) {
                             </div>
                         </div>
                         <p id="file-name"></p>
-                        <p><strong style="color: darkred; font-size: 1.5em;">SCAN TO PAY HERE</strong></p>
-                        <p>Kindly upload your E-receipt to verify your payment</p>
-                    </div>
-                </div>
+    <p><strong style="color: darkred; font-size: 1.5em;">SCAN TO PAY HERE</strong></p>
+    <p>Kindly upload your E-receipt to verify your payment</p>
+  </div>
+</div>
 
                 <form action="process_payment.php" method="POST" enctype="multipart/form-data">
                 <div class="button-container">
