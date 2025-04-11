@@ -171,3 +171,13 @@ body {
     max-height: 50vh; /* Adjust height */
     overflow-y: auto; /* Enables scrolling if content is too long */
 }
+
+#logout {
+    padding: 4px 8px; /* Compact padding for the button */
+    font-size: 0.8rem; /* Smaller font size for better fit */
+  }
+
+  #logout {
+    padding: 5px 5px;
+    margin-left: 40px;
+}
