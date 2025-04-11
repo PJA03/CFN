@@ -17,7 +17,7 @@ require_once 'auth_check.php';
     <style>
         .chart-container {
             max-width: 800px;
-            margin: 20px auto;
+            margin: 30px auto; /* Increased margin for better spacing */
             display: none; /* Initially hidden */
         }
         .loading-spinner {
@@ -35,10 +35,10 @@ require_once 'auth_check.php';
         }
         .stat-card {
             text-align: center;
-            padding: 1rem;
+            padding: 1.5rem; /* Increased padding */
             border-radius: 8px;
             background-color: #f8f9fa;
-            margin: 0.5rem;
+            margin: 1rem; /* Increased margin for better spacing */
         }
         .stat-title {
             font-size: 1rem;
@@ -49,37 +49,60 @@ require_once 'auth_check.php';
             font-weight: bold;
             color: #1F4529;
         }
+        .main-content {
+            position: relative; /* For positioning the export button */
+            padding-bottom: 4rem; /* Ensure space for the bottom-right button */
+        }
+        .export-btn-container {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+        }
+        .orders-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem; /* Space between heading and filter */
+            margin-bottom: 1rem;
+        }
+        .orders-heading {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            font-size: 1.5rem;
+            margin: 0; /* Remove default margin */
+        }
+        .table-responsive {
+            margin: 1.5rem 0; /* Increased margin for tables */
+        }
     </style>
 </head>
 <body>
     <div class="d-flex flex-wrap">
         <!-- Sidebar -->
-<div class="col-12 col-md-2 sidebar d-flex flex-column p-3">
-    <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3">
-    <nav class="nav flex-column">
-        <a class="nav-link" href="manageproductsA.php">Products</a>
-        <a class="nav-link" href="managecontentA.php">Content</a>
-        <a class="nav-link" href="manageordersA.php">Orders</a>
-        <a class="nav-link active" href="analytics.php">Analytics</a>
-    </nav>
-    <div class="date-picker mt-4">
-        <label for="start">Start Date:</label>
-        <input type="date" id="start" class="form-control mb-3" value="2025-03-01">
-        <label for="end">End Date:</label>
-        <input type="date" id="end" class="form-control" value="2025-03-31">
-        <button id="filterBtn" class="btn btn-success mt-2 w-100">Filter Data <span id="filterSpinner" class="loading-spinner" style="display: none;"></span></button>
-    </div>
-    <div class="mt-auto">
-        <hr>
-        <div class="admin-name d-flex align-items-center">
-            <i class="bi bi-person-circle fs-4 me-2"></i>
-            <div class="d-flex align-items-center gap-2">
-                <span class="adminuser">Admin User</span>
-                <a href="/CFN/e-com/logout.php" class="btn btn-danger btn-sm" id="logout">Logout</a>
+        <div class="col-12 col-md-2 sidebar d-flex flex-column p-3">
+            <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3">
+            <nav class="nav flex-column">
+                <a class="nav-link" href="manageproductsA.php">Products</a>
+                <a class="nav-link" href="managecontentA.php">Content</a>
+                <a class="nav-link" href="manageordersA.php">Orders</a>
+                <a class="nav-link active" href="analytics.php">Analytics</a>
+            </nav>
+            <div class="date-picker mt-4">
+                <label for="start">Start Date:</label>
+                <input type="date" id="start" class="form-control mb-3" value="2025-03-01">
+                <label for="end">End Date:</label>
+                <input type="date" id="end" class="form-control" value="2025-03-31">
+                <button id="filterBtn" class="btn btn-success mt-2 w-100">Filter Data <span id="filterSpinner" class="loading-spinner" style="display: none;"></span></button>
+            </div>
+            <div class="mt-auto">
+                <hr>
+                <div class="admin-name d-flex align-items-center">
+                    <i class="bi bi-person-circle fs-4 me-2"></i>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="adminuser">Admin User</span>
+                        <a href="/CFN/e-com/logout.php" class="btn btn-danger btn-sm" id="logout">Logout</a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
         <!-- Main Content -->
         <div class="col-12 col-md-10 p-4 main-content">
@@ -120,12 +143,11 @@ require_once 'auth_check.php';
                 </table>
             </div>
 
-
-            <!-- New Orders by Status Table -->
+            <!-- Orders by Status Table -->
             <div class="table-responsive mt-4">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5>Orders by Status</h5>
-                    <select id="statusFilter" class="form-select w-auto">
+                <div class="orders-header">
+                    <h5 class="orders-heading">Orders by Status</h5>
+                    <select id="statusFilter" class="form-select" style="width: auto;">
                         <option value="all">All Statuses</option>
                         <option value="waiting for payment">Waiting for Payment</option>
                         <option value="processing">Processing</option>
@@ -138,7 +160,6 @@ require_once 'auth_check.php';
                     <thead>
                         <tr>
                             <th>Order ID</th>
-                            <!-- <th>Customer Name</th> -->
                             <th>Status</th>
                             <th>Total Amount</th>
                             <th>Order Date</th>
@@ -150,285 +171,285 @@ require_once 'auth_check.php';
                 </table>
             </div>
 
-
-            <button class="btn btn-success mt-4" id="exportPDFBtn">Export as PDF <span id="pdfSpinner" class="loading-spinner" style="display: none;"></span></button>
+            <!-- Export Button Moved to Bottom Right -->
+            <div class="export-btn-container">
+                <button class="btn btn-success" id="exportPDFBtn">Export as PDF <span id="pdfSpinner" class="loading-spinner" style="display: none;"></span></button>
+            </div>
         </div>
     </div>
-
-    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-    let salesChart = null;
-    let allOrders = []; // Global variable to store orders
+        let salesChart = null;
+        let allOrders = []; // Global variable to store orders
 
-    // Function to calculate the difference in days between two dates
-    function getDaysDifference(startDate, endDate) {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        const diffTime = Math.abs(end - start);
-        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    }
-
-    // Function to initialize or update the chart
-    function updateChart(labels, data) {
-        const ctx = document.getElementById('salesChart').getContext('2d');
-        if (salesChart) {
-            salesChart.destroy();
+        // Function to calculate the difference in days between two dates
+        function getDaysDifference(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const diffTime = Math.abs(end - start);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         }
-        salesChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Total Sales (₱)',
-                    data: data,
-                    fill: false,
-                    borderColor: '#1F4529',
-                    borderWidth: 2,
-                    tension: 0.1,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#1F4529'
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: { title: { display: true, text: 'Date' } },
-                    y: { beginAtZero: true, title: { display: true, text: 'Total Sales (₱)' } }
-                },
-                plugins: {
-                    legend: { display: true, position: 'top' },
-                    title: { display: true, text: 'Total Sales Over Time' }
-                }
+
+        // Function to initialize or update the chart
+        function updateChart(labels, data) {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            if (salesChart) {
+                salesChart.destroy();
             }
-        });
-    }
-
-    // Define updateOrdersTable globally
-    function updateOrdersTable(orders) {
-        const ordersTableBody = document.getElementById('ordersTableBody');
-        const statusFilter = document.getElementById('statusFilter').value;
-        
-        console.log('Selected status:', statusFilter);
-        console.log('Orders:', orders);
-
-        ordersTableBody.innerHTML = '';
-        if (!orders || orders.length === 0) {
-            ordersTableBody.innerHTML = '<tr><td colspan="4">No orders available for this period.</td></tr>';
-            return;
+            salesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Sales (₱)',
+                        data: data,
+                        fill: false,
+                        borderColor: '#1F4529',
+                        borderWidth: 2,
+                        tension: 0.1,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#1F4529'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Date' } },
+                        y: { beginAtZero: true, title: { display: true, text: 'Total Sales (₱)' } }
+                    },
+                    plugins: {
+                        legend: { display: true, position: 'top' },
+                        title: { display: true, text: 'Total Sales Over Time' }
+                    }
+                }
+            });
         }
 
-        const filteredOrders = statusFilter === 'all' 
-            ? orders 
-            : orders.filter(order => order.status.toLowerCase() === statusFilter);
+        // Define updateOrdersTable globally
+        function updateOrdersTable(orders) {
+            const ordersTableBody = document.getElementById('ordersTableBody');
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            console.log('Selected status:', statusFilter);
+            console.log('Orders:', orders);
 
-        if (filteredOrders.length === 0) {
-            ordersTableBody.innerHTML = '<tr><td colspan="4">No orders found for this status.</td></tr>';
-            return;
+            ordersTableBody.innerHTML = '';
+            if (!orders || orders.length === 0) {
+                ordersTableBody.innerHTML = '<tr><td colspan="4">No orders available for this period.</td></tr>';
+                return;
+            }
+
+            const filteredOrders = statusFilter === 'all' 
+                ? orders 
+                : orders.filter(order => order.status.toLowerCase() === statusFilter);
+
+            if (filteredOrders.length === 0) {
+                ordersTableBody.innerHTML = '<tr><td colspan="4">No orders found for this status.</td></tr>';
+                return;
+            }
+
+            filteredOrders.forEach(order => {
+                const row = `<tr>
+                    <td>${order.orderID}</td>
+                    <td>${order.status}</td>
+                    <td>₱${parseFloat(order.total_amount).toFixed(2)}</td>
+                    <td>${new Date(order.order_date).toLocaleDateString()}</td>
+                </tr>`;
+                ordersTableBody.insertAdjacentHTML('beforeend', row);
+            });
         }
 
-        filteredOrders.forEach(order => {
-            const row = `<tr>
-                <td>${order.orderID}</td>
-                <td>${order.status}</td>
-                <td>₱${parseFloat(order.total_amount).toFixed(2)}</td>
-                <td>${new Date(order.order_date).toLocaleDateString()}</td>
-            </tr>`;
-            ordersTableBody.insertAdjacentHTML('beforeend', row);
-        });
-    }
+        // Function to fetch analytics data and update the page
+        function fetchAnalyticsData(startDate, endDate) {
+            const filterBtn = document.getElementById('filterBtn');
+            const filterSpinner = document.getElementById('filterSpinner');
+            const chartContainer = document.getElementById('chartContainer');
+            filterBtn.disabled = true;
+            filterSpinner.style.display = 'inline-block';
 
-    // Function to fetch analytics data and update the page
-    function fetchAnalyticsData(startDate, endDate) {
-        const filterBtn = document.getElementById('filterBtn');
-        const filterSpinner = document.getElementById('filterSpinner');
-        const chartContainer = document.getElementById('chartContainer');
-        filterBtn.disabled = true;
-        filterSpinner.style.display = 'inline-block';
+            fetch(`fetchanalytics.php?start=${startDate}&end=${endDate}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    // Update stat cards
+                    document.getElementById('totalSales').textContent = `₱${data.totalSales.toFixed(2)}`;
+                    document.getElementById('newUsers').textContent = data.newUsers;
+                    document.getElementById('repeatPurchase').textContent = `${data.repeatPurchase.toFixed(1)}%`;
 
-        fetch(`fetchanalytics.php?start=${startDate}&end=${endDate}`)
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            })
-            .then(data => {
-                // Update stat cards
-                document.getElementById('totalSales').textContent = `₱${data.totalSales.toFixed(2)}`;
-                document.getElementById('newUsers').textContent = data.newUsers;
-                document.getElementById('repeatPurchase').textContent = `${data.repeatPurchase.toFixed(1)}%`;
+                    // Update chart based on date range
+                    const daysDiff = getDaysDifference(startDate, endDate);
+                    if (daysDiff < 5) {
+                        chartContainer.style.display = 'none';
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Date Range Too Short',
+                            text: 'The date range is less than 5 days. The chart will not be displayed.',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        chartContainer.style.display = 'block';
+                        updateChart(data.chartLabels, data.chartData);
+                    }
 
-                // Update chart based on date range
-                const daysDiff = getDaysDifference(startDate, endDate);
-                if (daysDiff < 5) {
-                    chartContainer.style.display = 'none';
+                    // Update top selling products table
+                    const topProductsTable = document.getElementById('topProductsTable');
+                    topProductsTable.innerHTML = '';
+                    if (data.topProducts.length === 0) {
+                        topProductsTable.innerHTML = '<tr><td colspan="2">No sales data available for this period.</td></tr>';
+                    } else {
+                        data.topProducts.forEach(product => {
+                            const row = `<tr><td>${product.quantity}</td><td>${product.product_name}</td></tr>`;
+                            topProductsTable.insertAdjacentHTML('beforeend', row);
+                        });
+                    }
+
+                    // Store orders globally and update table
+                    allOrders = data.orders || [];
+                    updateOrdersTable(allOrders);
+
+                    // Store the data in a hidden input for PDF export
+                    document.getElementById('exportPDFBtn').dataset.analytics = JSON.stringify(data);
+
+                    filterBtn.disabled = false;
+                    filterSpinner.style.display = 'none';
+
                     Swal.fire({
-                        icon: 'info',
-                        title: 'Date Range Too Short',
-                        text: 'The date range is less than 5 days. The chart will not be displayed.',
+                        icon: 'success',
+                        title: 'Data Loaded',
+                        text: 'Analytics data has been successfully loaded.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching analytics:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to load analytics data: ' + error.message,
                         confirmButtonText: 'OK'
                     });
-                } else {
-                    chartContainer.style.display = 'block';
-                    updateChart(data.chartLabels, data.chartData);
-                }
+                    filterBtn.disabled = false;
+                    filterSpinner.style.display = 'none';
+                });
+        }
 
-                // Update top selling products table
-                const topProductsTable = document.getElementById('topProductsTable');
-                topProductsTable.innerHTML = '';
-                if (data.topProducts.length === 0) {
-                    topProductsTable.innerHTML = '<tr><td colspan="2">No sales data available for this period.</td></tr>';
-                } else {
-                    data.topProducts.forEach(product => {
-                        const row = `<tr><td>${product.quantity}</td><td>${product.product_name}</td></tr>`;
-                        topProductsTable.insertAdjacentHTML('beforeend', row);
-                    });
-                }
+        // Function to export as PDF
+        function exportAsPDF() {
+            const exportBtn = document.getElementById('exportPDFBtn');
+            const pdfSpinner = document.getElementById('pdfSpinner');
+            const startDate = document.getElementById('start').value;
+            const endDate = document.getElementById('end').value;
+            const analyticsData = JSON.parse(exportBtn.dataset.analytics || '{}');
+            const statusFilter = document.getElementById('statusFilter').value;
 
-                // Store orders globally and update table
-                allOrders = data.orders || [];
-                updateOrdersTable(allOrders);
+            if (!startDate || !endDate || !analyticsData.totalSales) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No Data',
+                    text: 'Please fetch analytics data before exporting.',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6'
+                });
+                return;
+            }
 
-                // Store the data in a hidden input for PDF export
-                document.getElementById('exportPDFBtn').dataset.analytics = JSON.stringify(data);
+            // Get the filtered orders based on the current status filter
+            const filteredOrders = statusFilter === 'all' 
+                ? allOrders 
+                : allOrders.filter(order => order.status.toLowerCase() === statusFilter);
 
-                filterBtn.disabled = false;
-                filterSpinner.style.display = 'none';
+            exportBtn.disabled = true;
+            pdfSpinner.style.display = 'inline-block';
+
+            fetch('export_pdf.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    startDate: startDate,
+                    endDate: endDate,
+                    totalSales: analyticsData.totalSales,
+                    newUsers: analyticsData.newUsers,
+                    repeatPurchase: analyticsData.repeatPurchase,
+                    topProducts: analyticsData.topProducts,
+                    orders: filteredOrders, // Send filtered orders
+                    statusFilter: statusFilter // Send status filter for header/filename
+                })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to generate PDF');
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Analytics_Report_${startDate}_to_${endDate}${statusFilter !== 'all' ? '_' + statusFilter : ''}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+
+                exportBtn.disabled = false;
+                pdfSpinner.style.display = 'none';
 
                 Swal.fire({
                     icon: 'success',
-                    title: 'Data Loaded',
-                    text: 'Analytics data has been successfully loaded.',
+                    title: 'PDF Exported',
+                    text: 'The analytics report has been successfully exported as a PDF.',
                     timer: 1500,
                     showConfirmButton: false
                 });
             })
             .catch(error => {
-                console.error('Error fetching analytics:', error);
+                console.error('Error exporting PDF:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Failed to load analytics data: ' + error.message,
-                    confirmButtonText: 'OK'
-                });
-                filterBtn.disabled = false;
-                filterSpinner.style.display = 'none';
-            });
-    }
-
-    // Function to export as PDF
-    function exportAsPDF() {
-    const exportBtn = document.getElementById('exportPDFBtn');
-    const pdfSpinner = document.getElementById('pdfSpinner');
-    const startDate = document.getElementById('start').value;
-    const endDate = document.getElementById('end').value;
-    const analyticsData = JSON.parse(exportBtn.dataset.analytics || '{}');
-    const statusFilter = document.getElementById('statusFilter').value;
-
-    if (!startDate || !endDate || !analyticsData.totalSales) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'No Data',
-            text: 'Please fetch analytics data before exporting.',
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#3085d6'
-        });
-        return;
-    }
-
-    // Get the filtered orders based on the current status filter
-    const filteredOrders = statusFilter === 'all' 
-        ? allOrders 
-        : allOrders.filter(order => order.status.toLowerCase() === statusFilter);
-
-    exportBtn.disabled = true;
-    pdfSpinner.style.display = 'inline-block';
-
-    fetch('export_pdf.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            startDate: startDate,
-            endDate: endDate,
-            totalSales: analyticsData.totalSales,
-            newUsers: analyticsData.newUsers,
-            repeatPurchase: analyticsData.repeatPurchase,
-            topProducts: analyticsData.topProducts,
-            orders: filteredOrders, // Send filtered orders
-            statusFilter: statusFilter // Send status filter for header/filename
-        })
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Failed to generate PDF');
-        return response.blob();
-    })
-    .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Analytics_Report_${startDate}_to_${endDate}${statusFilter !== 'all' ? '_' + statusFilter : ''}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-
-        exportBtn.disabled = false;
-        pdfSpinner.style.display = 'none';
-
-        Swal.fire({
-            icon: 'success',
-            title: 'PDF Exported',
-            text: 'The analytics report has been successfully exported as a PDF.',
-            timer: 1500,
-            showConfirmButton: false
-        });
-    })
-    .catch(error => {
-        console.error('Error exporting PDF:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to export PDF: ' + error.message,
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#3085d6'
-        });
-        exportBtn.disabled = false;
-        pdfSpinner.style.display = 'none';
-    });
-}
-
-    // Initialize on page load with default dates
-    document.addEventListener('DOMContentLoaded', function() {
-        const startDate = document.getElementById('start').value;
-        const endDate = document.getElementById('end').value;
-        fetchAnalyticsData(startDate, endDate);
-
-        document.getElementById('filterBtn').addEventListener('click', function() {
-            const startDate = document.getElementById('start').value;
-            const endDate = document.getElementById('end').value;
-            if (startDate && endDate && startDate <= endDate) {
-                fetchAnalyticsData(startDate, endDate);
-            } else {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Invalid Date Range',
-                    text: 'Please ensure Start Date is not after End Date.',
+                    text: 'Failed to export PDF: ' + error.message,
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#3085d6'
                 });
-            }
-        });
+                exportBtn.disabled = false;
+                pdfSpinner.style.display = 'none';
+            });
+        }
 
-        document.getElementById('exportPDFBtn').addEventListener('click', exportAsPDF);
+        // Initialize on page load with default dates
+        document.addEventListener('DOMContentLoaded', function() {
+            const startDate = document.getElementById('start').value;
+            const endDate = document.getElementById('end').value;
+            fetchAnalyticsData(startDate, endDate);
 
-        // Add status filter event listener
-        document.getElementById('statusFilter').addEventListener('change', function() {
-            console.log('Status filter changed to:', this.value);
-            console.log('Orders data:', allOrders);
-            updateOrdersTable(allOrders);
+            document.getElementById('filterBtn').addEventListener('click', function() {
+                const startDate = document.getElementById('start').value;
+                const endDate = document.getElementById('end').value;
+                if (startDate && endDate && startDate <= endDate) {
+                    fetchAnalyticsData(startDate, endDate);
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Invalid Date Range',
+                        text: 'Please ensure Start Date is not after End Date.',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#3085d6'
+                    });
+                }
+            });
+
+            document.getElementById('exportPDFBtn').addEventListener('click', exportAsPDF);
+
+            // Add status filter event listener
+            document.getElementById('statusFilter').addEventListener('change', function() {
+                console.log('Status filter changed to:', this.value);
+                console.log('Orders data:', allOrders);
+                updateOrdersTable(allOrders);
+            });
         });
-    });
-</script>
+    </script>
 </body>
 </html>
