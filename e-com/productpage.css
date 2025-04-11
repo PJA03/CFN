@@ -108,10 +108,10 @@ header {
     padding: 30px;
     display: flex;
     align-items: flex-start;
-    justify-content: center; /* Center the content */
-    gap: 20px; /* Small gap between image and details */
-    width: 100%; /* Full width instead of max-width */
-    margin: 0; /* Remove auto margins */
+    justify-content: center;
+    gap: 30px; /* Increased from 20px for more space between image and text */
+    width: 100%;
+    margin: 0;
 }
 
 .product-image-container {
