@@ -838,6 +838,34 @@ var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggl
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl);
 });
+
+// Center modals properly
+document.addEventListener('DOMContentLoaded', function() {
+    // Override Bootstrap's modal positioning
+    const modals = document.querySelectorAll('.modal');
+    
+    // Function to center modal on show
+    function centerModal() {
+        const modalDialogs = document.querySelectorAll('.modal-dialog');
+        modalDialogs.forEach(dialog => {
+            // Reset any custom positioning to let Bootstrap handle it
+            dialog.style.position = '';
+            dialog.style.top = '';
+            dialog.style.left = '';
+            dialog.style.transform = '';
+            // Just keep the animation
+            dialog.style.animation = 'modalPop 0.4s ease-out forwards';
+        });
+    }
+    
+    // Apply to all modals
+    modals.forEach(modal => {
+        modal.addEventListener('show.bs.modal', centerModal);
+    });
+    
+    // Initial call for any visible modals
+    centerModal();
+});
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
