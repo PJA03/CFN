@@ -96,10 +96,8 @@ if ($qr_type) {
                             <img src="<?php echo htmlspecialchars($qr_image); ?>" alt="QR Code" class="qr-code-image">
                         </div>
                         <div class="text-content">
-                            <p>QR PH (<?php echo strtoupper(str_replace('_', ' ', $qr_type)); ?>)</p>
-                            <p>Scan the QR code to make your payment</p>
-                            <p>SCAN TO PAY HERE</p>
-                            <p>Kindly upload your E-receipt to verify your payment</p>
+                    <p><strong style="color: darkred; font-size: 1.5em;">QR PH</strong> (<?php echo strtoupper(str_replace('_', ' ', $qr_type)); ?>) <strong style="color: darkred; font-size: 1.2em;">NAME: MA*Y JA*E J.</strong></p>
+                    <p>Scan the QR code to make your payment</p>
                         </div>
                     </div>
                     
@@ -113,6 +111,8 @@ if ($qr_type) {
                             </div>
                         </div>
                         <p id="file-name"></p>
+                        <p><strong style="color: darkred; font-size: 1.5em;">SCAN TO PAY HERE</strong></p>
+                        <p>Kindly upload your E-receipt to verify your payment</p>
                     </div>
                 </div>
 
