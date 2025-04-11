@@ -9,17 +9,17 @@ body {
 html, body {
     height: 100%;
     display: flex;
-    flex-direction: column; /* Stack elements vertically */
+    flex-direction: column;
 }
 
 /* Sidebar Styling */
 .sidebar {
-    height: 100vh; /* Full viewport height */
-    position: sticky; /* Fixed position during scroll */
-    top: 0; /* Start from the top */
+    height: 100vh;
+    position: sticky;
+    top: 0;
     display: flex;
-    flex-direction: column; /* Aligns items vertically */
-    background-color: #1F4529; /* Green background */
+    flex-direction: column;
+    background-color: #1F4529;
     color: white;
     font-size: 1rem;
 }
@@ -35,21 +35,21 @@ html, body {
     font-weight: 400;
     font-size: 2rem;
     font-style: normal;
-    text-decoration: none; /* Removes underline */
-    color: #EED3B1; /* Default yellow (cream) */
-    display: block; /* Ensures vertical layout for flex-column */
-    transition: all 0.3s ease-in-out; /* Smooth transition for hover/click */
+    text-decoration: none;
+    color: #EED3B1;
+    display: block;
+    transition: all 0.3s ease-in-out;
 }
 
 .sidebar nav .nav-link:hover {
-    color: #b4d644; /* Green on hover */
+    color: #b4d644;
     text-decoration: underline;
 }
 
 .nav-link:visited {
     font-family: "Be Vietnam Pro", serif;
-    font-size: 1.1rem; /* Slightly larger */
-    color: #1F4529; /* Green */
+    font-size: 1.1rem;
+    color: #1F4529;
     font-weight: bold;
 }
 
@@ -61,6 +61,7 @@ html, body {
 .sidebar .mt-auto {
     margin-top: auto;
 }
+
 /* Main Content Styling */
 .main-content h1 {
     font-size: 2.4rem;
@@ -130,24 +131,7 @@ html, body {
     width: 100%;
 }
 
-/* Additional Styling from Original */
-.sidebar h2 {
-    font-family: "Bebas Neue", sans-serif;
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-}
-
-.nav-link:visited {
-    font-family: "Be Vietnam Pro", serif;
-    font-size: 1.1rem;
-    color: #1F4529;
-    font-weight: bold;
-}
-
-.sidebar .mt-auto {
-    margin-top: auto;
-}
-
+/* Additional Styling */
 .table img {
     width: 50px;
     height: 50px;
@@ -345,82 +329,64 @@ html, body {
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .sidebar {
-        display: none; /* Hidden by default on mobile, shown via toggle */
+        display: none;
     }
-
     .main-content {
         padding: 15px;
     }
-
     .main-content h1 {
         font-size: 1.8rem;
         text-align: center;
     }
-
     .main-content h3 {
         font-size: 1.5rem;
     }
-
     .product-grid {
-        grid-template-columns: 1fr; /* Single column on mobile */
+        grid-template-columns: 1fr;
     }
-
     .product-card {
         padding: 15px;
     }
-
     .product-card img {
         max-height: 120px;
     }
-
     .filter-section .col-md-4 {
         margin-bottom: 15px;
     }
-
     #searchOrder {
         max-width: 100%;
         margin-bottom: 10px;
     }
-
     #filterStatus {
         width: 100%;
         max-width: none;
     }
-
     .navbar-dark {
         background-color: #1F4529 !important;
     }
-
     .navbar-brand {
         font-size: 1.2rem;
     }
-
     #mobileSidebar .nav-link {
         font-size: 1.2rem;
     }
-
     .modal-dialog {
         max-width: 90%;
     }
-
     .table-responsive {
         font-size: 0.9rem;
     }
-
     .table th, .table td {
         padding: 0.5rem;
     }
-
     .popup-content {
         padding: 1rem;
         max-width: 95%;
     }
-
     .d-flex.justify-content-end {
         flex-direction: column;
         gap: 10px;
     }
-
     .btn {
         width: 100%;
     }
@@ -430,33 +396,27 @@ html, body {
     .product-card h5 {
         font-size: 0.9rem;
     }
-
     .product-card p {
         font-size: 0.8rem;
     }
-
     .btn-manage {
         font-size: 0.7rem;
     }
-
     .variant-table th, .variant-table td {
         font-size: 0.8rem;
     }
-
     .table th, .table td {
         font-size: 0.8rem;
     }
-
     #searchOrder {
         width: 100%;
     }
-
     .main-content h3 {
         font-size: 1.2rem;
     }
 }
 
-#searchProduct , #addProductBtn, #productList{
+#searchProduct, #addProductBtn, #productList {
     margin: 10px 10px;
 }
 
@@ -478,34 +438,52 @@ html, body {
 .admin-name {
     display: flex;
     align-items: center;
-  }
-  
-  .admin-name .d-flex {
-    gap: 8px; /* Small gap between Admin User text and logout button */
-  }
-  
-  .adminuser {
+}
+
+.admin-name .d-flex {
+    gap: 8px;
+}
+
+.adminuser {
     font-size: 1rem;
-    color: white; /* Ensure text is visible against sidebar background */
-  }
-  
-  #logout {
-    padding: 4px 8px; /* Compact padding for the button */
-    font-size: 0.8rem; /* Smaller font size for better fit */
-  }
-  
-  /* Mobile Menu Adjustments */
-  @media (max-width: 768px) {
+    color: white;
+}
+
+#logout {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
     .admin-name .d-flex {
-      gap: 6px; /* Slightly smaller gap for mobile */
+        gap: 6px;
     }
-  
     .adminuser {
-      font-size: 0.9rem; /* Slightly smaller text for mobile */
+        font-size: 0.9rem;
     }
-  
     #logout {
-      padding: 3px 6px; /* Smaller padding for mobile */
-      font-size: 0.75rem; /* Smaller font for mobile */
+        padding: 3px 6px;
+        font-size: 0.75rem;
     }
+}
+
+.btn-info {
+    background-color: #1F4529;
+    border-color: #1F4529;
+    color: white;
+  }
+  .btn-info:hover {
+    background-color: #17361f;
+    border-color: #17361f;
+    color: white;
+  }
+  .btn-info:focus, .btn-info:active {
+    background-color: #1F4529;
+    border-color: #1F4529;
+    box-shadow: 0 0 0 0.25rem rgba(31, 69, 41, 0.5);
+  }
+  .btn-info:disabled {
+    background-color: #4a6b52;
+    border-color: #4a6b52;
+    opacity: 0.65;
   }

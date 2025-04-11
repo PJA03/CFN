@@ -189,8 +189,8 @@ require_once 'auth_check.php';
               <input type="text" class="form-control" id="code" name="code" required>
             </div>
             <div class="modal-buttons">
+            <button type="submit" class="btn btn-success modal-btn">Save</button>
               <button type="button" class="btn btn-secondary modal-btn" onclick="closeVoucherModal()">Cancel</button>
-              <button type="submit" class="btn btn-success modal-btn">Save</button>
             </div>
           </form>
         </div>
@@ -259,8 +259,8 @@ require_once 'auth_check.php';
             ?>
           </select>
           <div class="modal-buttons mt-3">
+          <button class="btn btn-success modal-btn" onclick="confirmBestSeller()">Confirm</button>
             <button class="btn btn-secondary modal-btn" onclick="closeModal()">Cancel</button>
-            <button class="btn btn-success modal-btn" onclick="confirmBestSeller()">Confirm</button>
           </div>
         </div>
       </div>
