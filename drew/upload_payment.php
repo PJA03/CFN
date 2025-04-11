@@ -124,7 +124,7 @@ if ($qr_type) {
     <input type="file" id="payment-proof" name="payment_proof" accept=".png, .jpeg, .jpg" required style="display: none;">
     
     <button type="submit" class="upload-btn">Submit Payment</button>
-</div>
+        </div>
     </div>
 </form>
             </div>
