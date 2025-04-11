@@ -109,19 +109,6 @@ header {
     color: orange;
 }
 
-.home::after, /* Show underline when active */
-.home:hover::after { /* Show underline on hover */
-    content: "";
-    display: block;
-    width: 100%;
-    height: 4px; /* Thickness of underline */
-    background-color: orange; /* Change color if needed */
-    position: absolute;
-    bottom: -10px; /* Adjusts spacing below the icon */
-    border-radius: 2px;
-    left: 0;
-}
-
 .search-bar {
     padding: 8px 12px;
     border-radius: 25px;
