@@ -429,6 +429,43 @@ a[href^="mailto:"]:hover {
     overflow-y: auto; /* Enables scrolling if content is too long */
 }
 
-#close {
+#close, .close {
     background-color: red !important;
+}
+
+#ModalTitle {
+    color: white !important;
+    font-weight: bold;
+    background-color: #1F4529;
+}
+
+button[data-bs-toggle="modal"]:hover {
+    color: white !important;
+    background-color: green !important;
+    transform: scale(1.05); /* Optional: Add a slight zoom effect */
+}
+
+.custom-modal-dialog {
+    max-width: 60%; 
+    margin: auto; 
+}
+
+.custom-modal-content {
+    max-height: 75vh; /* Set the modal height to 90% of the viewport */
+    overflow-y: auto; /* Enable scrolling if the content overflows */
+}
+
+.center-image {
+    display: block; /* Ensures the image is treated as a block element */
+    margin: 0 auto; /* Centers the image horizontally */
+    max-width: 70%; /* Ensures the image does not overflow the modal */
+    height: auto; /* Maintains the aspect ratio */
+    text-align: center;
+}
+
+.modal-body {
+    display: flex;
+    justify-content: center; /* Centers the image horizontally */
+    align-items: center; /* Centers the image vertically */
+    height: 100%; /* Ensures the modal body takes up the full height */
 }

@@ -94,10 +94,40 @@ if (isset($_POST['logout'])) {
                     <li>Email: <a href="mailto:cosmeticasfraichenaturale@gmail.com" style="color: green; text-decoration: none;">cosmeticasfraichenaturale@gmail.com</a></li>
                     <li>Contact Number: 0962 079 8190</li>
                 </ul>
+                
+                <!-- Button trigger modal -->
+                <div class="d-flex justify-content-center">
+                    <button type="button" id="modal" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal" style="background: darkgreen; color: white; width: auto;">
+                        View FDA License
+                    </button>
+                </div>
+
+                <!-- FDA License -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog custom-modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content custom-modal-content">
+                        <div class="modal-header" style="background-color: #1F4529;">
+                                <h5 class="modal-title" id="ModalTitle">FDA License</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <img src="../Resources/FDA_License.png" alt="FDA License" class="img-fluid center-image" width="70%" height="80%">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn close" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
             </div>
             </div>
         </div>
     </div>
+
+    
+
+
 </div>
 
     <footer>
@@ -191,6 +221,7 @@ For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
         </div>
     </div>
 </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
