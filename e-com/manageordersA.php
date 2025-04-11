@@ -40,12 +40,24 @@ require_once 'auth_check.php';
       max-width: 900px;
       width: 90%;
       position: relative;
+      display: flex;
+      flex-direction: column; /* Stack elements vertically */
+      align-items: center; /* Center horizontally */
     }
     .popup-content .close {
       position: absolute;
       top: 1rem; right: 1rem;
       font-size: 1.5rem;
       cursor: pointer;
+    }
+    .order-details-title {
+      text-align: center;
+      margin: 0 0 1rem 0; /* Space below title, no top margin */
+      padding-top: 0.5rem; /* Slight padding to align with close button */
+      font-family: "Bebas Neue", serif;
+      font-size: 2rem;
+      color: #1F4529;
+      width: 100%;
     }
     .table-container {
       overflow-x: auto;
@@ -97,44 +109,59 @@ require_once 'auth_check.php';
     th.sorted-desc:after {
       content: " ↓";
     }
-    /* Style for the Search Order textbox */
     #searchOrder {
-      width: 200px; /* Fixed width for better layout */
-      max-width: 100%; /* Responsive on smaller screens */
+      width: 600px;
+      max-width: 100%;
     }
-    /* Ensure SweetAlert2 appears on top */
     .swal2-container {
       z-index: 10001 !important;
     }
-    /* Style for the address container */
     .address-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        gap: 10px; /* Space between address and icon */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 10px;
     }
-    /* Style for the address text */
     .address-text {
-        flex: 1; /* Take up remaining space */
-        word-wrap: break-word; /* Ensure long addresses wrap */
+      flex: 1;
+      word-wrap: break-word;
     }
-    /* Style for the copy icon */
     .copy-icon {
-        cursor: pointer;
-        font-size: 1.2rem; /* Size of the icon */
-        color: #6c757d; /* Bootstrap's secondary color */
-        transition: color 0.2s; /* Smooth color transition on hover */
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #6c757d;
+      transition: color 0.2s;
     }
     .copy-icon:hover {
-        color: #0d6efd; /* Bootstrap's primary color on hover */
+      color: #0d6efd;
     }
-    /* Style for the cancelled message */
     #cancelledMessage {
       display: none;
-      color: #dc3545; /* Bootstrap's danger color */
+      color: #dc3545;
       font-weight: bold;
       margin-bottom: 1rem;
+    }
+    /* Change blue buttons to green */
+    .btn-primary {
+      background-color: #1F4529;
+      border-color: #1F4529;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #17361f;
+      border-color: #17361f;
+      color: white;
+    }
+    .btn-primary:focus, .btn-primary:active {
+      background-color: #1F4529;
+      border-color: #1F4529;
+      box-shadow: 0 0 0 0.25rem rgba(31, 69, 41, 0.5);
+    }
+    .btn-primary:disabled {
+      background-color: #4a6b52;
+      border-color: #4a6b52;
+      opacity: 0.65;
     }
   </style>
 </head>
@@ -143,44 +170,44 @@ require_once 'auth_check.php';
   <div class="container-fluid">
     <div class="row">
       <!-- Sidebar -->
-<div class="col-md-2 sidebar d-flex flex-column p-3 d-none d-md-flex" id="sidebar">
-  <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3">
-  <nav class="nav flex-column">
-    <a class="nav-link" href="manageproductsA.php">Products</a>
-    <a class="nav-link" href="managecontentA.php">Content</a>
-    <a class="nav-link" href="manageordersA.php">Orders</a>
-    <a class="nav-link" href="analytics.php">Analytics</a>
-  </nav>
-  <div class="mt-auto">
-    <hr>
-    <div class="admin-name d-flex align-items-center">
-      <i class="bi bi-person-circle fs-4 me-2"></i>
-      <div class="d-flex align-items-center gap-2">
-        <span class="adminuser">Admin User</span>
-        <a href="/CFN/e-com/logout.php" class="btn btn-danger btn-sm" id="logout">Logout</a>
+      <div class="col-md-2 sidebar d-flex flex-column p-3 d-none d-md-flex" id="sidebar">
+        <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3">
+        <nav class="nav flex-column">
+          <a class="nav-link" href="manageproductsA.php">Products</a>
+          <a class="nav-link" href="managecontentA.php">Content</a>
+          <a class="nav-link" href="manageordersA.php">Orders</a>
+          <a class="nav-link" href="analytics.php">Analytics</a>
+        </nav>
+        <div class="mt-auto">
+          <hr>
+          <div class="admin-name d-flex align-items-center">
+            <i class="bi bi-person-circle fs-4 me-2"></i>
+            <div class="d-flex align-items-center gap-2">
+              <span class="adminuser">Admin User</span>
+              <a href="/CFN/e-com/logout.php" class="btn btn-danger btn-sm" id="logout">Logout</a>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
 
-<!-- Mobile Menu -->
-<div class="collapse navbar-collapse d-md-none bg-dark text-white p-3" id="mobileSidebar">
-  <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3" style="max-width: 100px;">
-  <nav class="nav flex-column">
-    <a class="nav-link" href="manageproductsA.php">Products</a>
-    <a class="nav-link" href="managecontentA.php">Content</a>
-    <a class="nav-link" href="manageordersA.php">Orders</a>
-    <a class="nav-link" href="analytics.php">Analytics</a>
-  </nav>
-  <hr class="bg-white">
-  <div class="d-flex align-items-center mb-3">
-    <i class="bi bi-person-circle fs-4 me-2"></i>
-    <div class="d-flex align-items-center gap-2">
-      <span class="adminuser">Admin User</span>
-      <a href="/CFN/e-com/logout.php" class="btn btn-danger btn-sm" id="logout">Logout</a>
-    </div>
-  </div>
-</div>
+      <!-- Mobile Menu -->
+      <div class="collapse navbar-collapse d-md-none bg-dark text-white p-3" id="mobileSidebar">
+        <img src="images/cfn_logo.png" alt="Naturale Logo" class="img-fluid mb-3" style="max-width: 100px;">
+        <nav class="nav flex-column">
+          <a class="nav-link" href="manageproductsA.php">Products</a>
+          <a class="nav-link" href="managecontentA.php">Content</a>
+          <a class="nav-link" href="manageordersA.php">Orders</a>
+          <a class="nav-link" href="analytics.php">Analytics</a>
+        </nav>
+        <hr class="bg-white">
+        <div class="d-flex align-items-center mb-3">
+          <i class="bi bi-person-circle fs-4 me-2"></i>
+          <div class="d-flex align-items-center gap-2">
+            <span class="adminuser">Admin User</span>
+            <a href="/CFN/e-com/logout.php" class="btn btn-danger btn-sm" id="logout">Logout</a>
+          </div>
+        </div>
+      </div>
 
       <!-- Main Content -->
       <div class="col-md-10 col-12 p-4 main-content">
@@ -226,8 +253,7 @@ require_once 'auth_check.php';
   <div id="orderPopup" class="popup">
     <div class="popup-content">
       <span class="close" onclick="closePopup()">×</span>
-      <h4>Order Details</h4>
-      <!-- Add a message area for cancelled orders -->
+      <h4 class="order-details-title">Order Details</h4>
       <div id="cancelledMessage">This order is cancelled and cannot be modified.</div>
       <div class="table-container">
         <table class="table table-bordered">
@@ -316,7 +342,7 @@ require_once 'auth_check.php';
     let sortOrder = 'asc';
     let originalStatus = '';
 
-    // 1. Load orders from fetchorders.php
+    // Load orders from fetchorders.php
     function loadOrders(query = "", filterStatus = "", sort = '', order = 'asc') {
       document.getElementById("ordersTable").innerHTML = "<tr><td colspan='7'>Loading...</td></tr>";
       const url = `fetchorders.php?search=${encodeURIComponent(query)}&filter=${encodeURIComponent(filterStatus)}&sort=${encodeURIComponent(sort)}&order=${encodeURIComponent(order)}`;
@@ -352,7 +378,7 @@ require_once 'auth_check.php';
       });
     });
 
-    // 2. Sort and filter table
+    // Sort and filter table
     function sortTable(field) {
       if (sortField === field) {
         sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
@@ -363,7 +389,7 @@ require_once 'auth_check.php';
       loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
     }
 
-    // 3. Open the details popup
+    // Open the details popup
     function openPopup(orderID) {
       currentOrderID = orderID;
       fetch(`getorderdetails.php?orderID=${orderID}`)
@@ -386,11 +412,9 @@ require_once 'auth_check.php';
           document.getElementById("confirmPayment").checked = (data.isApproved == 1);
           document.getElementById("trackingLink").value = data.trackingLink || "";
           
-          // Fix the receipt image path
           const receiptPath = data.payment_proof ? `../uploads/receipts/${data.payment_proof}` : "images/placeholder.jpg";
           document.getElementById("receiptImage").src = receiptPath;
 
-          // Check if the order is cancelled
           const isCancelled = data.status === "Cancelled";
           const statusSelect = document.getElementById("status");
           const confirmPaymentCheckbox = document.getElementById("confirmPayment");
@@ -431,7 +455,7 @@ require_once 'auth_check.php';
         });
     }
 
-    // 4. Close the details popup
+    // Close the details popup
     function closePopup() {
       if (isChanged) {
         Swal.fire({
@@ -481,7 +505,7 @@ require_once 'auth_check.php';
     document.getElementById("confirmPayment").addEventListener("change", () => { isChanged = true; });
     document.getElementById("trackingLink").addEventListener("input", () => { isChanged = true; });
 
-    // 5. Receipt popup
+    // Receipt popup
     document.getElementById("reviewPayment").addEventListener("click", (event) => {
       event.preventDefault();
       openReceiptPopup();
@@ -494,7 +518,7 @@ require_once 'auth_check.php';
       document.getElementById("receiptPopup").style.display = "none";
     }
 
-    // 6. Zoomed image
+    // Zoomed image
     function openZoomedImage() {
       const receiptImageSrc = document.getElementById("receiptImage").src;
       document.getElementById("zoomedImage").src = receiptImageSrc;
@@ -504,7 +528,7 @@ require_once 'auth_check.php';
       document.getElementById("zoomPopup").style.display = "none";
     }
 
-    // 7. Save changes to the order
+    // Save changes to the order
     function saveChanges() {
       let status = document.getElementById("status").value;
       const isPaymentConfirmed = document.getElementById("confirmPayment").checked ? 1 : 0;
@@ -599,7 +623,7 @@ require_once 'auth_check.php';
       isChanged = false;
     }
 
-    // 8. Delete the order (only available for cancelled orders)
+    // Delete the order (only available for cancelled orders)
     function deleteOrder() {
       Swal.fire({
         title: 'Are you sure?',
@@ -660,7 +684,7 @@ require_once 'auth_check.php';
       });
     }
 
-    // 9. Copy to Clipboard function for the address
+    // Copy to Clipboard function for the address
     function copyToClipboard(address) {
       const textarea = document.createElement('textarea');
       textarea.value = address;
