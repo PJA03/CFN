@@ -466,3 +466,24 @@ html, body {
         font-size: 0.75rem;
     }
 }
+
+.btn-info {
+    background-color: #1F4529;
+    border-color: #1F4529;
+    color: white;
+  }
+  .btn-info:hover {
+    background-color: #17361f;
+    border-color: #17361f;
+    color: white;
+  }
+  .btn-info:focus, .btn-info:active {
+    background-color: #1F4529;
+    border-color: #1F4529;
+    box-shadow: 0 0 0 0.25rem rgba(31, 69, 41, 0.5);
+  }
+  .btn-info:disabled {
+    background-color: #4a6b52;
+    border-color: #4a6b52;
+    opacity: 0.65;
+  }
