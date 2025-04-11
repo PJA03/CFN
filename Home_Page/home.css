@@ -254,7 +254,7 @@ header {
 .product-card {
     width: 250px;
     height: 350px;
-    background-color: #a3f5a3;
+    background-color: #97f397;
     padding: 20px;
     border-radius: 6px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -384,7 +384,7 @@ section {
 /* Category Grid */
 /* Category Section */
 .category-section {
-    background-color: #a3f5a3;
+    background-color: #9ed994;
     padding: 50px 30px;
     display: flex;
     justify-content: center;
