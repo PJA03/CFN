@@ -431,6 +431,7 @@ footer {
     height: 50px; /* Set a consistent height for both buttons */
     padding: 0 20px;
     /* Keep your other button styles like color, background, etc. */
+    margin-top: 30px;
 }
 
 /* If necessary, adjust the icon spacing */
@@ -583,13 +584,36 @@ footer {
     background-color: red;
 }
 
-/* Side-by-side layout for QR code and image preview */
+/* Center the scan-to-pay text */
+.scan-info {
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Make payment header section distribute evenly */
+.payment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.scan-info {
+    flex: 1;
+    margin-right: 20px;
+}
+.qr-info {
+    flex: 1;
+    margin-right: 70px;
+}
+
+/* Ensure payment section is balanced */
 .payment-section {
     display: flex;
+    justify-content: space-around;
     flex-wrap: wrap;
     gap: 30px;
-    margin-bottom: 30px;
-    align-items: stretch;
+    align-items: flex-start;
 }
 
 .qr-and-text {
@@ -599,6 +623,7 @@ footer {
     flex-direction: column;
 }
 
+/* Make preview section match QR code size */
 .preview-section {
     flex: 1;
     min-width: 300px;
@@ -610,19 +635,25 @@ footer {
     padding: 20px;
     border-radius: 10px;
     background-color: #f0f0f0;
-    height: 100%;
+    height: 450px; /* Match QR code height */
+    width: 450px; /* Match QR code width */
+    box-sizing: border-box;
 }
 
+/* Center the preview title */
 .preview-section h5 {
     font-family: "Bebas Neue", serif !important;
-    font-size: 20px;
+    font-size: 24px;
     color: #1F4529;
     margin-bottom: 15px;
+    text-align: center;
+    text-transform: uppercase;
 }
 
+/* Make image preview container fill available space */
 #image-preview-container {
     width: 100%;
-    height: 250px;
+    height: 350px; /* Increased height */
     display: flex;
     justify-content: center;
     align-items: center;
