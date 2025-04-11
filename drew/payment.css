@@ -40,11 +40,37 @@ body {
     width: auto; /* Keep aspect ratio */
 }
 
-/* Header Styling */
+/*HEADER*/
+.usernamedisplay{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    color: black;  
+    font-size: 20px;
+    font-family: "Bebas Neue", serif;    
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjust spacing between the image and text */
+}
+
+.logo-image {
+    height: 40px; /* Adjust size as needed */
+    width: auto; /* Keep aspect ratio */
+}
+
+.logo img {
+    height: 40px; /* Adjust logo size */
+}
+
 header {
-    background-color: #1F4529;
-    color: #EED3B1;
-    padding: 20px 20px;
+    background-color: white;
+    padding: 20px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -52,16 +78,11 @@ header {
     flex-wrap: wrap;
 }
 
-/* Logo Styling */
-.logo img {
-    height: 40px; /* Adjust logo size */
-}
-
 /* Navigation Bar Styling */
 .navbar {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     gap: 20px;
 }
 
@@ -72,14 +93,12 @@ header {
     justify-items: center;
     gap: 15px;
     transition: transform 0.3s ease, color 0.3s ease;
-    margin-left: 50px;
-    margin-right: 40px;
 }
 
 /* Font Awesome Icon Styles */
 .icon-profile, .home, .cart {
     font-size: 1.6rem;
-    color: #EED3B1;
+    color: black;
     cursor: pointer;
     margin-left: 10px;
     position: relative;
@@ -87,8 +106,32 @@ header {
 
 .icon-profile:hover, .home:hover, .cart:hover {
     transform: scale(1.1);
-    color: whitesmoke;
+    color: orange;
 }
+
+.home::after, /* Show underline when active */
+.home:hover::after { /* Show underline on hover */
+    content: "";
+    display: block;
+    width: 100%;
+    height: 4px; /* Thickness of underline */
+    background-color: orange; /* Change color if needed */
+    position: absolute;
+    bottom: -10px; /* Adjusts spacing below the icon */
+    border-radius: 2px;
+    left: 0;
+}
+
+.search-bar {
+    padding: 8px 12px;
+    border-radius: 25px;
+    border: 1px solid #ccc; /* Add border with a light grey color */
+    outline: none;
+    font-size: 1rem;
+    width: 300px;
+    background-color: #FFFFFF;
+}
+/*END OF HEADER*/
 
 /* Cart Page */
 .cart-container {
@@ -290,15 +333,15 @@ header {
     background-color: #7e7b7b;
 }
 
-/* Footer */
 footer {
-    background-color: #1F4529;
-    color: white;
-    padding: 40px 60px;
+    background-color: white;
+    color: black;
+    padding: 30px 30px;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Stack footer elements vertically */
     align-items: center;
     width: 100%;
+    margin-top: auto;
 }
 
 .footer-container {
@@ -309,23 +352,29 @@ footer {
     max-width: 1200px;
     flex-wrap: wrap;
     gap: 20px;
+    min-height: 200px;
 }
 
 .footer-left {
     display: flex;
-    align-items: center;
-    gap: 20px;
+    flex-direction: column;
+    align-items: left;
 }
 
 .footer-logo {
-    height: 150px;
+    height: 150px; /* Adjust according to your logo size */
+}
+
+.footer-logo img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
 }
 
 .footer-right {
     display: flex;
     flex-direction: column;
     text-align: left;
-    gap: 20px;
 }
 
 .footer-nav {
@@ -334,44 +383,41 @@ footer {
 }
 
 .footer-nav li {
-    font-family: "Bebas Neue", serif;
+    font-family: "Bebas Neue", serif !important;
     font-size: 20px;
     margin-bottom: 8px;
 }
 
 .footer-nav a {
-    color: white;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.footer-nav a:hover {
-    color: #EED3B1;
-}
-
-.social-icons {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-}
-
-.social-icons p {
-    font-size: 20px;
-    font-family: "Bebas Neue", serif;
-    margin: 0;
-}
-
-.social-icons a {
-    color: white;
-    font-size: 18px;
+    color: black;
     text-decoration: none;
     transition: transform 0.3s ease, color 0.3s ease;
 }
 
-.social-icons a:hover {
+.social-icons {
+    display: flex;
+    text-align: left;
+    flex-direction: column; /* Keeps the SOCIALS text on top and icons underneath */
+    align-items: flex-start; /* Aligns items to the left */
+    font-size: 20px;
+    font-family: "Bebas Neue", serif;
+    color: black;
+    text-decoration: none;
+    padding: 0;
+}
+
+.social-icons p {
+    margin-bottom: 8px;
+}
+
+.social-icons a {
+    margin-bottom: 8px;
+    color: black;
+}
+
+.social-icons a:hover, .footer-nav a:hover {
     transform: scale(1.1);
-    color: #EED3B1;
+    color: orange;
 }
 
 .footer-center {
@@ -481,7 +527,9 @@ footer {
 
 .cart-actions .cancel-btn:hover {
     background-color: #ff0000;
-}.modal-body {
+}
+
+.modal-body {
     text-align: justify;
     align-items: center;
     border-radius: 30px;
@@ -497,4 +545,8 @@ footer {
 .modal-content {
     max-height: 50vh; /* Adjust height */
     overflow-y: auto; /* Enables scrolling if content is too long */
+}
+
+.btn-secondary {
+    background-color: red;
 }

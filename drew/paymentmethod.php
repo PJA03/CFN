@@ -22,15 +22,19 @@ if (!isset($_SESSION['order']) || empty($_SESSION['order'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <header>
+<header>
         <div class="logo">
-            <img src="cfn_logo2.png" alt="Logo" class="logo-image" />
+            <a href = "../Home_Page/Home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
         </div>
         <div class="navbar">
-            <input type="text" class="search-bar" placeholder="Search Product" />
-            <div class="icons">
-                <i class="far fa-user-circle fa-2x icon-profile"></i>
-                <i class="fas fa-bars burger-menu"></i>
+        <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>            
+        <form action="../Home_Page/ProductScroll.php" method="GET" class="search-form" onsubmit="return validateSearch()">
+            <input type="text" name="search" class="search-bar" id="searchBar" placeholder="Search Product">
+        </form>            
+        <div class="icons">
+                <a href = "../Home_Page/Home.php"><i class="fa-solid fa-house home"></i></a>
+                <a href ="../drew/cart.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
+                <a href="../User_Profile_Page/UserProfile.php"><i class ="far fa-user-circle fa-2x icon-profile"></i></a>
             </div>
         </div>
     </header>
@@ -103,21 +107,20 @@ if (!isset($_SESSION['order']) || empty($_SESSION['order'])) {
     <footer>
         <div class="footer-container">
             <div class="footer-left">
-                <img src="cfn_logo.png" alt="Naturale Logo" class="footer-logo">
+                <img src="../Resources/cfn_logo.png" alt="Naturale Logo" class="footer-logo">
             </div>
             <div class="footer-right">
                 <ul class="footer-nav">
-                    <li><a href="#">ABOUT US</a></li>
-                    <li><a href="#">PRODUCTS</a></li>
-                    <li><a href="#">LOGIN</a></li>
-                    <li><a href="#">SIGN UP</a></li>
+                    <li><a href="../User_Profile_Page/aboutUs.php">About Us</a></li>
+                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#ModalTerms">Terms and Conditions</a></li>
+                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#ModalPrivacy">Privacy Policy</a></li>
                 </ul>
             </div>
             <div class="social-icons">
                 <p>SOCIALS</p>
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
+                <a href="https://www.facebook.com/share/1CRTizfAxP/?mibextid=wwXIfr" target="_blank"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/cosmeticasfraiche?igsh=ang2MHg1MW5qZHQw" target="_blank"><i class="fab fa-instagram"></i></a>
+            </div>            
         </div>
         <div class="footer-center">
             &copy; COSMETICAS 2024
