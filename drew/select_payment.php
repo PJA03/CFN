@@ -79,7 +79,6 @@ while ($row = $result->fetch_assoc()) {
     </header>
 
     <main>
-        <h1 class="cart-title">Payment Method</h1>
         <section class="cart-container">
 
         <!-- Modal Privacy Notice -->
@@ -114,34 +113,6 @@ while ($row = $result->fetch_assoc()) {
         });
     });
 </script>
-
-<div class="payment-method">
-    <h2>SELECT PAYMENT METHOD</h2>
-    <?php if (isset($_SESSION['payment_error'])): ?>
-        <div class="alert alert-danger">
-            <?php echo $_SESSION['payment_error']; unset($_SESSION['payment_error']); ?>
-        </div>
-    <?php endif; ?>
-    <div class="payment-options-container">
-        <?php if (empty($qr_codes)): ?>
-            <p>No payment methods available at this time.</p>
-        <?php else: ?>
-            <?php foreach ($qr_codes as $type => $image): ?>
-                <div class="payment-option" style="width: 150px; height: 150px; background-color: #f0f0f0; border: 2px dashed #1F4529; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
-                    <a href="upload_payment.php?type=<?php echo htmlspecialchars($type); ?>" 
-                       style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; text-decoration: none; color: inherit;">
-                        <img src="../uploads/qr/<?php echo htmlspecialchars($image); ?>" 
-                             alt="<?php echo ucfirst(str_replace('_', ' ', $type)); ?>" 
-                             class="payment-logo" 
-                             style="max-width: 60%; max-height: 60%; margin-bottom: 10px;">
-                        <p style="margin: 0; font-weight: 500;"><?php echo ucfirst(str_replace('_', ' ', $type)); ?></p>
-                    </a>
-                </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </div>
-</div>
-
             <div class="cart-summary">
                 <h3>Order Summary</h3>
                 <div class="order-items">
@@ -169,7 +140,36 @@ while ($row = $result->fetch_assoc()) {
                 </div>
             </div>
 
-            <div class="cart-actions">
+        
+
+            <div class="payment-method">
+    <h2>SELECT PAYMENT METHOD</h2>
+    <?php if (isset($_SESSION['payment_error'])): ?>
+        <div class="alert alert-danger">
+            <?php echo $_SESSION['payment_error']; unset($_SESSION['payment_error']); ?>
+        </div>
+    <?php endif; ?>
+    <div class="payment-options-container">
+        <?php if (empty($qr_codes)): ?>
+            <p>No payment methods available at this time.</p>
+        <?php else: ?>
+            <?php foreach ($qr_codes as $type => $image): ?>
+                <div class="payment-option" style="width: 150px; height: 150px; background-color: #f0f0f0; border: 2px dashed #1F4529; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+                    <a href="upload_payment.php?type=<?php echo htmlspecialchars($type); ?>" 
+                       style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; text-decoration: none; color: inherit;">
+                        <img src="../uploads/qr/<?php echo htmlspecialchars($image); ?>" 
+                             alt="<?php echo ucfirst(str_replace('_', ' ', $type)); ?>" 
+                             class="payment-logo" 
+                             style="max-width: 60%; max-height: 60%; margin-bottom: 10px;">
+                        <p style="margin: 0; font-weight: 500;"><?php echo ucfirst(str_replace('_', ' ', $type)); ?></p>
+                    </a>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="cart-actions">
                 <a href="cart.php" class="btn cancel-btn">Back to Cart</a>
             </div>
         </section>
