@@ -71,17 +71,19 @@ require_once 'auth_check.php'; // Ensures user is logged in with either admin or
       $pendingResult = $conn->query($pendingQuery);
       $pendingOrders = $pendingResult->fetch_assoc()['pending'] ?? 0;
 
-      // Top Selling Product (updated to only count approved payments)
-      $topSellingQuery = "SELECT product_name, SUM(quantity) as total_sold 
-                          FROM tb_orders 
-                          WHERE status != 'Cancelled' 
-                          AND isApproved = 1 
-                          GROUP BY productID, product_name 
-                          ORDER BY total_sold DESC 
-                          LIMIT 1";
+      // Top Selling Product with Variants
+      $topSellingQuery = "SELECT oi.product_name, oi.variant_id, pv.variant_name, SUM(oi.quantity) as total_sold 
+      FROM tb_order_items oi
+      JOIN tb_orders o ON oi.orderID = o.orderID
+      LEFT JOIN tb_productvariants pv ON oi.productID = pv.productID AND oi.variant_id = pv.variant_id
+      WHERE o.status != 'Cancelled' 
+      AND o.isApproved = 1 
+      GROUP BY oi.productID, oi.product_name, oi.variant_id, pv.variant_name 
+      ORDER BY total_sold DESC 
+      LIMIT 1";
       $topSellingResult = $conn->query($topSellingQuery);
       $topSelling = $topSellingResult->fetch_assoc();
-      $topSellingProduct = $topSelling ? $topSelling['product_name'] : 'N/A';
+      $topSellingProduct = $topSelling ? ($topSelling['product_name'] . ($topSelling['variant_name'] ? " ({$topSelling['variant_name']})" : "")) : 'N/A';
 
       // Month Revenue (updated to only count approved payments)
       $monthRevenueQuery = "SELECT SUM(price_total) as revenue 
@@ -204,11 +206,11 @@ require_once 'auth_check.php'; // Ensures user is logged in with either admin or
         <div class="product-slider">
           <div id="bestSellersContainer" class="d-flex gap-3">
             <?php
-            $sql = "SELECT bs.bestseller_id, p.productID, p.product_name, p.product_image 
-                    FROM tb_bestsellers bs
-                    JOIN tb_products p ON bs.productID = p.productID
-                    ORDER BY bs.display_order ASC";
-            $result = $conn->query($sql);
+            $sql = "SELECT bs.bestseller_id, p.productID, p.product_name, p.product_image, p.category 
+            FROM tb_bestsellers bs
+            JOIN tb_products p ON bs.productID = p.productID
+            ORDER BY bs.display_order ASC";
+             $result = $conn->query($sql);
             if ($result->num_rows > 0) {
               while ($row = $result->fetch_assoc()) {
                 $imgSrc = !empty($row['product_image']) ? "../e-com/{$row['product_image']}" : "../e-com/uploads/default.png";
