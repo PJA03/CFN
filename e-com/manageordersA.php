@@ -23,7 +23,7 @@ require_once 'auth_check.php';
   <link rel="stylesheet" href="style2.css" />
 
   <style>
-    .popup, .zoom-popup {
+    .popup, .zoom-popup, .items-popup {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
@@ -41,8 +41,8 @@ require_once 'auth_check.php';
       width: 90%;
       position: relative;
       display: flex;
-      flex-direction: column; /* Stack elements vertically */
-      align-items: center; /* Center horizontally */
+      flex-direction: column;
+      align-items: center;
     }
     .popup-content .close {
       position: absolute;
@@ -52,8 +52,8 @@ require_once 'auth_check.php';
     }
     .order-details-title {
       text-align: center;
-      margin: 0 0 1rem 0; /* Space below title, no top margin */
-      padding-top: 0.5rem; /* Slight padding to align with close button */
+      margin: 0 0 1rem 0;
+      padding-top: 0.5rem;
       font-family: "Bebas Neue", serif;
       font-size: 2rem;
       color: #1F4529;
@@ -74,7 +74,7 @@ require_once 'auth_check.php';
       word-wrap: break-word;
       text-align: left;
     }
-    #receiptPopup .popup-content {
+    #receiptPopup .popup-content, #itemsPopup .popup-content {
       max-width: 600px;
     }
     #zoomPopup {
@@ -142,7 +142,6 @@ require_once 'auth_check.php';
       font-weight: bold;
       margin-bottom: 1rem;
     }
-    /* Change blue buttons to green */
     .btn-primary {
       background-color: #1F4529;
       border-color: #1F4529;
@@ -162,6 +161,14 @@ require_once 'auth_check.php';
       background-color: #4a6b52;
       border-color: #4a6b52;
       opacity: 0.65;
+    }
+    .items-count {
+      color: #0d6efd;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .items-count:hover {
+      color: #0056b3;
     }
   </style>
 </head>
@@ -235,7 +242,7 @@ require_once 'auth_check.php';
                 <tr class="table-success">
                   <th>Order ID</th>
                   <th>Number of Items</th>
-                  <th class="sortable" onclick="sortTable('total')">Total</th>
+                  <th class="sortable" onclick="sortTable('total_amount')">Total</th>
                   <th class="sortable" onclick="sortTable('status')">Status</th>
                   <th>Tracking Link</th>
                   <th>Address</th>
@@ -261,11 +268,8 @@ require_once 'auth_check.php';
           <thead class="table-success">
             <tr>
               <th>Order Date</th>
-              <th>Product ID</th>
-              <th>Product Name</th>
               <th>User ID</th>
               <th>Email</th>
-              <th>Quantity</th>
               <th>Payment Option</th>
               <th>Status</th>
               <th>Total</th>
@@ -276,11 +280,8 @@ require_once 'auth_check.php';
           <tbody>
             <tr>
               <td><div id="orderDateDisplay" class="form-control-plaintext"></div></td>
-              <td><div id="productIDDisplay" class="form-control-plaintext"></div></td>
-              <td><div id="productNameDisplay" class="form-control-plaintext"></div></td>
               <td><div id="userIDDisplay" class="form-control-plaintext"></div></td>
               <td><div id="emailDisplay" class="form-control-plaintext"></div></td>
-              <td><div id="quantityDisplay" class="form-control-plaintext"></div></td>
               <td><div id="paymentOptionDisplay" class="form-control-plaintext"></div></td>
               <td>
                 <select id="status" name="status" class="form-select">
@@ -306,11 +307,46 @@ require_once 'auth_check.php';
             </tr>
           </tbody>
         </table>
+        <h5 class="mt-3">Ordered Items</h5>
+        <table class="table table-bordered">
+          <thead class="table-success">
+            <tr>
+              <th>Product ID</th>
+              <th>Product Name</th>
+              <th>Quantity</th>
+              <th>Unit Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="orderItemsTable"></tbody>
+        </table>
       </div>
       <div class="mt-3 text-end d-flex justify-content-end gap-2 flex-column flex-md-row">
         <button type="button" class="btn btn-danger" id="deleteOrderButton" onclick="deleteOrder()" style="display: none;">Delete Order</button>
         <button type="button" class="btn btn-primary" id="saveChangesButton" onclick="saveChanges()">Save changes</button>
         <button type="button" class="btn btn-secondary" onclick="discardChanges()">Discard changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ITEMS LIST MODAL -->
+  <div id="itemsPopup" class="items-popup">
+    <div class="popup-content">
+      <span class="close" onclick="closeItemsPopup()">×</span>
+      <h4 class="order-details-title">Order Items</h4>
+      <div class="table-container">
+        <table class="table table-bordered">
+          <thead class="table-success">
+            <tr>
+              <th>Product ID</th>
+              <th>Product Name</th>
+              <th>Quantity</th>
+              <th>Unit Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="itemsListTable"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -390,6 +426,48 @@ require_once 'auth_check.php';
       loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
     }
 
+    // Open items modal
+    function openItemsPopup(orderID) {
+      fetch(`getorderitems.php?orderID=${orderID}`)
+        .then(response => {
+          if (!response.ok) throw new Error("Network response was not ok");
+          return response.json();
+        })
+        .then(data => {
+          const itemsTable = document.getElementById("itemsListTable");
+          itemsTable.innerHTML = "";
+          if (data.items && data.items.length > 0) {
+            data.items.forEach(item => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${item.productID}</td>
+                <td>${item.product_name}</td>
+                <td>${item.quantity}</td>
+                <td>₱${parseFloat(item.unit_price).toFixed(2)}</td>
+                <td>₱${parseFloat(item.item_total).toFixed(2)}</td>
+              `;
+              itemsTable.appendChild(row);
+            });
+          } else {
+            itemsTable.innerHTML = "<tr><td colspan='5'>No items found</td></tr>";
+          }
+          document.getElementById("itemsPopup").style.display = "flex";
+        })
+        .catch(error => {
+          console.error("Error fetching items:", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to load items: ' + error.message,
+            confirmButtonText: 'OK'
+          });
+        });
+    }
+
+    function closeItemsPopup() {
+      document.getElementById("itemsPopup").style.display = "none";
+    }
+
     // Open the details popup
     function openPopup(orderID) {
       currentOrderID = orderID;
@@ -400,21 +478,37 @@ require_once 'auth_check.php';
         })
         .then(data => {
           document.getElementById("orderDateDisplay").textContent = data.order_date || "";
-          document.getElementById("productIDDisplay").textContent = data.productID || "";
-          document.getElementById("productNameDisplay").textContent = data.product_name || "";
           document.getElementById("userIDDisplay").textContent = data.user_id || "";
           document.getElementById("emailDisplay").textContent = data.email || "";
-          document.getElementById("quantityDisplay").textContent = data.quantity || "";
           document.getElementById("paymentOptionDisplay").textContent = data.payment_option || "";
-          document.getElementById("totalDisplay").textContent = "₱" + (data.price_total || "0.00");
+          document.getElementById("totalDisplay").textContent = "₱" + (parseFloat(data.total_amount) || "0.00").toFixed(2);
           
           document.getElementById("status").value = data.status || "Waiting for Payment";
           originalStatus = data.status || "Waiting for Payment";
           document.getElementById("confirmPayment").checked = (data.isApproved == 1);
           document.getElementById("trackingLink").value = data.trackingLink || "";
           
-          const receiptPath = data.payment_proof ? `../uploads/receipts/${data.payment_proof}` : "images/placeholder.jpg";
+          const receiptPath = data.payment_proof ? `../Uploads/receipts/${data.payment_proof}` : "images/placeholder.jpg";
           document.getElementById("receiptImage").src = receiptPath;
+
+          // Populate items table
+          const itemsTable = document.getElementById("orderItemsTable");
+          itemsTable.innerHTML = "";
+          if (data.items && data.items.length > 0) {
+            data.items.forEach(item => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${item.productID}</td>
+                <td>${item.product_name}</td>
+                <td>${item.quantity}</td>
+                <td>₱${parseFloat(item.unit_price).toFixed(2)}</td>
+                <td>₱${parseFloat(item.item_total).toFixed(2)}</td>
+              `;
+              itemsTable.appendChild(row);
+            });
+          } else {
+            itemsTable.innerHTML = "<tr><td colspan='5'>No items found</td></tr>";
+          }
 
           const isCancelled = data.status === "Cancelled";
           const statusSelect = document.getElementById("status");

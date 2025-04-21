@@ -1,84 +1,72 @@
 <?php
-require_once 'auth_check.php';
-
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "db_cfn";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die(json_encode(["status" => "error", "message" => "Connection failed: " . $conn->connect_error]));
-}
+require_once '../conn.php';
 
 $search = isset($_GET['search']) ? $_GET['search'] : '';
-$filterStatus = isset($_GET['filter']) ? $_GET['filter'] : '';
-$sort = isset($_GET['sort']) ? $_GET['sort'] : 'orderID';
-$order = isset($_GET['order']) ? $_GET['order'] : 'asc';
+$filter = isset($_GET['filter']) ? $_GET['filter'] : '';
+$sort = isset($_GET['sort']) ? $_GET['sort'] : 'order_date';
+$order = isset($_GET['order']) ? $_GET['order'] : 'desc';
 
-// Validate sort and order parameters
-$validSortFields = ['orderID', 'quantity', 'price_total', 'status', 'trackingLink'];
-$validOrder = ['asc', 'desc'];
-$sort = in_array($sort, $validSortFields) ? $sort : 'orderID';
-$order = in_array($order, $validOrder) ? $order : 'asc';
-
-$whereClause = [];
+$whereClauses = [];
 $params = [];
 $types = '';
 
 if ($search) {
-    $whereClause[] = "o.orderID LIKE ?";
-    $params[] = "%$search%";
-    $types .= 's';
+    $whereClauses[] = "(o.orderID LIKE ? OR o.email LIKE ? OR o.first_name LIKE ? OR o.last_name LIKE ?)";
+    $searchTerm = "%$search%";
+    $params = [$searchTerm, $searchTerm, $searchTerm, $searchTerm];
+    $types = str_repeat('s', count($params));
 }
-if ($filterStatus) {
-    $whereClause[] = "o.status = ?";
-    $params[] = $filterStatus;
+
+if ($filter) {
+    $whereClauses[] = "o.status = ?";
+    $params[] = $filter;
     $types .= 's';
 }
 
-$sql = "SELECT o.orderID, o.quantity, o.price_total, o.status, o.trackingLink, u.address 
-        FROM tb_orders o 
-        LEFT JOIN tb_user u ON o.user_id = u.user_id";
-if (!empty($whereClause)) {
-    $sql .= " WHERE " . implode(" AND ", $whereClause);
-}
-$sql .= " ORDER BY o.{$sort} {$order}";
+$where = $whereClauses ? 'WHERE ' . implode(' AND ', $whereClauses) : '';
+$sortColumn = in_array($sort, ['order_date', 'total_amount', 'status']) ? $sort : 'order_date';
+$sortOrder = $order === 'asc' ? 'ASC' : 'DESC';
 
-$stmt = $conn->prepare($sql);
-if (!empty($params) && !empty($whereClause)) {
+// Query to get orders with item count
+$query = "
+    SELECT 
+        o.orderID,
+        o.order_date,
+        o.status,
+        o.price_total AS total_amount,
+        o.trackingLink,
+        u.address,
+        COUNT(oi.order_item_id) AS item_count
+    FROM tb_orders o
+    LEFT JOIN tb_order_items oi ON o.orderID = oi.orderID
+    LEFT JOIN tb_user u ON o.user_id = u.user_id
+    $where
+    GROUP BY o.orderID
+    ORDER BY $sortColumn $sortOrder
+";
+
+$stmt = $conn->prepare($query);
+if ($params) {
     $stmt->bind_param($types, ...$params);
 }
 $stmt->execute();
 $result = $stmt->get_result();
 
-echo '<tbody>';
 while ($row = $result->fetch_assoc()) {
-    // Handle null address by defaulting to empty string
-    $address = $row['address'] ?? '';
-    $truncatedAddress = strlen($address) > 20 ? substr($address, 0, 20) . '...' : $address;
-    $trackingLink = $row['trackingLink'] ? "<a href='{$row['trackingLink']}' target='_blank'>{$row['trackingLink']}</a>" : "-";
-    echo "<tr>
-            <td>{$row['orderID']}</td>
-            <td>{$row['quantity']}</td>
-            <td>₱{$row['price_total']}</td>
-            <td>{$row['status']}</td>
-            <td>$trackingLink</td>
-            <td>
-                <div class='address-container'>
-                    <span class='address-text' title='{$address}'>$truncatedAddress</span>
-                    <i class='bi bi-clipboard copy-icon' onclick=\"copyToClipboard('{$address}')\" title='Copy to Clipboard'></i>
-                </div>
-            </td>
-            <td>
-                <button class='btn btn-info btn-sm' onclick='openPopup({$row['orderID']})'>View Details</button>
-            </td>
-          </tr>";
+    $address = htmlspecialchars($row['address'] ?? 'No address');
+    echo "<tr>";
+    echo "<td>" . htmlspecialchars($row['orderID']) . "</td>";
+    echo "<td><a href='#' class='items-count' onclick='openItemsPopup(" . $row['orderID'] . ")'>" . $row['item_count'] . "</a></td>";
+    echo "<td>₱" . number_format($row['total_amount'], 2) . "</td>";
+    echo "<td>" . htmlspecialchars($row['status']) . "</td>";
+    echo "<td>" . ($row['trackingLink'] ? "<a href='" . htmlspecialchars($row['trackingLink']) . "' target='_blank'>Track</a>" : "-") . "</td>";
+    echo "<td class='address-container'>
+            <span class='address-text'>" . $address . "</span>
+            <i class='bi bi-clipboard copy-icon' onclick='copyToClipboard(\"" . $address . "\")'></i>
+          </td>";
+    echo "<td><button class='btn btn-primary btn-sm' onclick='openPopup(" . $row['orderID'] . ")'>View</button></td>";
+    echo "</tr>";
 }
-echo '</tbody>';
 
 $stmt->close();
 $conn->close();

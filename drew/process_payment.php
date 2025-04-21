@@ -6,12 +6,37 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Payment</title>
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+<?php
 if (!isset($_SESSION['user_id'])) {
-    echo "<script>alert('Please log in to complete your payment.'); window.location.href='../Registration_Page/registration.php';</script>";
+    echo "<script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Login Required',
+            text: 'Please log in to complete your payment.',
+            confirmButtonColor: '#1f4529',
+            confirmButtonText: 'OK'
+        }).then(() => {
+            window.location.href = '../Registration_Page/registration.php';
+        });
+    </script>";
     exit();
 }
 
 $user_id = $_SESSION['user_id'];
+$payment_option = $_SESSION['payment_option'] ?? 'unknown'; // Define early for error cases
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_proof'])) {
     $file = $_FILES['payment_proof'];
@@ -19,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_proof'])) {
     $max_size = 5 * 1024 * 1024; // 5MB
 
     if (in_array($file['type'], $allowed_types) && $file['size'] <= $max_size && $file['error'] === UPLOAD_ERR_OK) {
-        $upload_dir = '../uploads/receipts/';
+        $upload_dir = '../Uploads/receipts/';
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0777, true) or die("Failed to create directory");
         }
@@ -40,49 +65,145 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_proof'])) {
             $price_total = $_SESSION['total_price'] ?? 0;
 
             if (!empty($cart_items)) {
-                $payment_option = $_SESSION['payment_option'] ?? 'unknown';
-
-                // Insert order into tb_orders
-                $query = "INSERT INTO tb_orders (order_date, productID, product_name, user_id, email, first_name, last_name, quantity, status, payment_option, payment_proof, isApproved, price_total, trackingLink) 
-                          VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, 'Waiting for Payment', ?, ?, 0, ?, NULL)";
-                $stmt = $conn->prepare($query);
-
-                foreach ($cart_items as $item) {
-                    $stmt->bind_param("isissisisd", 
-                        $item['productID'], 
-                        $item['product_name'], 
+                $total_quantity = array_sum(array_column($cart_items, 'quantity')); // Sum of all item quantities
+            
+                // Start transaction
+                $conn->begin_transaction();
+            
+                try {
+                    // Insert order into tb_orders (single row)
+                    $query = "INSERT INTO tb_orders (order_date, user_id, email, first_name, last_name, quantity, status, payment_option, payment_proof, isApproved, price_total, trackingLink) 
+                              VALUES (NOW(), ?, ?, ?, ?, ?, 'Waiting for Payment', ?, ?, 0, ?, NULL)";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("iississd", 
                         $user_id, 
                         $user['email'], 
                         $user['first_name'], 
                         $user['last_name'], 
-                        $item['quantity'], 
+                        $total_quantity, 
                         $payment_option, 
                         $file_name, 
                         $price_total
                     );
                     $stmt->execute();
+                    $order_id = $conn->insert_id;
+                    $stmt->close();
+            
+                    // Insert items into tb_order_items
+                    $query = "INSERT INTO tb_order_items (orderID, productID, product_name, quantity, unit_price, item_total, variant_id) 
+                              VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($query);
+            
+                    foreach ($cart_items as $item) {
+                        // Fetch unit_price from tb_productvariants
+                        $unit_price = $item['unit_price'] ?? null;
+                        if (!$unit_price) {
+                            if (isset($item['variant_id'])) {
+                                $price_query = "SELECT price FROM tb_productvariants WHERE productID = ? AND variant_id = ?";
+                                $price_stmt = $conn->prepare($price_query);
+                                $price_stmt->bind_param("ii", $item['productID'], $item['variant_id']);
+                            } else {
+                                $price_query = "SELECT price FROM tb_productvariants WHERE productID = ? LIMIT 1";
+                                $price_stmt = $conn->prepare($price_query);
+                                $price_stmt->bind_param("i", $item['productID']);
+                            }
+                            $price_stmt->execute();
+                            $price_result = $price_stmt->get_result();
+                            $price_row = $price_result->fetch_assoc();
+                            $unit_price = $price_row['price'] ?? 0;
+                            $price_stmt->close();
+            
+                            if ($unit_price == 0) {
+                                throw new Exception("Price not found for product ID: " . $item['productID'] . (isset($item['variant_id']) ? ", variant ID: " . $item['variant_id'] : ""));
+                            }
+                        }
+            
+                        $item_total = $item['quantity'] * $unit_price;
+                        $variant_id = $item['variant_id'] ?? null;
+            
+                        $stmt->bind_param("iisiddi", 
+                            $order_id, 
+                            $item['productID'], 
+                            $item['product_name'], 
+                            $item['quantity'], 
+                            $unit_price, 
+                            $item_total,
+                            $variant_id
+                        );
+                        $stmt->execute();
+                    }
+                    $stmt->close();
+            
+                    // Clear cart
+                    $query = "DELETE FROM tb_cart WHERE user_id = ?";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("i", $user_id);
+                    $stmt->execute();
+                    $stmt->close();
+            
+                    // Commit transaction
+                    $conn->commit();
+            
+                    // Clear session data
+                    unset($_SESSION['order']);
+                    unset($_SESSION['total_price']);
+                    unset($_SESSION['payment_option']);
+            
+                    // Show success SweetAlert and redirect
+                    echo "<script>
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Order Placed',
+                            text: 'Your order has been placed successfully.',
+                            confirmButtonColor: '#1f4529',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = 'success_order.php';
+                        });
+                    </script>";
+                    exit();
+                } catch (Exception $e) {
+                    // Rollback transaction on error
+                    $conn->rollback();
+                    echo "<script>
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Order Failed',
+                            text: 'Failed to process order: " . addslashes($e->getMessage()) . "',
+                            confirmButtonColor: '#1f4529',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = 'cart.php';
+                        });
+                    </script>";
+                    exit();
                 }
-
-                // Clear cart
-                $query = "DELETE FROM tb_cart WHERE user_id = ?";
-                $stmt = $conn->prepare($query);
-                $stmt->bind_param("i", $user_id);
-                $stmt->execute();
-
-                // Clear session data
-                unset($_SESSION['order']);
-                unset($_SESSION['total_price']);
-                unset($_SESSION['payment_option']);
-
-                // Redirect to success page instead of showing modal
-                header("Location: success_order.php");
-                exit();
             } else {
-                echo "<script>alert('Your order is empty.'); window.location.href='cart.php';</script>";
+                echo "<script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Empty Order',
+                        text: 'Your order is empty.',
+                        confirmButtonColor: '#1f4529',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = 'cart.php';
+                    });
+                </script>";
                 exit();
             }
         } else {
-            echo "<script>alert('Failed to upload receipt. Please check file permissions.'); window.location.href='upload_payment.php?type=" . htmlspecialchars($payment_option) . "';</script>";
+            echo "<script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Upload Failed',
+                    text: 'Failed to upload receipt. Please check file permissions.',
+                    confirmButtonColor: '#1f4529',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.href = 'upload_payment.php?type=" . htmlspecialchars($payment_option) . "';
+                });
+            </script>";
             exit();
         }
     } else {
@@ -90,12 +211,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_proof'])) {
         if (!in_array($file['type'], $allowed_types)) $error_msg .= "Type not allowed. ";
         if ($file['size'] > $max_size) $error_msg .= "File too large. ";
         if ($file['error'] !== UPLOAD_ERR_OK) $error_msg .= "Upload error code: " . $file['error'];
-        echo "<script>alert('$error_msg'); window.location.href='upload_payment.php?type=" . htmlspecialchars($payment_option) . "';</script>";
+        echo "<script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid File',
+                text: '" . addslashes($error_msg) . "',
+                confirmButtonColor: '#1f4529',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = 'upload_payment.php?type=" . htmlspecialchars($payment_option) . "';
+            });
+        </script>";
         exit();
     }
 } else {
-    $payment_option = $_SESSION['payment_option'] ?? 'unknown';
-    echo "<script>alert('No payment proof uploaded.'); window.location.href='upload_payment.php?type=" . htmlspecialchars($payment_option) . "';</script>";
+    echo "<script>
+        Swal.fire({
+            icon: 'error',
+            title: 'No File Uploaded',
+            text: 'No payment proof uploaded.',
+            confirmButtonColor: '#1f4529',
+            confirmButtonText: 'OK'
+        }).then(() => {
+            window.location.href = 'upload_payment.php?type=" . htmlspecialchars($payment_option) . "';
+        });
+    </script>";
     exit();
 }
 ?>
+</body>
+</html>

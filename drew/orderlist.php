@@ -10,11 +10,21 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Fetch order data from the database
-$query = "SELECT o.orderID, o.order_date, o.product_name, o.quantity, o.price_total, o.status, o.trackingLink 
-          FROM tb_orders o
-          WHERE o.user_id = ?
-          ORDER BY o.order_date DESC";
+// Fetch order data from the view
+$query = "
+    SELECT 
+        o.orderID, 
+        o.order_date, 
+        o.price_total, 
+        o.status, 
+        o.trackingLink,
+        COUNT(oi.order_item_id) AS item_count
+    FROM tb_orders o
+    LEFT JOIN tb_order_items oi ON o.orderID = oi.orderID
+    WHERE o.user_id = ?
+    GROUP BY o.orderID
+    ORDER BY o.order_date DESC
+";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -25,12 +35,11 @@ while ($row = $result->fetch_assoc()) {
     $orders[] = $row;
 }
 
-
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
     $orderID = $_POST["orderID"];
 
-    // Update the order status to "Cancelled" if the status is "waiting for payment"
-    $query = "UPDATE tb_orders SET status = 'Cancelled' WHERE orderID = ? AND status = 'waiting for payment'";
+    // Update the order status to "Cancelled" if the status is "Waiting for Payment"
+    $query = "UPDATE tb_orders SET status = 'Cancelled' WHERE orderID = ? AND status = 'Waiting for Payment'";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $orderID);
     
@@ -40,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
         $_SESSION['message'] = "Failed to cancel order.";
     }
 
-    header("Location: orderlist.php"); // Redirect back to order list
+    header("Location: orderlist.php");
     exit();
 }
 ?>
@@ -59,21 +68,83 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
+    <style>
+        .items-popup {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none;
+            align-items: center; 
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+        }
+        .items-popup .popup-content {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .items-popup .popup-content .close {
+            position: absolute;
+            top: 1rem; right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .items-popup .order-items-title {
+            text-align: center;
+            margin: 0 0 1rem 0;
+            padding-top: 0.5rem;
+            font-family: "Bebas Neue", serif;
+            font-size: 2rem;
+            color: #1F4529;
+            width: 100%;
+        }
+        .items-popup .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        .items-popup .table-container table {
+            width: 100%;
+            table-layout: auto;
+        }
+        .items-popup .table-container th,
+        .items-popup .table-container td {
+            min-width: 100px;
+            white-space: normal;
+            word-wrap: break-word;
+            text-align: left;
+        }
+        .items-count {
+            color: #0d6efd;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .items-count:hover {
+            color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-<header>
+    <header>
         <div class="logo">
-            <a href = "../Home_Page/Home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
+            <a href="../Home_Page/Home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
         </div>
         <div class="navbar">
-        <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>            
-        <form action="../Home_Page/ProductScroll.php" method="GET" class="search-form" onsubmit="return validateSearch()">
-            <input type="text" name="search" class="search-bar" id="searchBar" placeholder="Search Product">
-        </form>            
-        <div class="icons">
-                <a href = "../Home_Page/Home.php"><i class="fa-solid fa-house home"></i></a>
-                <a href ="../drew/cart.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
-                <a href="../User_Profile_Page/UserProfile.php"><i class ="far fa-user-circle fa-2x icon-profile"></i></a>
+            <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($_SESSION['username'] ?? 'User', ENT_QUOTES, 'UTF-8'); ?>!</p>            
+            <form action="../Home_Page/ProductScroll.php" method="GET" class="search-form" onsubmit="return validateSearch()">
+                <input type="text" name="search" class="search-bar" id="searchBar" placeholder="Search Product">
+            </form>            
+            <div class="icons">
+                <a href="../Home_Page/Home.php"><i class="fa-solid fa-house home"></i></a>
+                <a href="../drew/cart.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
+                <a href="../User_Profile_Page/UserProfile.php"><i class="far fa-user-circle fa-2x icon-profile"></i></a>
             </div>
         </div>
     </header>
@@ -87,42 +158,61 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
                             <th class="date-header">Date</th>
                             <th class="order-list-header">Order List</th>
                             <th class="total-header">Total</th>
-                            <th class="payment-method-header">Tracking Link</th>
+                            <th class="tracking-link-header">Tracking Link</th>
                             <th class="status-header">Status</th>
-                            <th class="tracking-link-header">Action</th>
-                            <th></th>
+                            <th class="action-header">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-        <?php if (!empty($orders)): ?>
-            <?php foreach ($orders as $order): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars(date('M j, Y', strtotime($order['order_date']))); ?></td>
-                    <td><?php echo htmlspecialchars($order['product_name']); ?> (x<?php echo $order['quantity']; ?>)</td>
-                    <td>₱<?php echo number_format($order['price_total'], 2); ?></td>
-                    <td><a href="<?= htmlspecialchars($order['trackingLink']) ?>"><?= htmlspecialchars($order['trackingLink']) ?></a></td>
-                    <td><?php echo htmlspecialchars($order['status']); ?></td>
-                    <td>
-                        <?php if ($order['status'] === 'Waiting for Payment'): ?>
-                            <form action="" method="POST">
-                                <input type="hidden" name="orderID" value="<?php echo $order['orderID']; ?>">
-                                <button type="submit" style="background-color: red; color: white; border: none; padding: 5px 10px;">Cancel</button>
-                            </form>
+                        <?php if (!empty($orders)): ?>
+                            <?php foreach ($orders as $order): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars(date('M j, Y', strtotime($order['order_date']))); ?></td>
+                                    <td><a href="#" class="items-count" onclick="openItemsPopup(<?php echo $order['orderID']; ?>)"><?php echo $order['item_count']; ?> Item<?php echo $order['item_count'] != 1 ? 's' : ''; ?></a></td>
+                                    <td>₱<?php echo number_format($order['price_total'], 2); ?></td>
+                                    <td><?php echo $order['trackingLink'] ? '<a href="' . htmlspecialchars($order['trackingLink']) . '" target="_blank">' . htmlspecialchars($order['trackingLink']) . '</a>' : '-'; ?></td>
+                                    <td><?php echo htmlspecialchars($order['status']); ?></td>
+                                    <td>
+                                        <?php if ($order['status'] === 'Waiting for Payment'): ?>
+                                            <form action="" method="POST">
+                                                <input type="hidden" name="orderID" value="<?php echo $order['orderID']; ?>">
+                                                <button type="submit" class="cancel-btn">Cancel</button>
+                                            </form>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6">You have no orders yet.</td>
+                            </tr>
                         <?php endif; ?>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <tr>
-                <td colspan="7">You have no orders yet.</td>
-            </tr>
-        <?php endif; ?>
-    </tbody>
-
+                    </tbody>
                 </table>
             </div>
         </section>
     </main>
+
+    <!-- ITEMS LIST MODAL -->
+    <div id="itemsPopup" class="items-popup">
+        <div class="popup-content">
+            <span class="close" onclick="closeItemsPopup()">×</span>
+            <h4 class="order-items-title">Order Items</h4>
+            <div class="table-container">
+                <table class="table table-bordered">
+                    <thead class="table-success">
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsListTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
     <footer>
         <div class="footer-container">
@@ -143,7 +233,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
             </div>
         </div>
         <div class="footer-center">
-            &copy; COSMETICAS 2024
+            © COSMETICAS 2024
         </div>
     </footer>
 
@@ -209,100 +299,121 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["orderID"])) {
                     For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
-    
-    <div class="modal fade" id="cancelOrderModal" tabindex="-1" role="dialog" aria-labelledby="cancelOrderModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: #1F4529;">
-                <h5 class="modal-title" id="cancelOrderModalTitle" style="font-weight: bold; color: white;">Confirm Cancellation</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to cancel this order?
-            </div>
-            <div class="modal-footer">
-                <input type="hidden" name="orderID" id="cancelOrderId" value="">
-                <button type="button" class="btn btn-danger" style="background-color: #d34646 !important; color: white !important; border-color: #d34646 !important;">Yes</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: #1f4529 !important; color: white !important; border-color: #1f4529 !important;">No</button>
-                <form id="confirmCancelForm" action="" method="POST"></form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    #cancelOrderModal .btn-secondary:hover, 
-    #cancelOrderModal .btn-secondary:focus {
-        background-color: #1f4529 !important;
-        color: white !important;
-    }
-    #cancelOrderModal .btn-danger:hover, 
-    #cancelOrderModal .btn-danger:focus {
-        background-color: #d34646 !important;
-        color: white !important;
-    }
-</style>
 
     <!-- Bootstrap JS (with Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Get all cancel buttons
-    const cancelButtons = document.querySelectorAll('tr form button[type="submit"]');
+        function openItemsPopup(orderID) {
+            fetch(`../e-com/getorderitems.php?orderID=${orderID}`)
+                .then(response => {
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    return response.json();
+                })
+                .then(data => {
+                    const itemsTable = document.getElementById("itemsListTable");
+                    itemsTable.innerHTML = "";
+                    if (data.items && data.items.length > 0) {
+                        data.items.forEach(item => {
+                            const row = document.createElement("tr");
+                            row.innerHTML = `
+                                <td>${item.product_name}</td>
+                                <td>${item.quantity}</td>
+                                <td>₱${parseFloat(item.unit_price).toFixed(2)}</td>
+                                <td>₱${parseFloat(item.item_total).toFixed(2)}</td>
+                            `;
+                            itemsTable.appendChild(row);
+                        });
+                    } else {
+                        itemsTable.innerHTML = "<tr><td colspan='4'>No items found</td></tr>";
+                    }
+                    document.getElementById("itemsPopup").style.display = "flex";
+                })
+                .catch(error => {
+                    console.error("Error fetching items:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to load items: ' + error.message,
+                        confirmButtonText: 'OK'
+                    });
+                });
+        }
 
-    // Add click event to each cancel button
-    cancelButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Get the orderID from the hidden input in the same form
-            const orderID = this.closest('form').querySelector('input[name="orderID"]').value;
-            
-            // Show SweetAlert confirmation
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to cancel this order?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d34646',
-                cancelButtonColor: '#1f4529',
-                confirmButtonText: 'Yes, cancel it!',
-                cancelButtonText: 'No, keep it'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Submit the form via AJAX
-                    fetch('', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: `orderID=${orderID}`
-                    })
-                    .then(response => response.text())
-                    .then(() => {
-                        // Update the status in the table
-                        const row = this.closest('tr');
-                        row.querySelector('td:nth-child(5)').textContent = 'Cancelled';
+        function closeItemsPopup() {
+            document.getElementById("itemsPopup").style.display = "none";
+        }
 
-                        // Disable the cancel button
-                        this.disabled = true;
-                        this.textContent = 'Cancelled';
-                        this.style.backgroundColor = 'gray';
-                    })
-                    .catch(error => console.error('Error:', error));
-                }
+        document.addEventListener('DOMContentLoaded', function() {
+            const cancelButtons = document.querySelectorAll('.cancel-btn');
+            cancelButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const orderID = this.closest('form').querySelector('input[name="orderID"]').value;
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: 'Do you want to cancel this order?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d34646',
+                        cancelButtonColor: '#1f4529',
+                        confirmButtonText: 'Yes, cancel it!',
+                        cancelButtonText: 'No, keep it'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch('', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: `orderID=${orderID}`
+                            })
+                            .then(response => response.text())
+                            .then(() => {
+                                const row = this.closest('tr');
+                                row.querySelector('td:nth-child(5)').textContent = 'Cancelled';
+                                this.disabled = true;
+                                this.textContent = 'Cancelled';
+                                this.style.backgroundColor = 'gray';
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Cancelled!',
+                                    text: 'Your order has been cancelled.',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Failed to cancel order: ' + error.message,
+                                    confirmButtonText: 'OK'
+                                });
+                            });
+                        }
+                    });
+                });
             });
-        });
-    });
-});
-</script>
 
+            // Display session message if set
+            <?php if (isset($_SESSION['message'])): ?>
+                Swal.fire({
+                    icon: '<?php echo strpos($_SESSION['message'], 'successfully') !== false ? 'success' : 'error'; ?>',
+                    title: '<?php echo strpos($_SESSION['message'], 'successfully') !== false ? 'Success' : 'Error'; ?>',
+                    text: '<?php echo $_SESSION['message']; ?>',
+                    confirmButtonText: 'OK'
+                });
+                <?php unset($_SESSION['message']); ?>
+            <?php endif; ?>
+        });
+    </script>
 </body>
 </html>
