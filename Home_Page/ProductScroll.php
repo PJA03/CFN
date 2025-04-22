@@ -95,7 +95,7 @@ $result = $conn->query($sql);
 
         <div class="product-grid" id="product-grid">
     <?php
-    define('BASE_PATH', '/CFN-main/');
+    define('BASE_PATH', '/CFN/');
 
     if (!$result) {
         echo "<p>Error fetching products: " . $conn->error . "</p>";

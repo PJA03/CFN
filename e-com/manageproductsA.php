@@ -19,25 +19,12 @@ require_once 'auth_check.php'; // Ensures user is logged in with either admin or
   <!-- Custom CSS -->
   <link rel="stylesheet" href="style2.css">
   <style>
-    .product-card {
-      background-color: #f8f9fa;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .product-card img {
-      width: 100%;
-      max-height: 150px;
-      object-fit: cover;
-      border-radius: 5px;
-    }
     .btn-manage {
       background-color: #1F4529;
       color: #fff;
       border: none;
-      font-size: 0.6rem;
-      padding: 3px 8px;
+      font-size: 0.75rem; /* Adjusted for consistency */
+      padding: 5px 10px;
     }
     .btn-manage:hover {
       background-color: #15432b;
@@ -58,6 +45,30 @@ require_once 'auth_check.php'; // Ensures user is logged in with either admin or
       padding: 15px;
       border-radius: 8px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .product-card {
+      display: flex;
+      flex-direction: column; /* Stack content vertically */
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 250px;
+      box-sizing: border-box;
+    }
+    .product-card img {
+      width: 100%;
+      max-height: 150px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: auto; /* Push buttons to bottom */
     }
   </style>
 </head>
@@ -178,12 +189,16 @@ require_once 'auth_check.php'; // Ensures user is logged in with either admin or
                   <img src="<?= $imgSrc; ?>" alt="Product Image">
                   <h5><?= htmlspecialchars($product['product_name']); ?></h5>
                   <p>₱<?= number_format($price, 2); ?> - <?= $stock; ?> left</p>
-                  <div class="actions">
-                    <i class="bi bi-pencil-square edit-icon" onclick="redirectToEdit(<?= $product['productID']; ?>)"></i>
-                    <i class="bi bi-trash delete-icon" onclick="removeItem(<?= $product['productID']; ?>, this.closest('.product-card'))"></i>
+                  <div class="card-actions">
+                    <button class="btn btn-manage btn-sm" onclick="redirectToEdit(<?= $product['productID']; ?>)">
+                      <i class="bi bi-pencil-square"></i> Edit
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="removeItem(<?= $product['productID']; ?>, this.closest('.product-card'))">
+                      <i class="bi bi-trash"></i> Delete
+                    </button>
                     <?php if ($product['variant_count'] > 1): ?>
-                      <button class="btn btn-manage btn-sm mt-2" id="variants" data-bs-toggle="collapse" data-bs-target="#variants-<?= $product['productID']; ?>">
-                        View Variants
+                      <button class="btn btn-manage btn-sm" data-bs-toggle="collapse" data-bs-target="#variants-<?= $product['productID']; ?>">
+                        <i class="bi bi-list"></i> Variants
                       </button>
                     <?php endif; ?>
                   </div>
