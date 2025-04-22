@@ -441,7 +441,7 @@ require_once 'auth_check.php';
               const row = document.createElement("tr");
               row.innerHTML = `
                 <td>${item.productID}</td>
-                <td>${item.product_name}</td>
+                <td>${item.product_name.replace(/\s*\([^)]+\)$/, '')}${item.category && item.category.toLowerCase() === 'perfume' && item.variant_name ? ' (' + item.variant_name + ')' : ''}</td>
                 <td>${item.quantity}</td>
                 <td>₱${parseFloat(item.unit_price).toFixed(2)}</td>
                 <td>₱${parseFloat(item.item_total).toFixed(2)}</td>
@@ -499,7 +499,7 @@ require_once 'auth_check.php';
               const row = document.createElement("tr");
               row.innerHTML = `
                 <td>${item.productID}</td>
-                <td>${item.product_name}</td>
+                <td>${item.product_name.replace(/\s*\([^)]+\)$/, '')}${item.category && item.category.toLowerCase() === 'perfume' && item.variant_name ? ' (' + item.variant_name + ')' : ''}</td>
                 <td>${item.quantity}</td>
                 <td>₱${parseFloat(item.unit_price).toFixed(2)}</td>
                 <td>₱${parseFloat(item.item_total).toFixed(2)}</td>
@@ -538,6 +538,9 @@ require_once 'auth_check.php';
 
           isChanged = false;
           document.getElementById("orderPopup").style.display = "flex";
+        })
+        .then(data => {
+          console.log("Order Details Data:", data);
         })
         .catch(error => {
           console.error("Error fetching order details:", error);

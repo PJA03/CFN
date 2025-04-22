@@ -103,11 +103,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['aj
         
         // Calculate totals
         if (!$response['cart_empty']) {
-            $query = "SELECT c.productID, SUM(c.quantity) as quantity, c.price, p.product_name, p.product_image 
-                    FROM tb_cart c
-                    JOIN tb_products p ON c.productID = p.productID
-                    WHERE c.user_id = ?
-                    GROUP BY c.productID, c.price, p.product_name, p.product_image";
+            $query = "SELECT c.productID, SUM(c.quantity) as quantity, c.price, p.product_name, p.product_image, p.category,
+                             (SELECT v.variant_name FROM tb_productvariants v 
+                              WHERE v.productID = c.productID AND v.variant_id = c.variant_id LIMIT 1) as variant_name
+                      FROM tb_cart c
+                      JOIN tb_products p ON c.productID = p.productID
+                      WHERE c.user_id = ?
+                      GROUP BY c.productID, c.price, p.product_name, p.product_image, p.category";
             $stmt = $conn->prepare($query);
             $stmt->bind_param("i", $user_id);
             if ($stmt->execute()) {
@@ -163,11 +165,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['aj
 // Original PHP code for non-AJAX requests continues below
 
 // Fetch cart data
-$query = "SELECT c.productID, SUM(c.quantity) as quantity, c.price, p.product_name, p.product_image 
+$query = "SELECT c.productID, SUM(c.quantity) as quantity, c.price, p.product_name, p.product_image, p.category,
+                 (SELECT v.variant_name FROM tb_productvariants v 
+                  WHERE v.productID = c.productID AND v.variant_id = c.variant_id LIMIT 1) as variant_name
           FROM tb_cart c
           JOIN tb_products p ON c.productID = p.productID
           WHERE c.user_id = ?
-          GROUP BY c.productID, c.price, p.product_name, p.product_image";
+          GROUP BY c.productID, c.price, p.product_name, p.product_image, p.category";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $user_id);
 if (!$stmt->execute()) {
@@ -430,6 +434,9 @@ if (isset($_POST['cancel_cart'])) {
                                          alt="<?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?>" 
                                          class="product-image">
                                     <span><?php echo htmlspecialchars($item['product_name'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                    <?php if (strtolower($item['category']) === 'perfume' && !empty($item['variant_name'])): ?>
+                                        <br><small>Scent: <?php echo htmlspecialchars($item['variant_name'], ENT_QUOTES, 'UTF-8'); ?></small>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="product-quantity">
                                     <!-- Modified buttons for AJAX -->
@@ -531,7 +538,7 @@ if (isset($_POST['cancel_cart'])) {
             </div>            
         </div>
         <div class="footer-center">
-            &copy; COSMETICAS 2024
+            © COSMETICAS 2024
         </div>
     </footer>
 

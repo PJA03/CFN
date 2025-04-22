@@ -29,6 +29,7 @@ if ($conn->connect_error) {
 // Get product ID and variant ID from URL
 $productID = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $variantID = isset($_GET['variant_id']) ? intval($_GET['variant_id']) : null;
+$selected_variant_id = null; // Initialize as null
 
 // Initialize product variables with default values
 $product_name = "Product Not Found";
@@ -37,7 +38,6 @@ $category = "";
 $product_image = "../Resources/cfn_logo.png";
 $price = 0;
 $stock = 0;
-$selected_variant_id = $variantID;
 
 // Fetch product details
 if ($productID > 0) {
@@ -71,6 +71,20 @@ if ($productID > 0) {
         error_log("No product found for productID: $productID");
     }
     $stmt->close();
+
+    // If $selected_variant_id is still null, fetch the default variant explicitly
+    if ($selected_variant_id === null) {
+        $default_sql = "SELECT variant_id FROM tb_productvariants WHERE productID = ? AND is_default = 1 LIMIT 1";
+        $default_stmt = $conn->prepare($default_sql);
+        $default_stmt->bind_param("i", $productID);
+        $default_stmt->execute();
+        $default_result = $default_stmt->get_result();
+        if ($default_result->num_rows > 0) {
+            $default_row = $default_result->fetch_assoc();
+            $selected_variant_id = $default_row['variant_id'];
+        }
+        $default_stmt->close();
+    }
 
     // Debug: Log category
     error_log("Product category: '$category'");
@@ -237,31 +251,29 @@ $conn->close();
             <h1 class="product-name"><?php echo htmlspecialchars($product_name); ?></h1>
             <form action="add_to_cart.php" method="POST" id="addToCartForm">
                 <input type="hidden" name="productID" value="<?php echo $productID; ?>">
-                <?php if (strtolower($category) === 'perfume'): ?>
-                    <?php if (!empty($variants)): ?>
-                        <div class="variant-selector">
-                            <label for="variant">Select Scent</label>
-                            <select name="variant_id" id="variant" required>
-                                <?php foreach ($variants as $variant): ?>
-                                    <option value="<?php echo $variant['variant_id']; ?>" 
-                                            data-price="<?php echo $variant['price']; ?>" 
-                                            data-stock="<?php echo $variant['stock']; ?>" 
-                                            <?php echo $variant['variant_id'] == $selected_variant_id ? 'selected' : ''; ?>
-                                            <?php echo $variant['stock'] == 0 ? 'disabled' : ''; ?>>
-                                        <?php echo htmlspecialchars($variant['variant_name']) . " - ₱" . number_format($variant['price'], 2) . ($variant['stock'] == 0 ? " (Out of Stock)" : ""); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <?php if ($stock == 0): ?>
-                                <p class="out-of-stock">This scent is currently out of stock.</p>
-                            <?php endif; ?>
-                        </div>
-                    <?php else: ?>
-                        <p class="debug-message">No variants found for this perfume.</p>
-                        <input type="hidden" name="variant_id" value="<?php echo $selected_variant_id; ?>">
-                    <?php endif; ?>
+                <?php if (strtolower($category) === 'perfume' && !empty($variants)): ?>
+                    <div class="variant-selector">
+                        <label for="variant">Select Scent</label>
+                        <select name="variant_id" id="variant" required>
+                            <?php foreach ($variants as $variant): ?>
+                                <option value="<?php echo $variant['variant_id']; ?>" 
+                                        data-price="<?php echo $variant['price']; ?>" 
+                                        data-stock="<?php echo $variant['stock']; ?>" 
+                                        <?php echo $variant['variant_id'] == $selected_variant_id ? 'selected' : ''; ?>
+                                        <?php echo $variant['stock'] == 0 ? 'disabled' : ''; ?>>
+                                    <?php echo htmlspecialchars($variant['variant_name']) . " - ₱" . number_format($variant['price'], 2) . ($variant['stock'] == 0 ? " (Out of Stock)" : ""); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <?php if ($stock == 0): ?>
+                            <p class="out-of-stock">This scent is currently out of stock.</p>
+                        <?php endif; ?>
+                    </div>
                 <?php else: ?>
-                    <input type="hidden" name="variant_id" value="<?php echo $selected_variant_id; ?>">
+                    <input type="hidden" name="variant_id" value="<?php echo $selected_variant_id ?? 0; ?>">
+                    <?php if ($category === 'perfume' && empty($variants)): ?>
+                        <p class="debug-message">No variants found for this perfume.</p>
+                    <?php endif; ?>
                 <?php endif; ?>
                 <div class="quantity-selector">
                     <button type="button" class="quantity-btn">-</button>
@@ -457,6 +469,10 @@ $conn->close();
                 }
 
                 const formData = new FormData(addToCartForm);
+                // Debug: Log the form data being sent
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+                }
                 fetch('add_to_cart.php', {
                     method: 'POST',
                     body: formData

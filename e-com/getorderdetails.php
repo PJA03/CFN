@@ -41,14 +41,18 @@ if (!$order) {
 // Fetch items
 $stmt = $conn->prepare("
     SELECT 
-        order_item_id,
-        productID,
-        product_name,
-        quantity,
-        unit_price,
-        item_total
-    FROM tb_order_items
-    WHERE orderID = ?
+        oi.order_item_id,
+        oi.productID,
+        oi.variant_id,
+        oi.product_name,
+        oi.quantity,
+        oi.unit_price,
+        oi.item_total,
+        p.category,
+        (SELECT v.variant_name FROM tb_productvariants v WHERE v.variant_id = oi.variant_id LIMIT 1) as variant_name
+    FROM tb_order_items oi
+    JOIN tb_products p ON oi.productID = p.productID
+    WHERE oi.orderID = ?
 ");
 $stmt->bind_param("i", $orderID);
 $stmt->execute();

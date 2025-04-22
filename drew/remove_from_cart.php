@@ -1,20 +1,35 @@
 <?php
 session_start();
-include '../conn.php';
+require_once '../conn.php';
 
 header('Content-Type: application/json');
+$response = ['success' => false, 'message' => ''];
 
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Not logged in']);
-    exit();
+    $response['message'] = 'Please log in.';
+    echo json_encode($response);
+    exit;
 }
 
-$product_id = $_POST['product_id'] ?? '';
+$input = json_decode(file_get_contents('php://input'), true);
+$cart_id = filter_var($input['cart_id'] ?? 0, FILTER_SANITIZE_NUMBER_INT);
 
-if ($product_id && isset($_SESSION['cart'][$product_id])) {
-    unset($_SESSION['cart'][$product_id]);
-    echo json_encode(['success' => true]);
+if ($cart_id <= 0) {
+    $response['message'] = 'Invalid input.';
+    echo json_encode($response);
+    exit;
+}
+
+$query = "DELETE FROM tb_cart WHERE cart_id = ? AND user_id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("ii", $cart_id, $_SESSION['user_id']);
+if ($stmt->execute()) {
+    $response['success'] = true;
 } else {
-    echo json_encode(['success' => false, 'message' => 'Item not found']);
+    $response['message'] = 'Failed to remove item: ' . $stmt->error;
 }
+
+$stmt->close();
+$conn->close();
+echo json_encode($response);
 ?>
