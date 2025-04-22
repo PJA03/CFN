@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 10, 2025 at 09:56 AM
+-- Generation Time: Apr 22, 2025 at 04:42 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -68,9 +68,6 @@ CREATE TABLE `tb_cart` (
 --
 
 INSERT INTO `tb_cart` (`cart_id`, `user_id`, `productID`, `quantity`, `price`) VALUES
-(11, 89, 11, 1, 190.00),
-(12, 89, 19, 1, 180.00),
-(13, 89, 15, 1, 180.00),
 (14, 79, 9, 1, 140.00),
 (15, 79, 9, 1, 140.00),
 (16, 79, 9, 1, 140.00),
@@ -79,7 +76,13 @@ INSERT INTO `tb_cart` (`cart_id`, `user_id`, `productID`, `quantity`, `price`) V
 (19, 79, 9, 1, 140.00),
 (20, 79, 9, 1, 140.00),
 (28, 91, 10, 1, 130.00),
-(29, 91, 13, 1, 180.00);
+(29, 91, 13, 1, 180.00),
+(43, 72, 35, 1, 350.00),
+(44, 96, 22, 1, 120.00),
+(45, 96, 12, 1, 720.00),
+(46, 96, 10, 3, 130.00),
+(48, 96, 12, 1, 720.00),
+(58, 89, 37, 1, 350.00);
 
 -- --------------------------------------------------------
 
@@ -90,8 +93,6 @@ INSERT INTO `tb_cart` (`cart_id`, `user_id`, `productID`, `quantity`, `price`) V
 CREATE TABLE `tb_orders` (
   `orderID` int(11) NOT NULL,
   `order_date` datetime NOT NULL,
-  `productID` int(11) NOT NULL,
-  `product_name` varchar(255) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `first_name` varchar(255) NOT NULL,
@@ -110,18 +111,60 @@ CREATE TABLE `tb_orders` (
 -- Dumping data for table `tb_orders`
 --
 
-INSERT INTO `tb_orders` (`orderID`, `order_date`, `productID`, `product_name`, `user_id`, `email`, `first_name`, `last_name`, `quantity`, `status`, `payment_option`, `payment_proof`, `isApproved`, `price_total`, `trackingLink`, `delivered_date`) VALUES
-(3, '2025-03-21 16:16:52', 10, 'Buster D’ Acne Serum 30ml', 89, 'princessjamie.galias.cics@ust.edu.ph', 'Arah', '0', 1, 'Delivered', '0', '67dd2074ef482-484292276_507224642440350_5531290597758342471_n.jpg', 1, 130, '930000123456', '2025-03-21 17:16:18'),
-(4, '2025-03-21 16:24:38', 11, 'Elixir Day Cream SPF50 PA+++ 50g', 89, 'princessjamie.galias.cics@ust.edu.ph', 'Arah', '0', 1, 'Delivered', '0', '67dd2246288bf-484292276_507224642440350_5531290597758342471_n.jpg', 1, 190, 'dsafsadf', '2025-03-25 16:02:42'),
-(5, '2025-03-24 20:01:41', 10, 'Buster D’ Acne Serum 30ml', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 4, 'Processing', '0', '67e149a57849b-bank qr.jpg', 1, 1430, '', NULL),
-(6, '2025-03-24 20:01:41', 11, 'Elixir Day Cream SPF50 PA+++ 50g', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Shipped', '0', '67e149a57849b-bank qr.jpg', 1, 1430, '234edffs', NULL),
-(7, '2025-03-24 20:01:41', 12, 'SET + Box Packaging', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Cancelled', '0', '67e149a57849b-bank qr.jpg', 0, 1430, NULL, NULL),
-(8, '2025-03-25 12:28:11', 10, 'Buster D’ Acne Serum 30ml', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Processing', '0', '67e230db2b311-Screenshot 2024-12-08 222746.png', 1, 130, '', NULL),
-(9, '2025-03-25 13:04:42', 11, 'Elixir Day Cream SPF50 PA+++ 50g', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 3, 'Cancelled', '0', '67e2396a4c3f9-Screenshot 2024-12-08 222734.png', 0, 1880, NULL, NULL),
-(10, '2025-03-25 13:04:42', 17, 'CollaBoost Foam Wash 100ml w/ Silicone Brush', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Waiting for Payment', '0', '67e2396a4c3f9-Screenshot 2024-12-08 222734.png', 0, 1880, NULL, NULL),
-(11, '2025-03-25 13:04:42', 22, 'Bright Radiance Toner 100ml', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Waiting for Payment', '0', '67e2396a4c3f9-Screenshot 2024-12-08 222734.png', 0, 1880, NULL, NULL),
-(12, '2025-03-25 13:04:42', 25, '250ml Gluta Kojic InstaWhite SPF50 Body Lotion', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 4, 'Waiting for Payment', '0', '67e2396a4c3f9-Screenshot 2024-12-08 222734.png', 0, 1880, NULL, NULL),
-(14, '2025-03-30 21:16:13', 11, 'Elixir Day Cream SPF50 PA+++ 50g', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 3, 'Delivered', '0', '67e9441d183ad-frassati.jpg', 0, 570, 'dsafsadf', '2025-03-30 21:17:09');
+INSERT INTO `tb_orders` (`orderID`, `order_date`, `user_id`, `email`, `first_name`, `last_name`, `quantity`, `status`, `payment_option`, `payment_proof`, `isApproved`, `price_total`, `trackingLink`, `delivered_date`) VALUES
+(3, '2025-03-21 16:16:52', 89, 'princessjamie.galias.cics@ust.edu.ph', 'Arah', '0', 1, 'Delivered', '0', '67dd2074ef482-484292276_507224642440350_5531290597758342471_n.jpg', 1, 130, '930000123456', '2025-03-21 17:16:18'),
+(4, '2025-03-21 16:24:38', 89, 'princessjamie.galias.cics@ust.edu.ph', 'Arah', '0', 1, 'Delivered', '0', '67dd2246288bf-484292276_507224642440350_5531290597758342471_n.jpg', 1, 190, 'dsafsadf', '2025-03-25 16:02:42'),
+(5, '2025-03-24 20:01:41', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 4, 'Processing', '0', '67e149a57849b-bank qr.jpg', 1, 1430, '', NULL),
+(6, '2025-03-24 20:01:41', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Shipped', '0', '67e149a57849b-bank qr.jpg', 1, 1430, '234edffs', NULL),
+(7, '2025-03-24 20:01:41', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Cancelled', '0', '67e149a57849b-bank qr.jpg', 0, 1430, NULL, NULL),
+(8, '2025-03-25 12:28:11', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Processing', '0', '67e230db2b311-Screenshot 2024-12-08 222746.png', 1, 130, '', NULL),
+(9, '2025-03-25 13:04:42', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 3, 'Cancelled', '0', '67e2396a4c3f9-Screenshot 2024-12-08 222734.png', 0, 1880, NULL, NULL),
+(10, '2025-03-25 13:04:42', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Waiting for Payment', '0', '67e2396a4c3f9-Screenshot 2024-12-08 222734.png', 0, 1880, NULL, NULL),
+(11, '2025-03-25 13:04:42', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Waiting for Payment', '0', '67e2396a4c3f9-Screenshot 2024-12-08 222734.png', 0, 1880, NULL, NULL),
+(12, '2025-03-25 13:04:42', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 4, 'Waiting for Payment', '0', '67e2396a4c3f9-Screenshot 2024-12-08 222734.png', 0, 1880, NULL, NULL),
+(14, '2025-03-30 21:16:13', 72, 'pjarahgalias27@gmail.com', 'Arah', '0', 3, 'Delivered', '0', '67e9441d183ad-frassati.jpg', 0, 570, 'dsafsadf', '2025-03-30 21:17:09'),
+(15, '2025-04-11 15:30:49', 72, 'pjarahgalias27@gmail.com', '', '0', 1, 'Waiting for Payment', '0', '67f8c529e1e30-FDA_License.jpg', 0, 130, NULL, NULL),
+(16, '2025-04-11 15:45:27', 95, 'brandonfredrick.gomez.cics@ust.edu.ph', 'Brandon', '0', 3, 'Waiting for Payment', '0', '67f8c897acb76-FDA_License.jpg', 0, 1230, NULL, NULL),
+(17, '2025-04-11 15:45:27', 95, 'brandonfredrick.gomez.cics@ust.edu.ph', 'Brandon', '0', 1, 'Waiting for Payment', '0', '67f8c897acb76-FDA_License.jpg', 0, 1230, NULL, NULL),
+(18, '2025-04-11 15:45:27', 95, 'brandonfredrick.gomez.cics@ust.edu.ph', 'Brandon', '0', 1, 'Waiting for Payment', '0', '67f8c897acb76-FDA_License.jpg', 0, 1230, NULL, NULL),
+(19, '2025-04-11 15:45:59', 95, 'brandonfredrick.gomez.cics@ust.edu.ph', 'Brandon', '0', 1, 'Waiting for Payment', '0', '67f8c8b72e36d-FDA_License.jpg', 0, 720, NULL, NULL),
+(20, '2025-04-21 09:01:03', 89, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Cancelled', '0', '680598cfc93e5-486965302_636938332513735_4847496771901525243_n.jpg', 0, 1110, NULL, NULL),
+(21, '2025-04-21 09:01:03', 89, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Waiting for Payment', '0', '680598cfc93e5-486965302_636938332513735_4847496771901525243_n.jpg', 0, 1110, NULL, NULL),
+(22, '2025-04-21 09:01:03', 89, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Waiting for Payment', '0', '680598cfc93e5-486965302_636938332513735_4847496771901525243_n.jpg', 0, 1110, NULL, NULL),
+(23, '2025-04-21 09:01:03', 89, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Waiting for Payment', '0', '680598cfc93e5-486965302_636938332513735_4847496771901525243_n.jpg', 0, 1110, NULL, NULL),
+(24, '2025-04-21 09:01:03', 89, 'pjarahgalias27@gmail.com', 'Arah', '0', 1, 'Waiting for Payment', '0', '680598cfc93e5-486965302_636938332513735_4847496771901525243_n.jpg', 0, 1110, NULL, NULL),
+(31, '2025-04-21 11:07:52', 89, '0', 'Arah', 'Galias', 5, 'Waiting for Payment', 'bank_transfer_bpi', '6805b68837da8-Screenshot 2024-12-08 223612.png', 0, 1530, NULL, NULL),
+(32, '2025-04-21 11:17:25', 89, '0', 'Arah', 'Galias', 8, 'Waiting for Payment', 'gcash', '6805b8c5b7f54-Screenshot 2024-12-08 223612.png', 0, 1640, NULL, NULL),
+(33, '2025-04-21 11:23:17', 89, '0', 'Arah', 'Galias', 1, 'Waiting for Payment', 'gcash', '6805ba2508614-Screenshot 2024-12-11 231008.png', 0, 180, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tb_order_items`
+--
+
+CREATE TABLE `tb_order_items` (
+  `order_item_id` int(11) NOT NULL,
+  `orderID` int(11) NOT NULL,
+  `productID` int(11) NOT NULL,
+  `product_name` varchar(255) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `unit_price` decimal(10,2) NOT NULL,
+  `item_total` decimal(10,2) GENERATED ALWAYS AS (`quantity` * `unit_price`) STORED,
+  `variant_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tb_order_items`
+--
+
+INSERT INTO `tb_order_items` (`order_item_id`, `orderID`, `productID`, `product_name`, `quantity`, `unit_price`, `variant_id`) VALUES
+(1, 24, 33, '30ml Hair Biotin Serum', 2, 520.00, NULL),
+(2, 31, 10, 'Buster D’ Acne Serum 30ml', 1, 130.00, NULL),
+(3, 31, 35, 'AMOII Parfum 85ml with BOX(HOMME)', 4, 350.00, NULL),
+(4, 32, 33, '30ml Hair Biotin Serum', 4, 180.00, NULL),
+(5, 32, 34, '100ml Hair Activator Spray', 4, 230.00, NULL),
+(6, 33, 33, '30ml Hair Biotin Serum', 1, 180.00, NULL);
 
 -- --------------------------------------------------------
 
@@ -352,9 +395,8 @@ CREATE TABLE `tb_user` (
 --
 
 INSERT INTO `tb_user` (`user_id`, `username`, `email`, `pass`, `first_name`, `last_name`, `contact_no`, `address`, `role`, `profile_image`, `validated`, `token`, `token_created_at`) VALUES
-(72, 'ironman123', 'pjarahgalias27@gmail.com', '$2y$10$ooz99XqFVVJgxMP7sDAZc.wU1Phl32pbsEn/dvLn8.Mu8ZX5ME0lO', 'Arah', 'Galias', '09669463472', 'Makati', 'user', '../uploads/ey.png', 1, '', '2025-03-05 13:10:47'),
 (79, 'Admin', 'galias.pja@gmail.com', '$2y$10$xZh8zzSPbdyxUa7cng7aDu7LsPboC1x29eitjMxjd/gTU0GP3bcL.', 'Arah', 'Galias', '09669463472', 'dyan lang', 'admin', NULL, 1, '', '2025-03-10 19:50:28'),
-(89, 'pjarahgalias27', 'princessjamie.galias.cics@ust.edu.ph', '$2y$10$iSWy.9Kp9yJ7mZD4q9/THOGG31y3aRyXI98axhH4Ahb0Vj2MUYfYi', 'Arah', 'Galias', '09669463472', 'Blk 1 Lot 1 Ibañez St', 'user', '../uploads/100ml-frost-glass-bottle-silver-spray-1.png', 1, '', '2025-03-19 07:05:30'),
+(89, 'pjarahgalias27', 'pjarahgalias27@gmail.com', '$2y$10$iSWy.9Kp9yJ7mZD4q9/THOGG31y3aRyXI98axhH4Ahb0Vj2MUYfYi', 'Arah', 'Galias', '09669463472', 'Blk 1 Lot 1 Ibañez St', 'user', '../uploads/100ml-frost-glass-bottle-silver-spray-1.png', 1, '', '2025-03-19 07:05:30'),
 (90, 'iSmooth', 'judesamonte1@gmail.com', '$2y$10$BE2XGuhaWyQT4MMoAhM.xOY5AhiAa8YVCbMNEX2ZrXPHlssSwCJqS', NULL, NULL, NULL, NULL, 'user', NULL, 0, '818349', '2025-03-20 18:10:25'),
 (92, 'SE 2', 'waffles@waffles.com', '$2y$10$kjy4YAoUumSXi8vSxkPa1O35s87tR2HFbC0w.95OUWR0./HWtFXEq', NULL, NULL, NULL, NULL, 'user', NULL, 0, '268114', '2025-03-24 19:25:36'),
 (93, 'pjarahgalias', 'waffles1@waffles.com', '$2y$10$GDlceD0pD7lVGdD1ZlySC.xjTy68f3IZKcZLDfE1qG0LUumIt5HwS', NULL, NULL, NULL, NULL, 'user', NULL, 0, '98663', '2025-03-24 19:26:20'),
@@ -383,6 +425,38 @@ CREATE TABLE `tb_vouchers` (
 INSERT INTO `tb_vouchers` (`voucherID`, `discount`, `details`, `valid_until`, `code`, `created_at`, `updated_at`) VALUES
 (15, 6.00, 'For sets', '2025-03-27', 'SIX', '2025-03-22 04:04:49', '2025-03-22 14:41:53');
 
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `vw_orders_with_items`
+-- (See below for the actual view)
+--
+CREATE TABLE `vw_orders_with_items` (
+`orderID` int(11)
+,`order_date` datetime
+,`user_id` int(11)
+,`email` varchar(255)
+,`first_name` varchar(255)
+,`last_name` varchar(255)
+,`status` varchar(255)
+,`price_total` double
+,`order_item_id` int(11)
+,`productID` int(11)
+,`product_name` varchar(255)
+,`quantity` int(11)
+,`unit_price` decimal(10,2)
+,`item_total` decimal(10,2)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `vw_orders_with_items`
+--
+DROP TABLE IF EXISTS `vw_orders_with_items`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vw_orders_with_items`  AS SELECT `o`.`orderID` AS `orderID`, `o`.`order_date` AS `order_date`, `o`.`user_id` AS `user_id`, `o`.`email` AS `email`, `o`.`first_name` AS `first_name`, `o`.`last_name` AS `last_name`, `o`.`status` AS `status`, `o`.`price_total` AS `price_total`, `oi`.`order_item_id` AS `order_item_id`, `oi`.`productID` AS `productID`, `oi`.`product_name` AS `product_name`, `oi`.`quantity` AS `quantity`, `oi`.`unit_price` AS `unit_price`, `oi`.`item_total` AS `item_total` FROM (`tb_orders` `o` left join `tb_order_items` `oi` on(`o`.`orderID` = `oi`.`orderID`)) ;
+
 --
 -- Indexes for dumped tables
 --
@@ -405,6 +479,14 @@ ALTER TABLE `tb_cart`
 --
 ALTER TABLE `tb_orders`
   ADD PRIMARY KEY (`orderID`);
+
+--
+-- Indexes for table `tb_order_items`
+--
+ALTER TABLE `tb_order_items`
+  ADD PRIMARY KEY (`order_item_id`),
+  ADD KEY `orderID` (`orderID`),
+  ADD KEY `productID` (`productID`);
 
 --
 -- Indexes for table `tb_payment_qr_codes`
@@ -455,13 +537,19 @@ ALTER TABLE `tb_bestsellers`
 -- AUTO_INCREMENT for table `tb_cart`
 --
 ALTER TABLE `tb_cart`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `tb_orders`
 --
 ALTER TABLE `tb_orders`
-  MODIFY `orderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `orderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+
+--
+-- AUTO_INCREMENT for table `tb_order_items`
+--
+ALTER TABLE `tb_order_items`
+  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `tb_payment_qr_codes`
@@ -485,7 +573,7 @@ ALTER TABLE `tb_productvariants`
 -- AUTO_INCREMENT for table `tb_user`
 --
 ALTER TABLE `tb_user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
 
 --
 -- AUTO_INCREMENT for table `tb_vouchers`
@@ -502,6 +590,13 @@ ALTER TABLE `tb_vouchers`
 --
 ALTER TABLE `tb_bestsellers`
   ADD CONSTRAINT `tb_bestsellers_ibfk_1` FOREIGN KEY (`productID`) REFERENCES `tb_products` (`productID`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `tb_order_items`
+--
+ALTER TABLE `tb_order_items`
+  ADD CONSTRAINT `tb_order_items_ibfk_1` FOREIGN KEY (`orderID`) REFERENCES `tb_orders` (`orderID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `tb_order_items_ibfk_2` FOREIGN KEY (`productID`) REFERENCES `tb_products` (`productID`);
 
 --
 -- Constraints for table `tb_payment_qr_codes`
