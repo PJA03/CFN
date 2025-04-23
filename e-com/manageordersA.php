@@ -374,216 +374,232 @@ require_once 'auth_check.php';
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
-    let isChanged = false;
-    let currentOrderID = null;
-    let sortField = '';
-    let sortOrder = 'asc';
-    let originalStatus = '';
+  let isChanged = false;
+  let currentOrderID = null;
+  let sortField = '';
+  let sortOrder = 'asc';
+  let originalStatus = '';
 
-    // Load orders from fetchorders.php
-    function loadOrders(query = "", filterStatus = "", sort = '', order = 'asc') {
-      document.getElementById("ordersTable").innerHTML = "<tr><td colspan='8'>Loading...</td></tr>";
-      const url = `fetchorders.php?search=${encodeURIComponent(query)}&filter=${encodeURIComponent(filterStatus)}&sort=${encodeURIComponent(sort)}&order=${encodeURIComponent(order)}`;
-      fetch(url)
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById("ordersTable").innerHTML = data;
-          document.querySelectorAll('th.sortable').forEach(th => th.classList.remove('sorted-asc', 'sorted-desc'));
-          if (sort) {
-            const th = document.querySelector(`th.sortable[onclick="sortTable('${sort}')"]`);
-            if (th) th.classList.add(sortOrder === 'asc' ? 'sorted-asc' : 'sorted-desc');
-          }
-        })
-        .catch(error => {
-          console.error("Error loading orders:", error);
-          document.getElementById("ordersTable").innerHTML = "<tr><td colspan='8' class='text-danger'>Failed to load data</td></tr>";
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to load orders: ' + error.message,
-            confirmButtonText: 'OK'
-          });
-        });
-    }
+  // Define valid status progression
+  const statusHierarchy = [
+    'Waiting for Payment',
+    'Processing',
+    'Shipped',
+    'Delivered',
+    'Cancelled'
+  ];
 
-    document.addEventListener("DOMContentLoaded", () => {
-      loadOrders();
-      document.getElementById("searchOrder").addEventListener("input", function () {
-        loadOrders(this.value, document.getElementById("filterStatus").value, sortField, sortOrder);
-      });
-      document.getElementById("filterStatus").addEventListener("change", function () {
-        loadOrders(document.getElementById("searchOrder").value, this.value, sortField, sortOrder);
-      });
-    });
-
-    // Sort and filter table
-    function sortTable(field) {
-      if (sortField === field) {
-        sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
-      } else {
-        sortField = field;
-        sortOrder = 'asc';
-      }
-      loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
-    }
-
-    // Open items modal
-    function openItemsPopup(orderID) {
-      fetch(`getorderitems.php?orderID=${orderID}`)
-        .then(response => {
-          if (!response.ok) throw new Error("Network response was not ok");
-          return response.json();
-        })
-        .then(data => {
-          console.log("Order Items Data:", data); // Debug: Log the fetched data
-          const itemsTable = document.getElementById("itemsListTable");
-          itemsTable.innerHTML = "";
-          if (data.items && data.items.length > 0) {
-            data.items.forEach(item => {
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                <td>${item.productID}</td>
-                <td>${item.product_name.replace(/\s*\([^)]+\)$/, '')}${item.category && item.category.toLowerCase() === 'perfume' && item.variant_name ? ' (' + item.variant_name + ')' : ''}</td>
-                <td>${item.quantity}</td>
-                <td>₱${parseFloat(item.unit_price).toFixed(2)}</td>
-                <td>₱${parseFloat(item.item_total).toFixed(2)}</td>
-              `;
-              itemsTable.appendChild(row);
-            });
-          } else {
-            itemsTable.innerHTML = "<tr><td colspan='5'>No items found</td></tr>";
-          }
-          document.getElementById("itemsPopup").style.display = "flex";
-        })
-        .catch(error => {
-          console.error("Error fetching items:", error);
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to load items: ' + error.message,
-            confirmButtonText: 'OK'
-          });
-        });
-    }
-
-    function closeItemsPopup() {
-      document.getElementById("itemsPopup").style.display = "none";
-    }
-
-    // Open the details popup
-    function openPopup(orderID) {
-      currentOrderID = orderID;
-      fetch(`getorderdetails.php?orderID=${orderID}`)
-        .then(response => {
-          if (!response.ok) throw new Error("Network response was not ok");
-          return response.json();
-        })
-        .then(data => {
-          console.log("Order Details Data:", data); // Debug: Log the fetched data
-          document.getElementById("orderDateDisplay").textContent = data.order_date || "";
-          document.getElementById("userIDDisplay").textContent = data.user_id || "";
-          document.getElementById("emailDisplay").textContent = data.email || "N/A";
-          document.getElementById("paymentOptionDisplay").textContent = data.payment_option || "";
-          document.getElementById("totalDisplay").textContent = "₱" + (parseFloat(data.total_amount) || "0.00").toFixed(2);
-          
-          document.getElementById("status").value = data.status || "Waiting for Payment";
-          originalStatus = data.status || "Waiting for Payment";
-          document.getElementById("confirmPayment").checked = (data.isApproved == 1);
-          document.getElementById("trackingLink").value = data.trackingLink || "";
-          
-          const receiptPath = data.payment_proof ? `../Uploads/receipts/${data.payment_proof}` : "images/placeholder.jpg";
-          document.getElementById("receiptImage").src = receiptPath;
-
-          // Populate items table
-          const itemsTable = document.getElementById("orderItemsTable");
-          itemsTable.innerHTML = "";
-          if (data.items && data.items.length > 0) {
-            data.items.forEach(item => {
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                <td>${item.productID}</td>
-                <td>${item.product_name.replace(/\s*\([^)]+\)$/, '')}${item.category && item.category.toLowerCase() === 'perfume' && item.variant_name ? ' (' + item.variant_name + ')' : ''}</td>
-                <td>${item.quantity}</td>
-                <td>₱${parseFloat(item.unit_price).toFixed(2)}</td>
-                <td>₱${parseFloat(item.item_total).toFixed(2)}</td>
-              `;
-              itemsTable.appendChild(row);
-            });
-          } else {
-            itemsTable.innerHTML = "<tr><td colspan='5'>No items found</td></tr>";
-          }
-
-          const isCancelled = data.status === "Cancelled";
-          const statusSelect = document.getElementById("status");
-          const confirmPaymentCheckbox = document.getElementById("confirmPayment");
-          const trackingLinkInput = document.getElementById("trackingLink");
-          const saveChangesButton = document.getElementById("saveChangesButton");
-          const deleteOrderButton = document.getElementById("deleteOrderButton");
-          const cancelledMessage = document.getElementById("cancelledMessage");
-
-          if (isCancelled) {
-            cancelledMessage.style.display = "block";
-            statusSelect.disabled = true;
-            confirmPaymentCheckbox.disabled = true;
-            trackingLinkInput.disabled = true;
-            saveChangesButton.disabled = true;
-            saveChangesButton.classList.add("disabled");
-            deleteOrderButton.style.display = "inline-block";
-          } else {
-            cancelledMessage.style.display = "none";
-            statusSelect.disabled = false;
-            confirmPaymentCheckbox.disabled = false;
-            trackingLinkInput.disabled = false;
-            saveChangesButton.disabled = false;
-            saveChangesButton.classList.remove("disabled");
-            deleteOrderButton.style.display = "none";
-          }
-
-          isChanged = false;
-          document.getElementById("orderPopup").style.display = "flex";
-        })
-        .catch(error => {
-          console.error("Error fetching order details:", error);
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to load order details: ' + error.message,
-            confirmButtonText: 'OK'
-          });
-        });
-    }
-
-    // Close the details popup
-    function closePopup() {
-      if (isChanged) {
+  // Load orders from fetchorders.php
+  function loadOrders(query = "", filterStatus = "", sort = '', order = 'asc') {
+    document.getElementById("ordersTable").innerHTML = "<tr><td colspan='8'>Loading...</td></tr>";
+    const url = `fetchorders.php?search=${encodeURIComponent(query)}&filter=${encodeURIComponent(filterStatus)}&sort=${encodeURIComponent(sort)}&order=${encodeURIComponent(order)}`;
+    fetch(url)
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("ordersTable").innerHTML = data;
+        document.querySelectorAll('th.sortable').forEach(th => th.classList.remove('sorted-asc', 'sorted-desc'));
+        if (sort) {
+          const th = document.querySelector(`th.sortable[onclick="sortTable('${sort}')"]`);
+          if (th) th.classList.add(sortOrder === 'asc' ? 'sorted-asc' : 'sorted-desc');
+        }
+      })
+      .catch(error => {
+        console.error("Error loading orders:", error);
+        document.getElementById("ordersTable").innerHTML = "<tr><td colspan='8' class='text-danger'>Failed to load data</td></tr>";
         Swal.fire({
-          title: 'Unsaved Changes',
-          text: 'You have unsaved changes. Do you want to discard them?',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#d33',
-          cancelButtonColor: '#3085d6',
-          confirmButtonText: 'Yes, discard',
-          cancelButtonText: 'No, keep editing'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            document.getElementById("orderPopup").style.display = "none";
-            currentOrderID = null;
-            originalStatus = '';
-            isChanged = false;
-          }
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to load orders: ' + error.message,
+          confirmButtonText: 'OK'
         });
-      } else {
-        document.getElementById("orderPopup").style.display = "none";
-        currentOrderID = null;
-        originalStatus = '';
-      }
+      });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadOrders();
+    document.getElementById("searchOrder").addEventListener("input", function () {
+      loadOrders(this.value, document.getElementById("filterStatus").value, sortField, sortOrder);
+    });
+    document.getElementById("filterStatus").addEventListener("change", function () {
+      loadOrders(document.getElementById("searchOrder").value, this.value, sortField, sortOrder);
+    });
+  });
+
+  // Sort and filter table
+  function sortTable(field) {
+    if (sortField === field) {
+      sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      sortField = field;
+      sortOrder = 'asc';
+    }
+    loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
+  }
+
+  // Open items modal
+  function openItemsPopup(orderID) {
+    fetch(`getorderitems.php?orderID=${orderID}`)
+      .then(response => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.json();
+      })
+      .then(data => {
+        console.log("Order Items Data:", data);
+        const itemsTable = document.getElementById("itemsListTable");
+        itemsTable.innerHTML = "";
+        if (data.items && data.items.length > 0) {
+          data.items.forEach(item => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${item.productID}</td>
+              <td>${item.product_name.replace(/\s*\([^)]+\)$/, '')}${item.category && item.category.toLowerCase() === 'perfume' && item.variant_name ? ' (' + item.variant_name + ')' : ''}</td>
+              <td>${item.quantity}</td>
+              <td>₱${parseFloat(item.unit_price).toFixed(2)}</td>
+              <td>₱${parseFloat(item.item_total).toFixed(2)}</td>
+            `;
+            itemsTable.appendChild(row);
+          });
+        } else {
+          itemsTable.innerHTML = "<tr><td colspan='5'>No items found</td></tr>";
+        }
+        document.getElementById("itemsPopup").style.display = "flex";
+      })
+      .catch(error => {
+        console.error("Error fetching items:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to load items: ' + error.message,
+          confirmButtonText: 'OK'
+        });
+      });
+  }
+
+  function closeItemsPopup() {
+    document.getElementById("itemsPopup").style.display = "none";
+  }
+
+  // Open the details popup
+  function openPopup(orderID) {
+    currentOrderID = orderID;
+    fetch(`getorderdetails.php?orderID=${orderID}`)
+      .then(response => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.json();
+      })
+      .then(data => {
+        console.log("Order Details Data:", data);
+        document.getElementById("orderDateDisplay").textContent = data.order_date || "";
+        document.getElementById("userIDDisplay").textContent = data.user_id || "";
+        document.getElementById("emailDisplay").textContent = data.email || "N/A";
+        document.getElementById("paymentOptionDisplay").textContent = data.payment_option || "";
+        document.getElementById("totalDisplay").textContent = "₱" + (parseFloat(data.total_amount) || 0.00).toFixed(2);
+
+        document.getElementById("status").value = data.status || "Waiting for Payment";
+        originalStatus = data.status || "Waiting for Payment";
+        document.getElementById("confirmPayment").checked = data.isApproved == 1;
+        document.getElementById("trackingLink").value = data.trackingLink || "";
+
+        const receiptPath = data.payment_proof ? `../Uploads/receipts/${data.payment_proof}` : "images/placeholder.jpg";
+        document.getElementById("receiptImage").src = receiptPath;
+
+        // Populate items table
+        const itemsTable = document.getElementById("orderItemsTable");
+        itemsTable.innerHTML = "";
+        if (data.items && data.items.length > 0) {
+          data.items.forEach(item => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${item.productID}</td>
+              <td>${item.product_name.replace(/\s*\([^)]+\)$/, '')}${item.category && item.category.toLowerCase() === 'perfume' && item.variant_name ? ' (' + item.variant_name + ')' : ''}</td>
+              <td>${item.quantity}</td>
+              <td>₱${parseFloat(item.unit_price).toFixed(2)}</td>
+              <td>₱${parseFloat(item.item_total).toFixed(2)}</td>
+            `;
+            itemsTable.appendChild(row);
+          });
+        } else {
+          itemsTable.innerHTML = "<tr><td colspan='5'>No items found</td></tr>";
+        }
+
+        const isCancelled = data.status === "Cancelled";
+        const statusSelect = document.getElementById("status");
+        const confirmPaymentCheckbox = document.getElementById("confirmPayment");
+        const trackingLinkInput = document.getElementById("trackingLink");
+        const saveChangesButton = document.getElementById("saveChangesButton");
+        const deleteOrderButton = document.getElementById("deleteOrderButton");
+        const cancelledMessage = document.getElementById("cancelledMessage");
+
+        if (isCancelled) {
+          cancelledMessage.style.display = "block";
+          statusSelect.disabled = true;
+          confirmPaymentCheckbox.disabled = true;
+          trackingLinkInput.disabled = true;
+          saveChangesButton.disabled = true;
+          saveChangesButton.classList.add("disabled");
+          deleteOrderButton.style.display = "inline-block";
+        } else {
+          cancelledMessage.style.display = "none";
+          statusSelect.disabled = false;
+          confirmPaymentCheckbox.disabled = data.isApproved == 1; // Disable if already approved
+          trackingLinkInput.disabled = false;
+          saveChangesButton.disabled = false;
+          saveChangesButton.classList.remove("disabled");
+          deleteOrderButton.style.display = "none";
+        }
+
+        // Update status dropdown options based on original status
+        updateStatusOptions(originalStatus);
+
+        isChanged = false;
+        document.getElementById("orderPopup").style.display = "flex";
+      })
+      .catch(error => {
+        console.error("Error fetching order details:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to load order details: ' + error.message,
+          confirmButtonText: 'OK'
+        });
+      });
+  }
+
+  // Update status dropdown options based on specified status
+  function updateStatusOptions(statusToUse) {
+    const statusSelect = document.getElementById("status");
+    const isPaymentApproved = document.getElementById("confirmPayment").checked;
+    const currentIndex = statusHierarchy.indexOf(statusToUse);
+
+    // Clear existing options
+    statusSelect.innerHTML = '';
+
+    // Define allowed statuses
+    let allowedStatuses = [];
+    if (statusToUse === 'Waiting for Payment') {
+      allowedStatuses = isPaymentApproved ? ['Processing', 'Cancelled'] : ['Waiting for Payment', 'Cancelled'];
+    } else {
+      allowedStatuses = statusHierarchy.slice(currentIndex);
     }
 
-    function discardChanges() {
+    // Add allowed status options
+    allowedStatuses.forEach(status => {
+      const option = document.createElement('option');
+      option.value = status;
+      option.textContent = status;
+      if (status === statusSelect.value || (status === statusToUse && !statusSelect.value)) {
+        option.selected = true;
+      }
+      statusSelect.appendChild(option);
+    });
+  }
+
+  // Close the details popup
+  function closePopup() {
+    if (isChanged) {
       Swal.fire({
-        title: 'Discard Changes',
-        text: 'Are you sure you want to discard all changes?',
+        title: 'Unsaved Changes',
+        text: 'You have unsaved changes. Do you want to discard them?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
@@ -592,94 +608,189 @@ require_once 'auth_check.php';
         cancelButtonText: 'No, keep editing'
       }).then((result) => {
         if (result.isConfirmed) {
+          // Reset status to original
+          document.getElementById("status").value = originalStatus;
+          updateStatusOptions(originalStatus);
+          document.getElementById("orderPopup").style.display = "none";
+          currentOrderID = null;
+          originalStatus = '';
           isChanged = false;
-          closePopup();
         }
       });
+    } else {
+      document.getElementById("orderPopup").style.display = "none";
+      currentOrderID = null;
+      originalStatus = '';
     }
+  }
 
-    // Mark changes to detect unsaved modifications
-    document.getElementById("status").addEventListener("change", () => { isChanged = true; });
-    document.getElementById("confirmPayment").addEventListener("change", () => { isChanged = true; });
-    document.getElementById("trackingLink").addEventListener("input", () => { isChanged = true; });
-
-    // Receipt popup
-    document.getElementById("reviewPayment").addEventListener("click", (event) => {
-      event.preventDefault();
-      openReceiptPopup();
+  function discardChanges() {
+    Swal.fire({
+      title: 'Discard Changes',
+      text: 'Are you sure you want to discard all changes?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, discard',
+      cancelButtonText: 'No, keep editing'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Reset status to original
+        document.getElementById("status").value = originalStatus;
+        updateStatusOptions(originalStatus);
+        isChanged = false;
+        closePopup();
+      }
     });
+  }
 
-    function openReceiptPopup() {
-      document.getElementById("receiptPopup").style.display = "flex";
+  // Mark changes to detect unsaved modifications
+  document.getElementById("status").addEventListener("change", () => {
+    isChanged = true;
+    // Do not update options on change to keep all options available
+  });
+  document.getElementById("confirmPayment").addEventListener("change", (event) => {
+    isChanged = true;
+    if (event.target.checked) {
+      event.target.disabled = true; // Disable checkbox once checked
+      updateStatusOptions(originalStatus); // Update options to reflect payment approval
     }
-    function closeReceiptPopup() {
-      document.getElementById("receiptPopup").style.display = "none";
+  });
+  document.getElementById("trackingLink").addEventListener("input", () => {
+    isChanged = true;
+  });
+
+  // Receipt popup
+  document.getElementById("reviewPayment").addEventListener("click", (event) => {
+    event.preventDefault();
+    openReceiptPopup();
+  });
+
+  function openReceiptPopup() {
+    document.getElementById("receiptPopup").style.display = "flex";
+  }
+
+  function closeReceiptPopup() {
+    document.getElementById("receiptPopup").style.display = "none";
+  }
+
+  // Zoomed image
+  function openZoomedImage() {
+    const receiptImageSrc = document.getElementById("receiptImage").src;
+    document.getElementById("zoomedImage").src = receiptImageSrc;
+    document.getElementById("zoomPopup").style.display = "flex";
+  }
+
+  function closeZoomedImage() {
+    document.getElementById("zoomPopup").style.display = "none";
+  }
+
+  // Save changes to the order
+  function saveChanges() {
+    let status = document.getElementById("status").value;
+    const isPaymentConfirmed = document.getElementById("confirmPayment").checked ? 1 : 0;
+    const trackingLink = document.getElementById("trackingLink").value.trim();
+
+    // Validate status transitions
+    const currentIndex = statusHierarchy.indexOf(originalStatus);
+    const newIndex = statusHierarchy.indexOf(status);
+
+    // Prevent going backward in status (except for cancellation from Waiting for Payment)
+    if (newIndex < currentIndex && status !== 'Cancelled') {
+      Swal.fire({
+        title: "Invalid Status Change",
+        text: `Cannot move back to '${status}' from '${originalStatus}'. Status can only progress forward.`,
+        icon: "warning",
+        confirmButtonText: "OK"
+      });
+      document.getElementById("status").value = originalStatus;
+      updateStatusOptions(originalStatus);
+      return;
     }
 
-    // Zoomed image
-    function openZoomedImage() {
-      const receiptImageSrc = document.getElementById("receiptImage").src;
-      document.getElementById("zoomedImage").src = receiptImageSrc;
-      document.getElementById("zoomPopup").style.display = "flex";
-    }
-    function closeZoomedImage() {
-      document.getElementById("zoomPopup").style.display = "none";
+    // Cancellation validation
+    if (status === "Cancelled" && originalStatus !== "Waiting for Payment") {
+      Swal.fire({
+        title: "Cannot Cancel Order",
+        text: `This order cannot be cancelled because it is currently in '${originalStatus}' status. Cancellation is only allowed for orders in 'Waiting for Payment' status.`,
+        icon: "warning",
+        confirmButtonText: "OK"
+      });
+      document.getElementById("status").value = originalStatus;
+      updateStatusOptions(originalStatus);
+      return;
     }
 
-    // Save changes to the order
-    function saveChanges() {
-      let status = document.getElementById("status").value;
-      const isPaymentConfirmed = document.getElementById("confirmPayment").checked ? 1 : 0;
-      const trackingLink = document.getElementById("trackingLink").value.trim();
+    // Payment confirmation validation
+    if (isPaymentConfirmed && status === "Waiting for Payment") {
+      status = "Processing";
+      document.getElementById("status").value = status;
+      updateStatusOptions(status);
+    }
 
-      if (status === "Cancelled" && ["Processing", "Shipped", "Delivered"].includes(originalStatus)) {
+    // Shipped status requires tracking link and Processing first
+    if (status === "Shipped") {
+      if (!trackingLink) {
         Swal.fire({
-          title: "Cannot Cancel Order",
-          text: "This order cannot be cancelled because it is currently in '" + originalStatus + "' status. Cancellation is only allowed for orders in 'Waiting for Payment' status.",
+          title: "Missing Tracking Link",
+          text: "A tracking link is required before marking an order as 'Shipped'.",
           icon: "warning",
-          confirmButtonText: "OK",
+          confirmButtonText: "OK"
         });
+        document.getElementById("status").value = "Processing";
+        updateStatusOptions("Processing");
         return;
       }
-
-      if (isPaymentConfirmed && status === "Waiting for Payment") {
-        status = "Processing";
-        document.getElementById("status").value = status;
+      if (originalStatus !== "Processing") {
+        Swal.fire({
+          title: "Invalid Status Change",
+          text: "Order must be in 'Processing' status before marking as 'Shipped'.",
+          icon: "warning",
+          confirmButtonText: "OK"
+        });
+        document.getElementById("status").value = originalStatus;
+        updateStatusOptions(originalStatus);
+        return;
       }
-      if (trackingLink && (status === "Processing" || status === "Waiting for Payment")) {
-        status = "Shipped";
-        document.getElementById("status").value = status;
-      }
+    }
 
-      if (status === "Delivered" && originalStatus !== "Shipped") {
+    // Delivered requires Shipped first and tracking link
+    if (status === "Delivered") {
+      if (originalStatus !== "Shipped") {
         Swal.fire({
           title: "Invalid Status Change",
           text: "Order must be in 'Shipped' status before marking as 'Delivered'.",
           icon: "warning",
-          confirmButtonText: "OK",
+          confirmButtonText: "OK"
         });
+        document.getElementById("status").value = originalStatus;
+        updateStatusOptions(originalStatus);
         return;
       }
-      if (status === "Delivered" && !trackingLink) {
+      if (!trackingLink) {
         Swal.fire({
           title: "Missing Tracking Link",
           text: "A tracking link is required before marking an order as 'Delivered'.",
           icon: "warning",
-          confirmButtonText: "OK",
+          confirmButtonText: "OK"
         });
+        document.getElementById("status").value = originalStatus;
+        updateStatusOptions(originalStatus);
         return;
       }
+    }
 
-      fetch("updateorder.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          orderID: currentOrderID,
-          status: status,
-          isApproved: isPaymentConfirmed,
-          trackingLink: trackingLink,
-        }),
+    fetch("updateorder.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        orderID: currentOrderID,
+        status: status,
+        isApproved: isPaymentConfirmed,
+        trackingLink: trackingLink
       })
+    })
       .then(response => {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         return response.json();
@@ -695,7 +806,7 @@ require_once 'auth_check.php';
             title: "Success!",
             text: result.message,
             icon: "success",
-            confirmButtonText: "OK",
+            confirmButtonText: "OK"
           }).then(() => {
             loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
           });
@@ -718,29 +829,29 @@ require_once 'auth_check.php';
         });
       });
 
-      isChanged = false;
-    }
+    isChanged = false;
+  }
 
-    // Delete the order (only available for cancelled orders)
-    function deleteOrder() {
-      Swal.fire({
-        title: 'Are you sure?',
-        text: 'Do you really want to delete this cancelled order? This action cannot be undone.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it',
-        cancelButtonText: 'No, keep it'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          fetch("deleteorder.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              orderID: currentOrderID
-            }),
+  // Delete the order (only available for cancelled orders)
+  function deleteOrder() {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you really want to delete this cancelled order? This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it',
+      cancelButtonText: 'No, keep it'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch("deleteorder.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderID: currentOrderID
           })
+        })
           .then(response => {
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return response.json();
@@ -756,7 +867,7 @@ require_once 'auth_check.php';
                 title: "Deleted!",
                 text: "The order has been deleted successfully.",
                 icon: "success",
-                confirmButtonText: "OK",
+                confirmButtonText: "OK"
               }).then(() => {
                 loadOrders(document.getElementById("searchOrder").value, document.getElementById("filterStatus").value, sortField, sortOrder);
               });
@@ -778,37 +889,37 @@ require_once 'auth_check.php';
               confirmButtonText: 'OK'
             });
           });
-        }
-      });
-    }
-
-    // Copy to Clipboard function for the address
-    function copyToClipboard(address) {
-      const textarea = document.createElement('textarea');
-      textarea.value = address;
-      document.body.appendChild(textarea);
-      textarea.select();
-      try {
-        document.execCommand('copy');
-        Swal.fire({
-          icon: 'success',
-          title: 'Copied!',
-          text: 'Address copied to clipboard.',
-          timer: 1500,
-          showConfirmButton: false
-        });
-      } catch (err) {
-        console.error('Failed to copy:', err);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to copy address to clipboard.',
-          confirmButtonText: 'OK'
-        });
-      } finally {
-        document.body.removeChild(textarea);
       }
+    });
+  }
+
+  // Copy to Clipboard function for the address
+  function copyToClipboard(address) {
+    const textarea = document.createElement('textarea');
+    textarea.value = address;
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      Swal.fire({
+        icon: 'success',
+        title: 'Copied!',
+        text: 'Address copied to clipboard.',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    } catch (err) {
+      console.error('Failed to copy:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to copy address to clipboard.',
+        confirmButtonText: 'OK'
+      });
+    } finally {
+      document.body.removeChild(textarea);
     }
-  </script>
+  }
+</script>
 </body>
 </html>

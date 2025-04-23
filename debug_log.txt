@@ -43,3 +43,11 @@ Array
 2025-04-23 08:13:09 - Received data - productID: 37, variant_id: 74, quantity: 1, price: 350
 2025-04-23 08:13:09 - Added to cart - productID: 37, variant_id: 74, quantity: 1
 2025-04-23 08:13:09 - Response sent: {"success":true,"message":""}
+2025-04-23 18:15:23 - Received data - productID: 11, variant_id: 13, quantity: 1, price: 190.00
+2025-04-23 18:15:23 - Added to cart - productID: 11, variant_id: 13, quantity: 1
+2025-04-23 18:15:23 - Response sent: {"success":true,"message":""}
+2025-04-23 18:15:34 - Received data - productID: 11, variant_id: 13, quantity: 1, price: 190.00
+2025-04-23 18:15:34 - Not enough stock to update - productID: 11, requested: 2, available: 1
+2025-04-23 18:15:51 - Received data - productID: 18, variant_id: 20, quantity: 1, price: 120.00
+2025-04-23 18:15:51 - Added to cart - productID: 18, variant_id: 20, quantity: 1
+2025-04-23 18:15:51 - Response sent: {"success":true,"message":""}
