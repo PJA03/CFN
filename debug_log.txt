@@ -1,0 +1,45 @@
+Order ID: 37
+Array
+(
+    [0] => Array
+        (
+            [productID] => 36
+            [product_name] => AMOII Parfum 60ml with BOX (HOMME)
+            [variant_id] => 
+            [quantity] => 1
+            [unit_price] => 280.00
+            [item_total] => 280.00
+            [category] => Perfume
+            [variant_name] => 
+        )
+
+)
+
+
+Order ID: 37
+Array
+(
+    [0] => Array
+        (
+            [productID] => 36
+            [product_name] => AMOII Parfum 60ml with BOX (HOMME)
+            [variant_id] => 
+            [quantity] => 1
+            [unit_price] => 280.00
+            [item_total] => 280.00
+            [category] => Perfume
+            [variant_name] => 
+        )
+
+)
+
+
+2025-04-23 08:12:37 - Received data - productID: 34, variant_id: 36, quantity: 1, price: 230.00
+2025-04-23 08:12:37 - Added to cart - productID: 34, variant_id: 36, quantity: 1
+2025-04-23 08:12:37 - Response sent: {"success":true,"message":""}
+2025-04-23 08:12:54 - Received data - productID: 37, variant_id: 65, quantity: 1, price: 350.00
+2025-04-23 08:12:54 - Added to cart - productID: 37, variant_id: 65, quantity: 1
+2025-04-23 08:12:54 - Response sent: {"success":true,"message":""}
+2025-04-23 08:13:09 - Received data - productID: 37, variant_id: 74, quantity: 1, price: 350
+2025-04-23 08:13:09 - Added to cart - productID: 37, variant_id: 74, quantity: 1
+2025-04-23 08:13:09 - Response sent: {"success":true,"message":""}

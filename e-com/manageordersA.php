@@ -242,6 +242,7 @@ require_once 'auth_check.php';
                 <tr class="table-success">
                   <th>Order ID</th>
                   <th>Number of Items</th>
+                  <th>Email</th>
                   <th class="sortable" onclick="sortTable('total_amount')">Total</th>
                   <th class="sortable" onclick="sortTable('status')">Status</th>
                   <th>Tracking Link</th>
@@ -381,7 +382,7 @@ require_once 'auth_check.php';
 
     // Load orders from fetchorders.php
     function loadOrders(query = "", filterStatus = "", sort = '', order = 'asc') {
-      document.getElementById("ordersTable").innerHTML = "<tr><td colspan='7'>Loading...</td></tr>";
+      document.getElementById("ordersTable").innerHTML = "<tr><td colspan='8'>Loading...</td></tr>";
       const url = `fetchorders.php?search=${encodeURIComponent(query)}&filter=${encodeURIComponent(filterStatus)}&sort=${encodeURIComponent(sort)}&order=${encodeURIComponent(order)}`;
       fetch(url)
         .then(response => response.text())
@@ -395,7 +396,7 @@ require_once 'auth_check.php';
         })
         .catch(error => {
           console.error("Error loading orders:", error);
-          document.getElementById("ordersTable").innerHTML = "<tr><td colspan='7' class='text-danger'>Failed to load data</td></tr>";
+          document.getElementById("ordersTable").innerHTML = "<tr><td colspan='8' class='text-danger'>Failed to load data</td></tr>";
           Swal.fire({
             icon: 'error',
             title: 'Error',
@@ -434,6 +435,7 @@ require_once 'auth_check.php';
           return response.json();
         })
         .then(data => {
+          console.log("Order Items Data:", data); // Debug: Log the fetched data
           const itemsTable = document.getElementById("itemsListTable");
           itemsTable.innerHTML = "";
           if (data.items && data.items.length > 0) {
@@ -477,9 +479,10 @@ require_once 'auth_check.php';
           return response.json();
         })
         .then(data => {
+          console.log("Order Details Data:", data); // Debug: Log the fetched data
           document.getElementById("orderDateDisplay").textContent = data.order_date || "";
           document.getElementById("userIDDisplay").textContent = data.user_id || "";
-          document.getElementById("emailDisplay").textContent = data.email || "";
+          document.getElementById("emailDisplay").textContent = data.email || "N/A";
           document.getElementById("paymentOptionDisplay").textContent = data.payment_option || "";
           document.getElementById("totalDisplay").textContent = "₱" + (parseFloat(data.total_amount) || "0.00").toFixed(2);
           
@@ -538,9 +541,6 @@ require_once 'auth_check.php';
 
           isChanged = false;
           document.getElementById("orderPopup").style.display = "flex";
-        })
-        .then(data => {
-          console.log("Order Details Data:", data);
         })
         .catch(error => {
           console.error("Error fetching order details:", error);

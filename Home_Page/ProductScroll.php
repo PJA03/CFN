@@ -1,5 +1,4 @@
 <?php
-
 // Start the session
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -18,6 +17,8 @@ if (isset($_SESSION['email'])) {
     ];
 } else {
     $user = ['username' => 'Guest'];
+    header('Location: ../Registration_Page/registration.php');
+    exit();
 }
 
 // Include database connection
@@ -45,7 +46,6 @@ if (!empty($category)) {
 
 // Execute query
 $result = $conn->query($sql);
-
 ?>
 
 <!DOCTYPE html>
@@ -60,40 +60,64 @@ $result = $conn->query($sql);
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="ProductScroll.css">
-    <link rel="stylesheet" href="product-scroll-styles.css">
+  
+    <style>
+        .add-to-cart-btn {
+            background-color: #1f4529;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .add-to-cart-btn:hover {
+            background-color: #163a22;
+        }
+        .add-to-cart-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .product-card {
+            position: relative;
+        }
+        .product-card-link {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
 </head>
 <body>
 <header>
-        <div class="logo">
-            <a href = "../Home_Page/Home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
-        </div>
-        <div class="navbar">
+    <div class="logo">
+        <a href="../Home_Page/Home.php"><img src="../Home_Page/cfn_logo2.png" alt="Logo" class="logo-image"/></a>
+    </div>
+    <div class="navbar">
         <p class="usernamedisplay">Bonjour, <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?>!</p>            
         <form action="../Home_Page/ProductScroll.php" method="GET" class="search-form" onsubmit="return validateSearch()">
-            <input type="text" name="search" class="search-bar" id="searchBar" placeholder="Search Product">
+            <input type="text" name="search" class="search-bar" id="searchBar" placeholder="Search Product" value="<?php echo htmlspecialchars($search); ?>">
         </form>            
         <div class="icons">
-                <a href = "../Home_Page/Home.php"><i class="fa-solid fa-house home"></i></a>
-                <a href ="../drew/cart.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
-                <a href="../User_Profile_Page/UserProfile.php"><i class ="far fa-user-circle fa-2x icon-profile"></i></a>
-            </div>
+            <a href="../Home_Page/Home.php"><i class="fa-solid fa-house home"></i></a>
+            <a href="../drew/cart.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
+            <a href="../User_Profile_Page/UserProfile.php"><i class="far fa-user-circle fa-2x icon-profile"></i></a>
         </div>
-    </header>
+    </div>
+</header>
 
-    <div class="container mt-4">
-        <div class="filter-container">
-            <i class="fas fa-filter"></i>
-            <span>Search Filter</span>
-            <select class="category-dropdown" id="categoryFilter">
-                <option value="">All Categories</option>
-                <option value="skin" <?php echo (isset($_GET['category']) && $_GET['category'] === 'skin') ? 'selected' : ''; ?>>Skin</option>
-                <option value="hair" <?php echo (isset($_GET['category']) && $_GET['category'] === 'hair') ? 'selected' : ''; ?>>Hair</option>
-                <option value="face" <?php echo (isset($_GET['category']) && $_GET['category'] === 'face') ? 'selected' : ''; ?>>Face</option>
-                <option value="perfume" <?php echo (isset($_GET['category']) && $_GET['category'] === 'perfume') ? 'selected' : ''; ?>>Perfume</option>
-            </select>
-        </div>
+<div class="container mt-4">
+    <div class="filter-container">
+        <i class="fas fa-filter"></i>
+        <span>Search Filter</span>
+        <select class="category-dropdown" id="categoryFilter">
+            <option value="">All Categories</option>
+            <option value="skin" <?php echo (isset($_GET['category']) && $_GET['category'] === 'skin') ? 'selected' : ''; ?>>Skin</option>
+            <option value="hair" <?php echo (isset($_GET['category']) && $_GET['category'] === 'hair') ? 'selected' : ''; ?>>Hair</option>
+            <option value="face" <?php echo (isset($_GET['category']) && $_GET['category'] === 'face') ? 'selected' : ''; ?>>Face</option>
+            <option value="perfume" <?php echo (isset($_GET['category']) && $_GET['category'] === 'perfume') ? 'selected' : ''; ?>>Perfume</option>
+        </select>
+    </div>
 
-        <div class="product-grid" id="product-grid">
+    <div class="product-grid" id="product-grid">
     <?php
     define('BASE_PATH', '/CFN/');
 
@@ -106,18 +130,23 @@ $result = $conn->query($sql);
             $imgSrc = !empty($productImage) ? BASE_PATH . "e-com/uploads/" . $productImage : BASE_PATH . "e-com/images/cfn_logo.png";
             $fallbackImgSrc = BASE_PATH . "e-com/images/cfn_logo.png";
     ?>
-        <a href="../e-com/productpage.php?id=<?= $product['productID']; ?>" class="product-card-link">
-            <div class="product-card"
-                 data-product-id="<?= $product['productID']; ?>"
-                 data-price="<?= $product['price']; ?>"
-                 data-stock="<?= $product['stock']; ?>"
-                 data-category="<?= strtolower($product['category']); ?>">
+        <div class="product-card"
+             data-product-id="<?= $product['productID']; ?>"
+             data-price="<?= $product['price']; ?>"
+             data-stock="<?= $product['stock']; ?>"
+             data-category="<?= strtolower($product['category']); ?>">
+            <a href="../e-com/productpage.php?id=<?= $product['productID']; ?>" class="product-card-link">
                 <img src="<?= $imgSrc; ?>" alt="Product Image" 
                      data-fallback="<?= $fallbackImgSrc; ?>" 
                      onload="this.removeAttribute('data-fallback');" 
                      onerror="if(this.src !== this.getAttribute('data-fallback')) { this.src = this.getAttribute('data-fallback'); } else { console.log('Fallback failed: <?= $fallbackImgSrc; ?>'); }">
                 <h5><?= htmlspecialchars($product['product_name']); ?></h5>
-                <p>₱<?= number_format($product['price'], 2); ?> - <?= $stockStatus; ?></p>
+                <p class="price-stock">₱<?= number_format($product['price'], 2); ?> - <?= $stockStatus; ?></p>
+            </a>
+            <form class="add-to-cart-form">
+                <input type="hidden" name="productID" value="<?= $product['productID']; ?>">
+                <input type="hidden" name="quantity" value="1">
+                <input type="hidden" name="price" value="<?= $product['price']; ?>">
                 <div class="variant-options">
                     <?php
                     $prodID = $product['productID'];
@@ -127,7 +156,8 @@ $result = $conn->query($sql);
                     $variant_stmt->execute();
                     $variant_result = $variant_stmt->get_result();
                     if ($variant_result && $variant_result->num_rows > 1) {
-                        echo '<select class="variant-select" name="variant_' . $prodID . '" onclick="event.stopPropagation();">';
+                        echo '<select class="variant-select" name="variant_id" onchange="updatePriceStock(this)" required>';
+                        echo '<option value="">Select Variant</option>';
                         while ($variant = $variant_result->fetch_assoc()) {
                             $variantStock = ($variant['stock'] > 0) ? "In Stock" : "Out of Stock";
                             $selected = ($variant['price'] == $product['price'] && $variant['stock'] == $product['stock']) ? 'selected' : '';
@@ -136,11 +166,15 @@ $result = $conn->query($sql);
                             echo "</option>";
                         }
                         echo '</select>';
+                    } elseif ($variant_result && $variant_result->num_rows == 1) {
+                        $variant = $variant_result->fetch_assoc();
+                        echo '<input type="hidden" name="variant_id" value="' . $variant['variant_id'] . '">';
                     }
                     ?>
                 </div>
-            </div>
-        </a>
+                <button type="submit" class="add-to-cart-btn" <?php echo ($stockStatus === 'Out of Stock') ? 'disabled' : ''; ?>>Add to Cart</button>
+            </form>
+        </div>
     <?php
         }
     } else {
@@ -148,187 +182,219 @@ $result = $conn->query($sql);
     }
     $conn->close();
     ?>
+    </div>
 </div>
 
-</div>
 <footer>
-        <div class="footer-container">
-            <div class="footer-left">
-                <img src="../Resources/cfn_logo.png" alt="Naturale Logo" class="footer-logo">
-            </div>
-            <div class="footer-right">
-                <ul class="footer-nav">
-                    <li><a href="../User_Profile_Page/aboutUs.php">About Us</a></li>
-                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#ModalTerms">Terms and Conditions</a></li>
-                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#ModalPrivacy">Privacy Policy</a></li>
-                </ul>
-            </div>
-            <div class="social-icons">
-                <p>SOCIALS</p>
-                <a href="https://www.facebook.com/share/1CRTizfAxP/?mibextid=wwXIfr" target="_blank"><i class="fab fa-facebook"></i></a>
-                <a href="https://www.instagram.com/cosmeticasfraiche?igsh=ang2MHg1MW5qZHQw" target="_blank"><i class="fab fa-instagram"></i></a>
-            </div>            
+    <div class="footer-container">
+        <div class="footer-left">
+            <img src="../Resources/cfn_logo.png" alt="Naturale Logo" class="footer-logo">
         </div>
-        <div class="footer-center">
-            &copy; COSMETICAS 2024
+        <div class="footer-right">
+            <ul class="footer-nav">
+                <li><a href="../User_Profile_Page/aboutUs.php">About Us</a></li>
+                <li><a href="#" data-bs-toggle="modal" data-bs-target="#ModalTerms">Terms and Conditions</a></li>
+                <li><a href="#" data-bs-toggle="modal" data-bs-target="#ModalPrivacy">Privacy Policy</a></li>
+            </ul>
         </div>
-    </footer>
-
-       <!-- Modal -->
-       <div class="modal fade" id="ModalTerms" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color: #1F4529;">
-                    <h5 class="modal-title" id="exampleModalLongTitle" style="font-weight: bold;">CFN Naturale Terms and Conditions</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-<b>1. Introduction</b><br>
-Welcome to Cosmeticas Fraiche Naturale. By accessing or using our website, you agree to comply with these Terms of Use. If you do not agree, please do not use our services.<br><br>
-<b>2. Use of Website</b><br>
-You must be at least 16 years old to use our website. You agree to use the website only for lawful purposes and in accordance with these terms.<br><br>
-<b>3. Account Registration</b><br>
-To make purchases, you may need to create an account. You are responsible for maintaining the confidentiality of your account and password.<br><br>
-<b>4. Orders and Payments</b><br>
-All prices are listed in Philippine Peso. We reserve the right to refuse or cancel orders at our discretion. Payments must be completed before orders are processed.<br><br>
-<b>5. Shipping and Cancellation of Orders</b><br>
-We strive to deliver products in a timely manner. All sales are final, and we do not accept returns or exchanges. As for cancellations, it is allowed as long as the orders are not confirmed yet.<br><br>
-<b>6. Intellectual Property</b><br>
-All content on this site, including logos, text, and images, is owned by Cosmeticas Fraiche Naturale and may not be used without permission.<br><br>
-<b>7. Limitation of Liability</b><br>
-We are not responsible for any indirect, incidental, or consequential damages arising from the use of our website or products.<br><br>
-<b>8. Changes to Terms</b><br>
-We may update these terms at any time. Continued use of the website means you accept the updated terms.<br><br>
-<b>9. Contact Information</b><br>
-For any questions, contact us at cosmeticasfraichenaturale@gmail.com.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
+        <div class="social-icons">
+            <p>SOCIALS</p>
+            <a href="https://www.facebook.com/share/1CRTizfAxP/?mibextid=wwXIfr" target="_blank"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.instagram.com/cosmeticasfraiche?igsh=ang2MHg1MW5qZHQw" target="_blank"><i class="fab fa-instagram"></i></a>
+        </div>            
     </div>
+    <div class="footer-center">
+        © COSMETICAS 2024
+    </div>
+</footer>
 
-    <!-- Modal Privacy Policy -->
-    <div class="modal fade" id="ModalPrivacy" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color: #1F4529;">
-                    <h5 class="modal-title" id="exampleModalLongTitle" style="font-weight: bold;">CFN Naturale Privacy Policy</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-<b>1. Information We Collect</b><br>
-We collect personal information, such as your name, email, shipping address, and payment details when you make a purchase or create an account.<br><br>
-<b>2. How We Use Your Information</b><br>
-We use your information to process orders, improve our website, and communicate with you about promotions or support inquiries.<br><br>
-<b>3. Sharing of Information</b><br>
-We do not sell your personal information. However, we may share it with third-party service providers for payment processing or shipping.<br><br>
-<b>4. Cookies and Tracking</b><br>
-We use cookies to enhance your browsing experience. You can disable cookies in your browser settings, but some features may not function properly.<br><br>
-<b>5. Data Security</b><br>
-We implement security measures to protect your data but cannot guarantee complete security due to internet vulnerabilities.<br><br>
-<b>6. Your Rights</b><br>
-You have the right to access, update, or delete your personal information. Contact us at cosmeticasfraichenaturale@gmail.com for any requests.<br><br>
-<b>7. Changes to Privacy Policy</b><br>
-We may update this policy. Continued use of our services after updates means you accept the revised policy.<br><br>
-<b>8. Contact Information</b><br>
-For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
+<!-- Modal -->
+<div class="modal fade" id="ModalTerms" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #1F4529;">
+                <h5 class="modal-title" id="exampleModalLongTitle" style="font-weight: bold;">CFN Naturale Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <b>1. Introduction</b><br>
+                Welcome to Cosmeticas Fraiche Naturale. By accessing or using our website, you agree to comply with these Terms of Use. If you do not agree, please do not use our services.<br><br>
+                <b>2. Use of Website</b><br>
+                You must be at least 16 years old to use our website. You agree to use the website only for lawful purposes and in accordance with these terms.<br><br>
+                <b>3. Account Registration</b><br>
+                To make purchases, you may need to create an account. You are responsible for maintaining the confidentiality of your account and password.<br><br>
+                <b>4. Orders and Payments</b><br>
+                All prices are listed in Philippine Peso. We reserve the right to refuse or cancel orders at our discretion. Payments must be completed before orders are processed.<br><br>
+                <b>5. Shipping and Cancellation of Orders</b><br>
+                We strive to deliver products in a timely manner. All sales are final, and we do not accept returns or exchanges. As for cancellations, it is allowed as long as the orders are not confirmed yet.<br><br>
+                <b>6. Intellectual Property</b><br>
+                All content on this site, including logos, text, and images, is owned by Cosmeticas Fraiche Naturale and may not be used without permission.<br><br>
+                <b>7. Limitation of Liability</b><br>
+                We are not responsible for any indirect, incidental, or consequential damages arising from the use of our website or products.<br><br>
+                <b>8. Changes to Terms</b><br>
+                We may update these terms at any time. Continued use of the website means you accept the updated terms.<br><br>
+                <b>9. Contact Information</b><br>
+                For any questions, contact us at cosmeticasfraichenaturale@gmail.com.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Variant selection handling
-        document.querySelectorAll('.variant-select').forEach(select => {
-            select.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                const price = selectedOption.getAttribute('data-price');
-                const stock = selectedOption.getAttribute('data-stock');
-                const card = this.closest('.product-card');
-                const priceStockText = card.querySelector('p');
-                priceStockText.textContent = `₱${parseFloat(price).toFixed(2)} - ${stock > 0 ? 'In Stock' : 'Out of Stock'}`;
+<!-- Modal Privacy Policy -->
+<div class="modal fade" id="ModalPrivacy" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #1F4529;">
+                <h5 class="modal-title" id="exampleModalLongTitle" style="font-weight: bold;">CFN Naturale Privacy Policy</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <b>1. Information We Collect</b><br>
+                We collect personal information, such as your name, email, shipping address, and payment details when you make a purchase or create an account.<br><br>
+                <b>2. How We Use Your Information</b><br>
+                We use your information to process orders, improve our website, and communicate with you about promotions or support inquiries.<br><br>
+                <b>3. Sharing of Information</b><br>
+                We do not sell your personal information. However, we may share it with third-party service providers for payment processing or shipping.<br><br>
+                <b>4. Cookies and Tracking</b><br>
+                We use cookies to enhance your browsing experience. You can disable cookies in your browser settings, but some features may not function properly.<br><br>
+                <b>5. Data Security</b><br>
+                We implement security measures to protect your data but cannot guarantee complete security due to internet vulnerabilities.<br><br>
+                <b>6. Your Rights</b><br>
+                You have the right to access, update, or delete your personal information. Contact us at cosmeticasfraichenaturale@gmail.com for any requests.<br><br>
+                <b>7. Changes to Privacy Policy</b><br>
+                We may update this policy. Continued use of our services after updates means you accept the revised policy.<br><br>
+                <b>8. Contact Information</b><br>
+                For privacy-related concerns, contact us at cosmeticasfraichenaturale@gmail.com.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Update price and stock when variant changes
+    function updatePriceStock(select) {
+        const selectedOption = select.options[select.selectedIndex];
+        const price = selectedOption.getAttribute('data-price');
+        const stock = selectedOption.getAttribute('data-stock');
+        const card = select.closest('.product-card');
+        const priceStockText = card.querySelector('.price-stock');
+        const addToCartBtn = card.querySelector('.add-to-cart-btn');
+        
+        priceStockText.textContent = `₱${parseFloat(price).toFixed(2)} - ${stock > 0 ? (stock >= 50 ? 'In Stock' : 'Low Stock') : 'Out of Stock'}`;
+        addToCartBtn.disabled = stock <= 0;
+        
+        // Update hidden price input in the form
+        const form = card.querySelector('.add-to-cart-form');
+        const priceInput = form.querySelector('input[name="price"]');
+        priceInput.value = price;
+    }
+
+    // Variant selection handling
+    document.querySelectorAll('.variant-select').forEach(select => {
+        select.addEventListener('change', function() {
+            updatePriceStock(this);
+        });
+    });
+
+    // Add to cart functionality
+    document.querySelectorAll('.add-to-cart-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('../e-com/add_to_cart.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Item added to cart!');
+                    window.location.href = '../drew/cart.php';
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to add item to cart.');
             });
         });
+    });
 
-        // Filter products by category and search
-        function filterProducts() {
-            const category = document.getElementById('categoryFilter').value.toLowerCase();
-            const searchText = document.getElementById('searchBar').value.toLowerCase();
-            const products = document.querySelectorAll('.product-card');
-            const noProductsMessage = document.getElementById('no-products-message');
-            let visibleProducts = 0;
-
-            products.forEach(product => {
-                const productCategory = product.getAttribute('data-category');
-                const productName = product.querySelector('h5').textContent.toLowerCase();
-                const matchesCategory = !category || productCategory === category;
-                const matchesSearch = productName.includes(searchText);
-
-                if (matchesCategory && matchesSearch) {
-                    product.style.display = '';
-                    visibleProducts++;
-                } else {
-                    product.style.display = 'none';
-                }
-            });
-
-            noProductsMessage.style.display = (visibleProducts === 0 && category) ? 'block' : 'none';
+    // Filter products by category and search
+    function filterProducts() {
+        const category = document.getElementById('categoryFilter').value.toLowerCase();
+        const searchText = document.getElementById('searchBar').value.toLowerCase();
+        const products = document.querySelectorAll('.product-card');
+        const noProductsMessage = document.createElement('p');
+        noProductsMessage.id = 'no-products-message';
+        noProductsMessage.textContent = 'No products found.';
+        noProductsMessage.style.display = 'none';
+        const productGrid = document.getElementById('product-grid');
+        if (!document.getElementById('no-products-message')) {
+            productGrid.appendChild(noProductsMessage);
         }
+        let visibleProducts = 0;
 
-        document.getElementById('searchBar').addEventListener('keypress', function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                const searchText = this.value.trim();
-                const urlParams = new URLSearchParams(window.location.search);
-                urlParams.set('search', searchText);
-                window.location.search = urlParams.toString();
+        products.forEach(product => {
+            const productCategory = product.getAttribute('data-category');
+            const productName = product.querySelector('h5').textContent.toLowerCase();
+            const matchesCategory = !category || productCategory === category;
+            const matchesSearch = productName.includes(searchText);
+
+            if (matchesCategory && matchesSearch) {
+                product.style.display = '';
+                visibleProducts++;
+            } else {
+                product.style.display = 'none';
             }
         });
 
-        document.getElementById('categoryFilter').addEventListener('change', function() {
-    filterProducts();
-    const newCategory = this.value;
-    const url = new URL(window.location);
-    if (newCategory) {
-        url.searchParams.set('category', newCategory);
-    } else {
-        url.searchParams.delete('category');
-    }
-    window.history.pushState({}, '', url);
-});
-
-document.getElementById('categoryFilter').addEventListener('change', function() {
-    const selectedCategory = this.value;
-    const url = new URL(window.location);
-
-    // Set category in the URL
-    if (selectedCategory) {
-        url.searchParams.set('category', selectedCategory);
-    } else {
-        url.searchParams.delete('category');
+        noProductsMessage.style.display = (visibleProducts === 0 && (category || searchText)) ? 'block' : 'none';
     }
 
-    // Remove search query and clear the search bar
-    url.searchParams.delete('search');
-    document.getElementById('searchBar').value = "";
+    document.getElementById('searchBar').addEventListener('keypress', function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            const searchText = this.value.trim();
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('search', searchText);
+            window.location.search = urlParams.toString();
+        }
+    });
 
-    // Reload page with updated filters
-    window.location.href = url.toString();
-});
+    document.getElementById('categoryFilter').addEventListener('change', function() {
+        const selectedCategory = this.value;
+        const url = new URL(window.location);
 
+        // Set category in the URL
+        if (selectedCategory) {
+            url.searchParams.set('category', selectedCategory);
+        } else {
+            url.searchParams.delete('category');
+        }
 
-        document.getElementById('searchBar').addEventListener('input', filterProducts);
+        // Remove search query and clear the search bar
+        url.searchParams.delete('search');
+        document.getElementById('searchBar').value = "";
 
-        window.onload = function() {
-            filterProducts();
-        };
-    </script>
+        // Reload page with updated filters
+        window.location.href = url.toString();
+    });
+
+    document.getElementById('searchBar').addEventListener('input', filterProducts);
+
+    window.onload = function() {
+        filterProducts();
+    };
+</script>
 </body>
 </html>

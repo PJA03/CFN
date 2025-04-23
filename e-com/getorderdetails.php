@@ -13,20 +13,19 @@ if ($orderID <= 0) {
 // Fetch order details
 $stmt = $conn->prepare("
     SELECT 
-        orderID,
-        order_date,
-        user_id,
-        email,
-        first_name,
-        last_name,
-        status,
-        payment_option,
-        payment_proof,
-        isApproved,
-        price_total AS total_amount,
-        trackingLink
-    FROM tb_orders
-    WHERE orderID = ?
+        o.orderID,
+        o.order_date,
+        o.user_id,
+        u.email,
+        o.status,
+        o.payment_option,
+        o.payment_proof,
+        o.isApproved,
+        o.price_total,
+        o.trackingLink
+    FROM tb_orders o
+    JOIN tb_user u ON o.user_id = u.user_id
+    WHERE o.orderID = ?
 ");
 $stmt->bind_param("i", $orderID);
 $stmt->execute();
@@ -35,6 +34,7 @@ $stmt->close();
 
 if (!$order) {
     echo json_encode(['error' => 'Order not found']);
+    $conn->close();
     exit;
 }
 
@@ -44,14 +44,15 @@ $stmt = $conn->prepare("
         oi.order_item_id,
         oi.productID,
         oi.variant_id,
-        oi.product_name,
         oi.quantity,
         oi.unit_price,
-        oi.item_total,
+        (oi.quantity * oi.unit_price) AS item_total,
+        p.product_name,
         p.category,
-        (SELECT v.variant_name FROM tb_productvariants v WHERE v.variant_id = oi.variant_id LIMIT 1) as variant_name
+        pv.variant_name
     FROM tb_order_items oi
     JOIN tb_products p ON oi.productID = p.productID
+    LEFT JOIN tb_productvariants pv ON oi.variant_id = pv.variant_id
     WHERE oi.orderID = ?
 ");
 $stmt->bind_param("i", $orderID);
@@ -69,13 +70,11 @@ echo json_encode([
     'order_date' => $order['order_date'],
     'user_id' => $order['user_id'],
     'email' => $order['email'],
-    'first_name' => $order['first_name'],
-    'last_name' => $order['last_name'],
     'status' => $order['status'],
     'payment_option' => $order['payment_option'],
     'payment_proof' => $order['payment_proof'],
     'isApproved' => $order['isApproved'],
-    'total_amount' => $order['total_amount'],
+    'total_amount' => $order['price_total'], // Map to total_amount for frontend
     'trackingLink' => $order['trackingLink'],
     'items' => $items
 ]);

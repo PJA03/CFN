@@ -5,31 +5,27 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Check if the user is logged in
-$user = isset($_SESSION['email']) ? [
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../Registration_Page/registration.php');
+    exit();
+}
+
+$user = [
     'username' => $_SESSION['username'] ?? 'Guest',
-    'email' => $_SESSION['email'],
+    'email' => $_SESSION['email'] ?? '',
     'first_name' => $_SESSION['first_name'] ?? '',
     'last_name' => $_SESSION['last_name'] ?? '',
     'contact_no' => $_SESSION['contact_no'] ?? '',
     'address' => $_SESSION['address'] ?? '',
     'profile_image' => $_SESSION['profile_image'] ?? '../Resources/default_profile.png',
-] : ['username' => 'Guest'];
+];
 
 // Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "db_cfn";
+require_once '../conn.php';
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Get product ID and variant ID from URL
+// Get product ID from URL
 $productID = isset($_GET['id']) ? intval($_GET['id']) : 0;
-$variantID = isset($_GET['variant_id']) ? intval($_GET['variant_id']) : null;
-$selected_variant_id = null; // Initialize as null
+$selected_variant_id = null;
 
 // Initialize product variables with default values
 $product_name = "Product Not Found";
@@ -41,20 +37,13 @@ $stock = 0;
 
 // Fetch product details
 if ($productID > 0) {
-    // Fetch default or specified variant
+    // Fetch default variant
     $sql = "SELECT p.product_name, p.product_desc, p.category, p.product_image, v.variant_id, v.variant_name, v.price, v.stock 
             FROM tb_products p 
             JOIN tb_productvariants v ON p.productID = v.productID 
-            WHERE p.productID = ?";
-    if ($variantID) {
-        $sql .= " AND v.variant_id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ii", $productID, $variantID);
-    } else {
-        $sql .= " AND v.is_default = 1";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $productID);
-    }
+            WHERE p.productID = ? AND v.is_default = 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $productID);
     $stmt->execute();
     $result = $stmt->get_result();
     
@@ -69,48 +58,28 @@ if ($productID > 0) {
         $selected_variant_id = $row['variant_id'] ?? null;
     } else {
         error_log("No product found for productID: $productID");
+        header('Location: ../Home_Page/ProductScroll.php');
+        exit();
     }
     $stmt->close();
 
-    // If $selected_variant_id is still null, fetch the default variant explicitly
-    if ($selected_variant_id === null) {
-        $default_sql = "SELECT variant_id FROM tb_productvariants WHERE productID = ? AND is_default = 1 LIMIT 1";
-        $default_stmt = $conn->prepare($default_sql);
-        $default_stmt->bind_param("i", $productID);
-        $default_stmt->execute();
-        $default_result = $default_stmt->get_result();
-        if ($default_result->num_rows > 0) {
-            $default_row = $default_result->fetch_assoc();
-            $selected_variant_id = $default_row['variant_id'];
-        }
-        $default_stmt->close();
-    }
-
-    // Debug: Log category
-    error_log("Product category: '$category'");
-
-    // Fetch variants for perfumes only
+    // Fetch variants for all products
     $variants = [];
-    if (strtolower($category) === 'perfume') { // Case-insensitive check
-        $variant_sql = "SELECT variant_id, variant_name, price, stock FROM tb_productvariants WHERE productID = ?";
-        $variant_stmt = $conn->prepare($variant_sql);
-        $variant_stmt->bind_param("i", $productID);
-        $variant_stmt->execute();
-        $variant_result = $variant_stmt->get_result();
-        while ($variant = $variant_result->fetch_assoc()) {
-            $variants[] = [
-                'variant_id' => $variant['variant_id'],
-                'variant_name' => $variant['variant_name'],
-                'price' => $variant['price'],
-                'stock' => $variant['stock']
-            ];
-        }
-        $variant_stmt->close();
-        // Debug: Log number of variants found
-        error_log("Variants found for productID $productID: " . count($variants));
-    } else {
-        error_log("Not a perfume product, skipping variant fetch");
+    $variant_sql = "SELECT variant_id, variant_name, price, stock FROM tb_productvariants WHERE productID = ?";
+    $variant_stmt = $conn->prepare($variant_sql);
+    $variant_stmt->bind_param("i", $productID);
+    $variant_stmt->execute();
+    $variant_result = $variant_stmt->get_result();
+    while ($variant = $variant_result->fetch_assoc()) {
+        $variants[] = [
+            'variant_id' => $variant['variant_id'],
+            'variant_name' => $variant['variant_name'],
+            'price' => $variant['price'],
+            'stock' => $variant['stock']
+        ];
     }
+    $variant_stmt->close();
+    error_log("Variants found for productID $productID: " . count($variants));
 
     // Fetch similar products (same category)
     $similarProductsArray = [];
@@ -169,7 +138,7 @@ $conn->close();
             border-radius: 4px;
             font-size: 0.9rem;
             background-color: #fff;
-            transition: border-color 0.3s;
+            transition: border-color  Tomatoes 0.3s;
         }
         .variant-selector select:focus {
             border-color: #1F4529;
@@ -249,31 +218,33 @@ $conn->close();
         </div>
         <div class="product-info">
             <h1 class="product-name"><?php echo htmlspecialchars($product_name); ?></h1>
-            <form action="add_to_cart.php" method="POST" id="addToCartForm">
+            <form id="addToCartForm" class="add-to-cart-form">
                 <input type="hidden" name="productID" value="<?php echo $productID; ?>">
-                <?php if (strtolower($category) === 'perfume' && !empty($variants)): ?>
+                <?php if (!empty($variants)): ?>
                     <div class="variant-selector">
-                        <label for="variant">Select Scent</label>
-                        <select name="variant_id" id="variant" required>
-                            <?php foreach ($variants as $variant): ?>
-                                <option value="<?php echo $variant['variant_id']; ?>" 
-                                        data-price="<?php echo $variant['price']; ?>" 
-                                        data-stock="<?php echo $variant['stock']; ?>" 
-                                        <?php echo $variant['variant_id'] == $selected_variant_id ? 'selected' : ''; ?>
-                                        <?php echo $variant['stock'] == 0 ? 'disabled' : ''; ?>>
-                                    <?php echo htmlspecialchars($variant['variant_name']) . " - ₱" . number_format($variant['price'], 2) . ($variant['stock'] == 0 ? " (Out of Stock)" : ""); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                        <?php if (count($variants) > 1): ?>
+                            <label for="variant_id">Select Variant</label>
+                            <select name="variant_id" id="variant_id" required>
+                                <option value="">Select Variant</option>
+                                <?php foreach ($variants as $variant): ?>
+                                    <option value="<?php echo $variant['variant_id']; ?>" 
+                                            data-price="<?php echo $variant['price']; ?>" 
+                                            data-stock="<?php echo $variant['stock']; ?>" 
+                                            <?php echo $variant['variant_id'] == $selected_variant_id ? 'selected' : ''; ?>
+                                            <?php echo $variant['stock'] == 0 ? 'disabled' : ''; ?>>
+                                        <?php echo htmlspecialchars($variant['variant_name']) . " - ₱" . number_format($variant['price'], 2) . ($variant['stock'] == 0 ? " (Out of Stock)" : ""); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        <?php else: ?>
+                            <input type="hidden" name="variant_id" value="<?php echo $variants[0]['variant_id']; ?>">
+                        <?php endif; ?>
                         <?php if ($stock == 0): ?>
-                            <p class="out-of-stock">This scent is currently out of stock.</p>
+                            <p class="out-of-stock">This variant is currently out of stock.</p>
                         <?php endif; ?>
                     </div>
                 <?php else: ?>
-                    <input type="hidden" name="variant_id" value="<?php echo $selected_variant_id ?? 0; ?>">
-                    <?php if ($category === 'perfume' && empty($variants)): ?>
-                        <p class="debug-message">No variants found for this perfume.</p>
-                    <?php endif; ?>
+                    <p class="debug-message">No variants found for this product.</p>
                 <?php endif; ?>
                 <div class="quantity-selector">
                     <button type="button" class="quantity-btn">-</button>
@@ -412,128 +383,135 @@ $conn->close();
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Variant selection (for perfumes only)
-            const variantSelect = document.getElementById('variant');
-            if (variantSelect) {
-                const priceDisplay = document.querySelector('.product-price');
-                const priceInput = document.getElementById('price-input');
-                const addToCartBtn = document.querySelector('.add-to-cart-btn');
-                const outOfStockMsg = document.querySelector('.out-of-stock');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Variant selection
+        const variantSelect = document.getElementById('variant_id');
+        if (variantSelect) {
+            const priceDisplay = document.querySelector('.product-price');
+            const priceInput = document.getElementById('price-input');
+            const addToCartBtn = document.querySelector('.add-to-cart-btn');
+            const outOfStockMsg = document.querySelector('.out-of-stock');
 
-                variantSelect.addEventListener('change', function() {
-                    const selectedOption = this.options[this.selectedIndex];
-                    const price = parseFloat(selectedOption.getAttribute('data-price'));
-                    const stock = parseInt(selectedOption.getAttribute('data-stock'));
-                    priceDisplay.textContent = `₱${price.toFixed(2)}`;
-                    priceInput.value = price;
-                    addToCartBtn.disabled = stock === 0;
-                    if (outOfStockMsg) {
-                        outOfStockMsg.style.display = stock === 0 ? 'block' : 'none';
-                    }
-                });
-            }
-
-            // Quantity control
-            const minusBtn = document.querySelector('.quantity-btn:first-child');
-            const plusBtn = document.querySelector('.quantity-btn:last-child');
-            const quantityEl = document.querySelector('.quantity-value');
-            const quantityInput = document.getElementById('quantity-input');
-            
-            minusBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                let qty = parseInt(quantityEl.textContent);
-                if (qty > 1) {
-                    qty--;
-                    quantityEl.textContent = qty;
-                    quantityInput.value = qty;
+            variantSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const price = parseFloat(selectedOption.getAttribute('data-price'));
+                const stock = parseInt(selectedOption.getAttribute('data-stock'));
+                priceDisplay.textContent = `₱${price.toFixed(2)}`;
+                priceInput.value = price;
+                addToCartBtn.disabled = stock === 0;
+                if (outOfStockMsg) {
+                    outOfStockMsg.style.display = stock === 0 ? 'block' : 'none';
                 }
             });
-            
-            plusBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                let qty = parseInt(quantityEl.textContent);
-                qty++;
+        }
+
+        // Quantity control
+        const minusBtn = document.querySelector('.quantity-btn:first-child');
+        const plusBtn = document.querySelector('.quantity-btn:last-child');
+        const quantityEl = document.querySelector('.quantity-value');
+        const quantityInput = document.getElementById('quantity-input');
+        
+        minusBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            let qty = parseInt(quantityEl.textContent);
+            if (qty > 1) {
+                qty--;
                 quantityEl.textContent = qty;
                 quantityInput.value = qty;
+            }
+        });
+        
+        plusBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            let qty = parseInt(quantityEl.textContent);
+            qty++;
+            quantityEl.textContent = qty;
+            quantityInput.value = qty;
+        });
+
+        // Add to cart form handler
+        const addToCartForm = document.getElementById('addToCartForm');
+        addToCartForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(addToCartForm);
+            const addToCartPath = './add_to_cart.php'; // Updated path
+            console.log('Attempting to fetch:', addToCartPath);
+
+            fetch(addToCartPath, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log('Fetch response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Fetch response data:', data);
+                if (data.success) {
+                    const modalMessage = document.getElementById('addToCartMessage');
+                    modalMessage.textContent = `<?php echo addslashes($product_name); ?> has been added to your cart!`;
+                    const addToCartModal = new bootstrap.Modal(document.getElementById('addToCartModal'));
+                    addToCartModal.show();
+                    updateCartIndicator();
+                } else {
+                    alert('Error adding to cart: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                alert('Failed to add item to cart. Please check if add_to_cart.php exists at the correct path.');
             });
+        });
 
-            // Add to cart form handler
-            const addToCartForm = document.getElementById('addToCartForm');
-            addToCartForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const isGuest = <?php echo isset($_SESSION['email']) ? 'false' : 'true'; ?>;
-                if (isGuest) {
-                    window.location.href = '../Registration_Page/registration.php';
-                    return;
-                }
-
-                const formData = new FormData(addToCartForm);
-                // Debug: Log the form data being sent
-                for (let [key, value] of formData.entries()) {
-                    console.log(`${key}: ${value}`);
-                }
-                fetch('add_to_cart.php', {
-                    method: 'POST',
-                    body: formData
-                })
+        // Update cart indicator
+        function updateCartIndicator() {
+            const getCartPath = 'get_cart.php';
+            console.log('Attempting to fetch cart:', getCartPath);
+            fetch(getCartPath)
                 .then(response => {
+                    console.log('Get cart response status:', response.status);
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }
                     return response.json();
                 })
                 .then(data => {
-                    if (data.success) {
-                        const modalMessage = document.getElementById('addToCartMessage');
-                        modalMessage.textContent = `<?php echo addslashes($product_name); ?> has been added to your cart!`;
-                        const addToCartModal = new bootstrap.Modal(document.getElementById('addToCartModal'));
-                        addToCartModal.show();
-                        updateCartIndicator();
-                    } else {
-                        alert('Error adding to cart: ' + data.message);
+                    console.log('Get cart response data:', data);
+                    const cart = data.cart || [];
+                    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                    let cartIndicator = document.querySelector('.cart-indicator');
+                    if (!cartIndicator) {
+                        const cartIcon = document.querySelector('.fa-cart-shopping').parentElement;
+                        cartIndicator = document.createElement('span');
+                        cartIndicator.className = 'cart-indicator';
+                        cartIcon.appendChild(cartIndicator);
                     }
+                    cartIndicator.textContent = totalItems;
+                    cartIndicator.style.display = totalItems > 0 ? 'flex' : 'none';
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error adding to cart.');
-                });
+                .catch(error => console.error('Error fetching cart:', error));
+        }
+
+        // Similar products click handler
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product-id');
+                window.location.href = `productpage.php?id=${productId}`;
             });
-
-            // Update cart indicator
-            function updateCartIndicator() {
-                fetch('get_cart.php')
-                    .then(response => response.json())
-                    .then(data => {
-                        const cart = data.cart || [];
-                        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-                        let cartIndicator = document.querySelector('.cart-indicator');
-                        if (!cartIndicator) {
-                            const cartIcon = document.querySelector('.fa-cart-shopping').parentElement;
-                            cartIndicator = document.createElement('span');
-                            cartIndicator.className = 'cart-indicator';
-                            cartIcon.appendChild(cartIndicator);
-                        }
-                        cartIndicator.textContent = totalItems;
-                        cartIndicator.style.display = totalItems > 0 ? 'flex' : 'none';
-                    })
-                    .catch(error => console.error('Error fetching cart:', error));
-            }
-
-            // Similar products click handler
-            document.querySelectorAll('.product-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    const productId = this.getAttribute('data-product-id');
-                    window.location.href = `productpage.php?id=${productId}`;
-                });
-            });
-
-            // Search form validation
-            function validateSearch() {
-                const searchInput = document.getElementById('searchBar').value.trim();
-                return searchInput.length > 0;
-            }
         });
-    </script>
+
+        // Search form validation
+        function validateSearch() {
+            const searchInput = document.getElementById('searchBar').value.trim();
+            return searchInput.length > 0;
+        }
+
+        // Initialize cart indicator on page load
+        updateCartIndicator();
+    });
+</script>
 </body>
 </html>

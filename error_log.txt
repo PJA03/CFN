@@ -1,0 +1,15 @@
+[22-Apr-2025 19:38:00 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'price' in 'field list' in C:\xampp\htdocs\CFN\e-com\add_to_cart.php:38
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\add_to_cart.php(38): mysqli->prepare('SELECT category...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\add_to_cart.php on line 38
+[22-Apr-2025 19:40:39 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'price' in 'field list' in C:\xampp\htdocs\CFN\e-com\add_to_cart.php:43
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\add_to_cart.php(43): mysqli->prepare('SELECT category...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\add_to_cart.php on line 43
+[22-Apr-2025 19:40:44 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'price' in 'field list' in C:\xampp\htdocs\CFN\e-com\add_to_cart.php:43
+Stack trace:
+#0 C:\xampp\htdocs\CFN\e-com\add_to_cart.php(43): mysqli->prepare('SELECT category...')
+#1 {main}
+  thrown in C:\xampp\htdocs\CFN\e-com\add_to_cart.php on line 43

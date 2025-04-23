@@ -60,125 +60,132 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_proof'])) {
             $user_result = $stmt->get_result();
             $user = $user_result->fetch_assoc();
 
-            // Fetch cart items from session
-            $cart_items = $_SESSION['order'] ?? [];
-            $price_total = $_SESSION['total_price'] ?? 0;
+           /// // Fetch cart items from session
+          // Fetch cart items from session
+$cart_items = $_SESSION['order'] ?? [];
+$price_total = $_SESSION['total_price'] ?? 0;
 
-            if (!empty($cart_items)) {
-                $total_quantity = array_sum(array_column($cart_items, 'quantity')); // Sum of all item quantities
-            
-                // Start transaction
-                $conn->begin_transaction();
-            
-                try {
-                    // Insert order into tb_orders (single row)
-                    $query = "INSERT INTO tb_orders (order_date, user_id, email, first_name, last_name, quantity, status, payment_option, payment_proof, isApproved, price_total, trackingLink) 
-                              VALUES (NOW(), ?, ?, ?, ?, ?, 'Waiting for Payment', ?, ?, 0, ?, NULL)";
-                    $stmt = $conn->prepare($query);
-                    $stmt->bind_param("iississd", 
-                        $user_id, 
-                        $user['email'], 
-                        $user['first_name'], 
-                        $user['last_name'], 
-                        $total_quantity, 
-                        $payment_option, 
-                        $file_name, 
-                        $price_total
-                    );
-                    $stmt->execute();
-                    $order_id = $conn->insert_id;
-                    $stmt->close();
-            
-                    // Insert items into tb_order_items
-                    $query = "INSERT INTO tb_order_items (orderID, productID, product_name, quantity, unit_price, item_total, variant_id) 
-                              VALUES (?, ?, ?, ?, ?, ?, ?)";
-                    $stmt = $conn->prepare($query);
-            
-                    foreach ($cart_items as $item) {
-                        // Fetch unit_price from tb_productvariants
-                        $unit_price = $item['unit_price'] ?? null;
-                        if (!$unit_price) {
-                            if (isset($item['variant_id'])) {
-                                $price_query = "SELECT price FROM tb_productvariants WHERE productID = ? AND variant_id = ?";
-                                $price_stmt = $conn->prepare($price_query);
-                                $price_stmt->bind_param("ii", $item['productID'], $item['variant_id']);
-                            } else {
-                                $price_query = "SELECT price FROM tb_productvariants WHERE productID = ? LIMIT 1";
-                                $price_stmt = $conn->prepare($price_query);
-                                $price_stmt->bind_param("i", $item['productID']);
-                            }
-                            $price_stmt->execute();
-                            $price_result = $price_stmt->get_result();
-                            $price_row = $price_result->fetch_assoc();
-                            $unit_price = $price_row['price'] ?? 0;
-                            $price_stmt->close();
-            
-                            if ($unit_price == 0) {
-                                throw new Exception("Price not found for product ID: " . $item['productID'] . (isset($item['variant_id']) ? ", variant ID: " . $item['variant_id'] : ""));
-                            }
-                        }
-            
-                        $item_total = $item['quantity'] * $unit_price;
-                        $variant_id = $item['variant_id'] ?? null;
-            
-                        $stmt->bind_param("iisiddi", 
-                            $order_id, 
-                            $item['productID'], 
-                            $item['product_name'], 
-                            $item['quantity'], 
-                            $unit_price, 
-                            $item_total,
-                            $variant_id
-                        );
-                        $stmt->execute();
-                    }
-                    $stmt->close();
-            
-                    // Clear cart
-                    $query = "DELETE FROM tb_cart WHERE user_id = ?";
-                    $stmt = $conn->prepare($query);
-                    $stmt->bind_param("i", $user_id);
-                    $stmt->execute();
-                    $stmt->close();
-            
-                    // Commit transaction
-                    $conn->commit();
-            
-                    // Clear session data
-                    unset($_SESSION['order']);
-                    unset($_SESSION['total_price']);
-                    unset($_SESSION['payment_option']);
-            
-                    // Show success SweetAlert and redirect
-                    echo "<script>
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Order Placed',
-                            text: 'Your order has been placed successfully.',
-                            confirmButtonColor: '#1f4529',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            window.location.href = 'success_order.php';
-                        });
-                    </script>";
-                    exit();
-                } catch (Exception $e) {
-                    // Rollback transaction on error
-                    $conn->rollback();
-                    echo "<script>
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Order Failed',
-                            text: 'Failed to process order: " . addslashes($e->getMessage()) . "',
-                            confirmButtonColor: '#1f4529',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            window.location.href = 'cart.php';
-                        });
-                    </script>";
-                    exit();
+if (!empty($cart_items)) {
+    $total_quantity = array_sum(array_column($cart_items, 'quantity')); // Sum of all item quantities
+
+    // Start transaction
+    $conn->begin_transaction();
+
+    try {
+        // Insert order into tb_orders (single row)
+        $query = "INSERT INTO tb_orders (order_date, user_id, email, first_name, last_name, quantity, status, payment_option, payment_proof, isApproved, price_total, trackingLink) 
+                  VALUES (NOW(), ?, ?, ?, ?, ?, 'Waiting for Payment', ?, ?, 0, ?, NULL)";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("iississd", 
+            $user_id, 
+            $user['email'], 
+            $user['first_name'], 
+            $user['last_name'], 
+            $total_quantity, 
+            $payment_option, 
+            $file_name, 
+            $price_total
+        );
+        $stmt->execute();
+        $order_id = $conn->insert_id;
+        $stmt->close();
+
+        // Insert items into tb_order_items
+        $query = "INSERT INTO tb_order_items (orderID, productID, product_name, quantity, unit_price, item_total, variant_id) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($query);
+
+        foreach ($cart_items as $item) {
+            // Validate that perfume products have a variant_id
+            if (strtolower($item['category']) === 'perfume' && (!isset($item['variant_id']) || $item['variant_id'] === null)) {
+                throw new Exception("No variant selected for perfume product ID: " . $item['productID']);
+            }
+
+            // Fetch unit_price from tb_productvariants
+            $unit_price = $item['price'] ?? null; // Use price from cart_items
+            if (!$unit_price) {
+                if (isset($item['variant_id']) && $item['variant_id'] !== null) {
+                    $price_query = "SELECT price FROM tb_productvariants WHERE productID = ? AND variant_id = ?";
+                    $price_stmt = $conn->prepare($price_query);
+                    $price_stmt->bind_param("ii", $item['productID'], $item['variant_id']);
+                } else {
+                    $price_query = "SELECT price FROM tb_products WHERE productID = ?";
+                    $price_stmt = $conn->prepare($price_query);
+                    $price_stmt->bind_param("i", $item['productID']);
                 }
-            } else {
+                $price_stmt->execute();
+                $price_result = $price_stmt->get_result();
+                $price_row = $price_result->fetch_assoc();
+                $unit_price = $price_row['price'] ?? 0;
+                $price_stmt->close();
+
+                if ($unit_price == 0) {
+                    throw new Exception("Price not found for product ID: " . $item['productID'] . (isset($item['variant_id']) ? ", variant ID: " . $item['variant_id'] : ""));
+                }
+            }
+
+            $item_total = $item['quantity'] * $unit_price;
+            $variant_id = $item['variant_id'] ?? null;
+
+            $stmt->bind_param("iisiddi", 
+                $order_id, 
+                $item['productID'], 
+                $item['product_name'], 
+                $item['quantity'], 
+                $unit_price, 
+                $item_total,
+                $variant_id
+            );
+            $stmt->execute();
+        }
+        $stmt->close();
+
+        // Clear cart
+        $query = "DELETE FROM tb_cart WHERE user_id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $stmt->close();
+
+        // Commit transaction
+        $conn->commit();
+
+        // Clear session data
+        unset($_SESSION['order']);
+        unset($_SESSION['total_price']);
+        unset($_SESSION['payment_option']);
+
+        // Show success SweetAlert and redirect
+        echo "<script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Order Placed',
+                text: 'Your order has been placed successfully.',
+                confirmButtonColor: '#1f4529',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = 'success_order.php';
+            });
+        </script>";
+        exit();
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $conn->rollback();
+        echo "<script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Order Failed',
+                text: 'Failed to process order: " . addslashes($e->getMessage()) . "',
+                confirmButtonColor: '#1f4529',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = 'cart.php';
+            });
+        </script>";
+        exit();
+    }
+}
+             else {
                 echo "<script>
                     Swal.fire({
                         icon: 'error',

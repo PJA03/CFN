@@ -103,13 +103,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['aj
         
         // Calculate totals
         if (!$response['cart_empty']) {
-            $query = "SELECT c.productID, SUM(c.quantity) as quantity, c.price, p.product_name, p.product_image, p.category,
+            $query = "SELECT c.productID, c.variant_id, SUM(c.quantity) as quantity, c.price, p.product_name, p.product_image, p.category,
                              (SELECT v.variant_name FROM tb_productvariants v 
                               WHERE v.productID = c.productID AND v.variant_id = c.variant_id LIMIT 1) as variant_name
                       FROM tb_cart c
                       JOIN tb_products p ON c.productID = p.productID
                       WHERE c.user_id = ?
-                      GROUP BY c.productID, c.price, p.product_name, p.product_image, p.category";
+                      GROUP BY c.productID, c.variant_id, c.price, p.product_name, p.product_image, p.category";
             $stmt = $conn->prepare($query);
             $stmt->bind_param("i", $user_id);
             if ($stmt->execute()) {
@@ -165,13 +165,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['aj
 // Original PHP code for non-AJAX requests continues below
 
 // Fetch cart data
-$query = "SELECT c.productID, SUM(c.quantity) as quantity, c.price, p.product_name, p.product_image, p.category,
+// Fetch cart data
+$query = "SELECT c.productID, c.variant_id, SUM(c.quantity) as quantity, c.price, p.product_name, p.product_image, p.category,
                  (SELECT v.variant_name FROM tb_productvariants v 
                   WHERE v.productID = c.productID AND v.variant_id = c.variant_id LIMIT 1) as variant_name
           FROM tb_cart c
           JOIN tb_products p ON c.productID = p.productID
           WHERE c.user_id = ?
-          GROUP BY c.productID, c.price, p.product_name, p.product_image, p.category";
+          GROUP BY c.productID, c.variant_id, c.price, p.product_name, p.product_image, p.category";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $user_id);
 if (!$stmt->execute()) {
