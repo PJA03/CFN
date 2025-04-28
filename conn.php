@@ -1,8 +1,8 @@
 <?php
 $servername = "localhost";
-$username = "root";
-$password = "";
-$name = "db_cfn";
+$username = "trpkocuj_cosmeticasfraichenaturale";
+$password = "CFN#2024!";
+$name = "trpkocuj_db_cfn";
 
 $conn = new mysqli($servername, $username, $password, $name);
 
